@@ -1,0 +1,20 @@
+#This file is part of the SportResultsAnalyzer package.
+#(c) Alexander Lukashevich <aleksandr.dwt@gmail.com>
+#For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+
+version: '3.3'
+services:
+  node:
+    image: "node:8"
+    command: "bash -c '
+      cd /usr/src/app ;
+      [ ! -d 'node_modules' ] && npm install ;
+      npm start
+      '"
+#    command: bash -c 'sleep 10000'
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - 80:80
