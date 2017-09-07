@@ -10,6 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "express": "^4.15.4"
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.15.4",
+    "phantom": "^4.0.5"
   }
 }

@@ -6,12 +6,14 @@
 
 'use strict';
 
-let express = require("express");
-let bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
+const phantom = require('phantom');
+const cheerio = require('cheerio');
+const SITE_URL = 'localhost';
 
-let app = express();
+const app = express();
 app.use(bodyParser.json());
-// app.use(express.static('/car-pi/client'));
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -26,6 +28,33 @@ app.use(function(req, res, next) {
 });
 
 app.get('/start', (req, res, next) => {
+
+    (async function() {
+        const instance = await phantom.create(['--ignore-ssl-errors=yes', '--load-images=no']);
+        const page = await instance.createPage();
+        await page.on('onResourceRequested',
+            function(requestData) { console.log(requestData.url) }
+        );
+
+        const status = await page.open(SITE_URL);
+        const content = await page.property('content');
+        let tableElement = await page.evaluate(function() {
+            return document.getElementsByClassName('matches');
+        });
+
+        await instance.exit();
+
+        if (tableElement.length !== 1) {
+            console.log('ERRRRRROR');
+        } else {
+            const $ = cheerio.load('<table id="myparsedtable">' + tableElement[0].innerHTML + '</table>');
+
+            $('#myparsedtable').find('tr.match').each(function(i, elem) {
+                console.log($(this).find('.team-a').eq(0).text().trim() + '  -  ' + $(this).find('.team-b').eq(0).text().trim());
+            });
+        }
+    })();
+
     res.json({});
 });
 
