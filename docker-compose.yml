@@ -14,6 +14,7 @@ services:
 #    command: bash -c 'sleep 10000'
     environment:
       - NODE_ENV=production
+      - SITE_URL
     volumes:
       - ./app:/usr/src/app
     ports:

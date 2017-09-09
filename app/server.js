@@ -6,56 +6,98 @@
 
 'use strict';
 
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
-const phantom = require('phantom');
 const cheerio = require('cheerio');
-const SITE_URL = 'localhost';
+const FILE_PATH = '/usr/src/app/output.txt';
+const request = require('request');
+const SITE_URL = process.env.SITE_URL;
+//
+// const app = express();
+// app.use(bodyParser.json());
+//
+// app.use(function(req, res, next) {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+//
+//     if (req.method.toLowerCase() === 'options') {
+//         res.status(204).send();
+//     } else {
+//         next();
+//     }
+// });
+//
+// app.get('/start', (req, res, next) => {
+//     res.json({});
+// });
+//
+// app.listen(80);
 
-const app = express();
-app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+fs.readFile(FILE_PATH, 'utf8', function (err,data) {
+    if (err) {
+        return console.log(err);
+    }
+    let arr = data.split("\r\n");
+    for (let url of arr) {
+        if (url.indexOf('http://') !== 0) {
+            continue;
+        }
+        console.log('Trying to download page');
+        request(url, function (error, response, body) {
+            if (error || response.statusCode !== 200) {
+                console.log('Failed download page');
+                return;
+            }
 
-    if (req.method.toLowerCase() === 'options') {
-        res.status(204).send();
-    } else {
-        next();
+            const $ = cheerio.load(
+                JSON.parse(body).commands.filter(obj => obj.name === 'updateContainer')[0].parameters.content
+            );
+
+            $('table').find('tr.match').each(function(i, elem) {
+                let score = $(this).find('.score-time').eq(0).text().trim();
+                score = score.split('-');
+                if (score.length !== 2) {
+                    return true;
+                }
+
+                let homeScore = parseInt(score[0]);
+                let guestScore = parseInt(score[1]);
+
+                if (isNaN(homeScore) || isNaN(guestScore)) {
+                    return true;
+                }
+
+                let homeTeamId = $(this).find('.team-a').eq(0).find('a').eq(0).attr('href');
+                let pos = homeTeamId.indexOf('&id=');
+                if (pos !== -1) {
+                    homeTeamId = homeTeamId.substring(pos + 4)
+                }
+                let homeTeam = $(this).find('.team-a').eq(0).text().trim();
+                let guestTeamId = $(this).find('.team-b').eq(0).find('a').eq(0).attr('href');
+                pos = guestTeamId.indexOf('&id=');
+                if (pos !== -1) {
+                    guestTeamId = guestTeamId.substring(pos + 4)
+                }
+                let guestTeam = $(this).find('.team-b').eq(0).text().trim();
+                let date = $(this).find('.date').eq(0).text().trim();
+
+                date = date.split('/');
+
+                let item = {
+                    homeScore,
+                    guestScore,
+                    homeTeam,
+                    homeTeamId,
+                    guestTeam,
+                    guestTeamId,
+                    date: (new Date(date[1] + '/' + date[0] + '/' + date[2])).toISOString()
+                };
+
+                console.log(item);
+            });
+        });
     }
 });
-
-app.get('/start', (req, res, next) => {
-
-    (async function() {
-        const instance = await phantom.create(['--ignore-ssl-errors=yes', '--load-images=no']);
-        const page = await instance.createPage();
-        await page.on('onResourceRequested',
-            function(requestData) { console.log(requestData.url) }
-        );
-
-        const status = await page.open(SITE_URL);
-        const content = await page.property('content');
-        let tableElement = await page.evaluate(function() {
-            return document.getElementsByClassName('matches');
-        });
-
-        await instance.exit();
-
-        if (tableElement.length !== 1) {
-            console.log('ERRRRRROR');
-        } else {
-            const $ = cheerio.load('<table id="myparsedtable">' + tableElement[0].innerHTML + '</table>');
-
-            $('#myparsedtable').find('tr.match').each(function(i, elem) {
-                console.log($(this).find('.team-a').eq(0).text().trim() + '  -  ' + $(this).find('.team-b').eq(0).text().trim());
-            });
-        }
-    })();
-
-    res.json({});
-});
-
-app.listen(80);
