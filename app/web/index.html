@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sports Analyzer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="alert alert-danger" role="alert" style="display:none; position: absolute; right: 15px; width: 150px; height: 50px; overflow: hidden" id="alert">
+        <p style="text-align: center"></p>
+    </div>
+
+    <div class="container">
+        <h3 class="text-muted"></h3>
+
+        <div class="jumbotron" style="padding-top: 10px; padding-bottom: 15px">
+            <label for="sport-types">Sport type</label>
+                <select class="form-control" id="sport-types">
+            </select>
+            <label for="tournaments">Tournament</label>
+                <select class="form-control" id="tournaments">
+            </select>
+        </div>
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#score-table-tab" role="tab">Score Table</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#all-matches-tab" role="tab">All Matches</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#team-matches-tab" role="tab">Team Matches</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="score-table-tab" role="tabpanel">
+                <div class="jumbotron my-tab">
+                    <table id="score-table" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>MP</th>
+                            <th>W</th>
+                            <th>D</th>
+                            <th>L</th>
+                            <th>F</th>
+                            <th>A</th>
+                            <th>GD</th>
+                            <th>P</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="tab-pane" id="all-matches-tab" role="tabpanel">
+                <div class="jumbotron my-tab">
+                    <table id="all-matches-table" class="table table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="tab-pane" id="team-matches-tab" role="tabpanel">
+                <div class="jumbotron my-tab">
+                    <label for="team">Team</label>
+                        <select class="form-control" id="team">
+                    </select>
+                    <table id="team-matches-table" class="table table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
