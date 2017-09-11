@@ -12,6 +12,7 @@
     "body-parser": "^1.17.2",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.4",
+    "mongodb": "^2.2.31",
     "phantom": "^4.0.5"
   }
 }
