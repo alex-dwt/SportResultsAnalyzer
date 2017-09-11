@@ -1,0 +1,48 @@
+var system = require('system');
+var args = system.args;
+var env = system.env;
+
+if (args.length !== 2) {
+    phantom.exit(1);
+}
+var url = args[1];
+var SITE_URL = env['SITE_URL'];
+
+var page = require('webpage').create();
+
+page.onResourceRequested = function(request) {
+    if (request.url.indexOf(SITE_URL + '/a/block_competition_matches') === 0) {
+        console.log(request.url);
+    }
+};
+
+page.open(url, function(status) {
+    if(status === "success") {
+        var direction = 'next';
+
+        console.log(page.evaluate(function() {
+            return document.title;
+        }));
+
+        var fun = function () {
+            var href = page.evaluate(function(direction) {
+                document.getElementsByClassName(direction)[0].click();
+                return document.getElementsByClassName(direction)[0];
+            }, direction);
+
+            if (href.className.indexOf('disabled') !== -1) {
+                if (direction === 'next') {
+                    direction = 'previous';
+                } else {
+                    phantom.exit();
+                }
+            }
+
+            setTimeout(fun, 5000);
+        };
+
+        fun();
+    } else {
+        phantom.exit(1);
+    }
+});
