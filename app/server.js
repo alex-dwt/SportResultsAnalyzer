@@ -23,7 +23,12 @@ app.use(express.static('web'));
  * List of tournaments
  */
 app.get('/tournaments', (req, res, next) => {
-    res.json([{id:1, name:'name'},{id:1, name:'name'},{id:1, name:'name'}]);
+    mongoCollection
+        .aggregate(
+            {$group: {_id: {tournamentId:"$tournamentId",tournamentName:"$tournamentName"}}},
+            {$sort: { "_id.tournamentName": 1}}
+        )
+        .toArray((err, result) => res.json(result.map(val => val._id )));
 });
 
 /**
@@ -46,8 +51,10 @@ app.get('/score-table/:tournamentId', (req, res, next) => {
  * All matches of tournament
  */
 app.get('/all-matches-table/:tournamentId', (req, res, next) => {
-    // req.params.tournamentId
-    res.json([{id:1, name:'team1'},{id:1, name:'team2'},{id:1, name:'team3'}]);
+    mongoCollection
+        .find({tournamentId: parseInt(req.params.tournamentId)})
+        .sort({date: -1})
+        .toArray((err, result) => res.json(result));
 });
 
 /**

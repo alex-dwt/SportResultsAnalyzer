@@ -20,7 +20,10 @@ $(() => {
         $tournamentsSelector.empty().append($('<option>-</option>').val(''));
         ajaxCall('/tournaments').done((data) => {
             $.each(data, (key, value) => {
-                $tournamentsSelector.append($('<option></option>').val(value.id).text(value.name));
+                $tournamentsSelector
+                    .append($('<option></option>')
+                    .val(value.tournamentId)
+                    .text(value.tournamentName));
             });
         });
     }
@@ -58,7 +61,17 @@ $(() => {
         }
 
         ajaxCall('/all-matches-table/' + tournamentId).done((data) => {
-
+            $.each(data, (key, value) => {
+                $allMatchesTable
+                    .append(`
+                        <tr>
+                            <td>${value.date.slice(0, 10)}</td>
+                            <td>${value.homeTeamName}</td>
+                            <td>${value.homeScore} - ${value.guestScore}</td>
+                            <td>${value.guestTeamName}</td>
+                        </tr>
+                    `);
+            });
         });
     }
 

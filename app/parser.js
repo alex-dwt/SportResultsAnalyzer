@@ -15,6 +15,9 @@ function startWatching(url) {
     proc.stdout.setEncoding('utf8');
 
     proc.stdout.on('data', (data) => {
+
+        // todo split "data" by \r\n and parse in loop
+
         if (data.indexOf('http://') === 0) {
             // download page
             request(data, function (error, response, body) {
@@ -46,28 +49,29 @@ function startWatching(url) {
                     if (pos !== -1) {
                         homeTeamId = homeTeamId.substring(pos + 4)
                     }
-                    let homeTeam = $(this).find('.team-a').eq(0).text().trim();
+                    let homeTeamName = $(this).find('.team-a').eq(0).text().trim();
                     let guestTeamId = $(this).find('.team-b').eq(0).find('a').eq(0).attr('href');
                     pos = guestTeamId.indexOf('&id=');
                     if (pos !== -1) {
                         guestTeamId = guestTeamId.substring(pos + 4)
                     }
-                    let guestTeam = $(this).find('.team-b').eq(0).text().trim();
+                    let guestTeamName = $(this).find('.team-b').eq(0).text().trim();
                     let date = $(this).find('.date').eq(0).text().trim();
                     date = date.split('/');
-                    let item = {
-                        homeScore,
-                        guestScore,
-                        homeTeam,
-                        homeTeamId,
-                        guestTeam,
-                        guestTeamId,
-                        date: (new Date(date[1] + '/' + date[0] + '/' + date[2])).toISOString()
-                    };
+                    date = (new Date(date[1] + '/' + date[0] + '/' + date[2]));
 
-                    console.log('title - ' + title);
-                    console.log('id - ' + url.id);
-                    console.log(item);
+                    mongoCollection.insertOne({
+                        _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
+                        tournamentId: url.id,
+                        tournamentName: title,
+                        homeTeamId,
+                        homeTeamName,
+                        homeScore,
+                        guestTeamId,
+                        guestTeamName,
+                        guestScore,
+                        date: date.toISOString()
+                    }).catch(() => { });
                 });
             });
         } else {
