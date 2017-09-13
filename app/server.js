@@ -35,8 +35,16 @@ app.get('/tournaments', (req, res, next) => {
  * List of teams in tournament
  */
 app.get('/teams/:tournamentId', (req, res, next) => {
-    // req.params.tournamentId
-    res.json([{id:1, name:'team1'},{id:1, name:'team2'},{id:1, name:'team3'}]);
+    mongoCollection
+        .aggregate([
+            {$match: {tournamentId: parseInt(req.params.tournamentId) || 0}},
+            {$group : {
+                _id : "",
+                home: {$addToSet: {teamId: "$homeTeamId", teamName: "$homeTeamName"}},
+                guest: {$addToSet: {teamId: "$guestTeamId", teamName: "$guestTeamName"}}
+            }},
+            {$project: {items: {$setUnion: ["$home", "$guest"]}, _id: 0}}]
+        ).toArray((err, result) => res.json(result[0].items));
 });
 
 /**
@@ -52,7 +60,7 @@ app.get('/score-table/:tournamentId', (req, res, next) => {
  */
 app.get('/all-matches-table/:tournamentId', (req, res, next) => {
     mongoCollection
-        .find({tournamentId: parseInt(req.params.tournamentId)})
+        .find({tournamentId: parseInt(req.params.tournamentId) || 0})
         .sort({date: -1})
         .toArray((err, result) => res.json(result));
 });
@@ -61,9 +69,16 @@ app.get('/all-matches-table/:tournamentId', (req, res, next) => {
  * All matches of one team in tournament
  */
 app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
-    // req.params.tournamentId
-    // req.params.teamId
-    res.json([{id:1, name:'team1'},{id:1, name:'team2'},{id:1, name:'team3'}]);
+    mongoCollection
+        .find({
+            tournamentId: parseInt(req.params.tournamentId) || 0,
+            $or: [
+                {homeTeamId: parseInt(req.params.teamId) || 0},
+                {guestTeamId:parseInt(req.params.teamId) || 0}
+            ]
+        })
+        .sort({date: -1})
+        .toArray((err, result) => res.json(result));
 });
 
 

@@ -17,7 +17,7 @@ $(() => {
     );
 
     function fillTournamentsSelector() {
-        $tournamentsSelector.empty().append($('<option>-</option>').val(''));
+        $tournamentsSelector.empty().append($('<option></option>').val(''));
         ajaxCall('/tournaments').done((data) => {
             $.each(data, (key, value) => {
                 $tournamentsSelector
@@ -29,13 +29,16 @@ $(() => {
     }
 
     function fillTeamsSelector(tournamentId) {
-        $teamSelector.empty().append($('<option>-</option>').val(''));
-        if (tournamentId) {
+        $teamSelector.empty().append($('<option></option>').val(''));
+        if (!tournamentId) {
             return;
         }
         ajaxCall('/teams/' + tournamentId).done((data) => {
             $.each(data, (key, value) => {
-                $teamSelector.append($('<option></option>').val(value.id).text(value.name));
+                $teamSelector
+                    .append($('<option></option>')
+                    .val(value.teamId)
+                    .text(value.teamName));
             });
         });
     }
@@ -79,12 +82,22 @@ $(() => {
     function buildTeamMatchesTable(tournamentId, teamId) {
         $teamMatchesTable.empty();
 
-        if (!tournamentId || teamId) {
+        if (!tournamentId || !teamId) {
             return;
         }
 
         ajaxCall('/team-matches-table/' + tournamentId + '/' + teamId).done((data) => {
-
+            $.each(data, (key, value) => {
+                $teamMatchesTable
+                    .append(`
+                        <tr>
+                            <td>${value.date.slice(0, 10)}</td>
+                            <td>${value.homeTeamName}</td>
+                            <td>${value.homeScore} - ${value.guestScore}</td>
+                            <td>${value.guestTeamName}</td>
+                        </tr>
+                    `);
+            });
         });
     }
 

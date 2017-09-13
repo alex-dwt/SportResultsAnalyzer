@@ -47,13 +47,19 @@ function startWatching(url) {
                     let homeTeamId = $(this).find('.team-a').eq(0).find('a').eq(0).attr('href');
                     let pos = homeTeamId.indexOf('&id=');
                     if (pos !== -1) {
-                        homeTeamId = homeTeamId.substring(pos + 4)
+                        homeTeamId = parseInt(homeTeamId.substring(pos + 4))
+                        if (isNaN(homeTeamId)) {
+                            return true;
+                        }
                     }
                     let homeTeamName = $(this).find('.team-a').eq(0).text().trim();
                     let guestTeamId = $(this).find('.team-b').eq(0).find('a').eq(0).attr('href');
                     pos = guestTeamId.indexOf('&id=');
                     if (pos !== -1) {
-                        guestTeamId = guestTeamId.substring(pos + 4)
+                        guestTeamId = parseInt(guestTeamId.substring(pos + 4));
+                        if (isNaN(guestTeamId)) {
+                            return true;
+                        }
                     }
                     let guestTeamName = $(this).find('.team-b').eq(0).text().trim();
                     let date = $(this).find('.date').eq(0).text().trim();
