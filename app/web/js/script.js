@@ -55,16 +55,22 @@ $(() => {
                 $scoreTable
                     .append(`
                         <tr>
-                            <td>${value.teamName}</td>
+                            <td>${value.position}. ${value.teamName}</td>
                             <td>${value.statistics.mp}</td>
                             <td>${value.statistics.w}</td>
                             <td>${value.statistics.d}</td>
                             <td>${value.statistics.l}</td>
                             <td>${value.statistics.gf}</td>
                             <td>${value.statistics.ga}</td>
+                            <td>${value.statistics.agf}</td>
+                            <td>${value.statistics.aga}</td>
                             <td>${value.statistics.gd}</td>
                             <td>${value.statistics.p}</td>
                             <td>${value.statistics.last5.join(' ').toUpperCase()}</td>
+                            <td>${value.statistics.agfh}</td>
+                            <td>${value.statistics.agah}</td>
+                            <td>${value.statistics.agfg}</td>
+                            <td>${value.statistics.agag}</td>
                         </tr>
                     `);
             });
