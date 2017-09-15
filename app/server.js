@@ -7,6 +7,7 @@
 'use strict';
 
 const parser = require("./parser");
+const fetcher = require("./fetcher");
 const express = require("express");
 const bodyParser = require("body-parser");
 const SITE_URL = process.env.SITE_URL;
@@ -23,36 +24,27 @@ app.use(express.static('web'));
  * List of tournaments
  */
 app.get('/tournaments', (req, res, next) => {
-    mongoCollection
-        .aggregate(
-            {$group: {_id: {tournamentId:"$tournamentId",tournamentName:"$tournamentName"}}},
-            {$sort: { "_id.tournamentName": 1}}
-        )
-        .toArray((err, result) => res.json(result.map(val => val._id )));
+    fetcher
+        .getTournamentsList(mongoCollection)
+        .then((result) => res.json(result));
 });
 
 /**
  * List of teams in tournament
  */
 app.get('/teams/:tournamentId', (req, res, next) => {
-    mongoCollection
-        .aggregate([
-            {$match: {tournamentId: parseInt(req.params.tournamentId) || 0}},
-            {$group : {
-                _id : "",
-                home: {$addToSet: {teamId: "$homeTeamId", teamName: "$homeTeamName"}},
-                guest: {$addToSet: {teamId: "$guestTeamId", teamName: "$guestTeamName"}}
-            }},
-            {$project: {items: {$setUnion: ["$home", "$guest"]}, _id: 0}}]
-        ).toArray((err, result) => res.json(result[0].items));
+    fetcher
+        .getTeamsList(mongoCollection, req.params.tournamentId)
+        .then((result) => res.json(result));
 });
 
 /**
  * Score table of tournament
  */
 app.get('/score-table/:tournamentId', (req, res, next) => {
-    // req.params.tournamentId
-    res.json([{id:1, name:'team1'},{id:1, name:'team2'},{id:1, name:'team3'}]);
+    fetcher
+        .getTournamentResults(mongoCollection, req.params.tournamentId)
+        .then((result) => res.json(result));
 });
 
 /**
@@ -69,16 +61,9 @@ app.get('/all-matches-table/:tournamentId', (req, res, next) => {
  * All matches of one team in tournament
  */
 app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
-    mongoCollection
-        .find({
-            tournamentId: parseInt(req.params.tournamentId) || 0,
-            $or: [
-                {homeTeamId: parseInt(req.params.teamId) || 0},
-                {guestTeamId:parseInt(req.params.teamId) || 0}
-            ]
-        })
-        .sort({date: -1})
-        .toArray((err, result) => res.json(result));
+    fetcher
+        .getTeamMatches(mongoCollection, req.params.tournamentId, req.params.teamId)
+        .then((result) => res.json(result));
 });
 
 
@@ -88,17 +73,11 @@ mongoClient
         mongoCollection = db.collection('matches');
 
         // start parsing sites forever
-        let urls = [
-            {
-                id: 15,
-                url: SITE_URL + '/?sport=soccer&page=competition&id=15&view=matches'
-            },
-            {
-                id: 32,
-                url: SITE_URL + '/?sport=soccer&page=competition&id=32&view=matches',
-            },
-        ];
-        parser.start(urls, mongoCollection);
+        let urls = [15,32,22,35,28,37,8];
+        parser.start(
+            urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
+            mongoCollection
+        );
     }).catch(
         (err) =>  console.log('Sorry unable to connect to MongoDB Error:', err)
     );

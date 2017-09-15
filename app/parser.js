@@ -81,7 +81,7 @@ function startWatching(url) {
                 });
             });
         } else {
-            title = data;
+            title = data.trim();
         }
     });
 

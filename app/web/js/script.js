@@ -51,7 +51,23 @@ $(() => {
         }
 
         ajaxCall('/score-table/' + tournamentId).done((data) => {
-
+            $.each(data, (key, value) => {
+                $scoreTable
+                    .append(`
+                        <tr>
+                            <td>${value.teamName}</td>
+                            <td>${value.statistics.mp}</td>
+                            <td>${value.statistics.w}</td>
+                            <td>${value.statistics.d}</td>
+                            <td>${value.statistics.l}</td>
+                            <td>${value.statistics.gf}</td>
+                            <td>${value.statistics.ga}</td>
+                            <td>${value.statistics.gd}</td>
+                            <td>${value.statistics.p}</td>
+                            <td>${value.statistics.last5.join(' ').toUpperCase()}</td>
+                        </tr>
+                    `);
+            });
         });
     }
 
