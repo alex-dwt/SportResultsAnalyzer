@@ -66,6 +66,20 @@ app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
         .then((result) => res.json(result));
 });
 
+/**
+ * Forecast 1
+ */
+app.get('/forecast1', (req, res, next) => {
+    fetcher
+        .getForecast1(
+            mongoCollection,
+            req.query.tournamentId,
+            req.query.teamAId,
+            req.query.teamBId
+        )
+        .then((result) => res.json(result));
+});
+
 
 mongoClient
     .connect(mongoClientUrl)

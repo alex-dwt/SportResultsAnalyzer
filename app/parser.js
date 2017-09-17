@@ -2,15 +2,20 @@ const { spawn } = require('child_process');
 const cheerio = require('cheerio');
 const request = require('request');
 
-const delay = 5 * 60 * 1000; // minutes
-let mongoCollection, isStarted;
+const delay = 3 * 60 * 1000; // minutes
+let mongoCollection, isStarted, urlsToParse;
+let currentPhantomCount = 0;
+let currentUrlIndex = 0;
+const maxConcurrentlyPhantomCount = 3;
 
-function startWatching(url) {
+function parseUrl(url) {
     let title = '';
     let proc = spawn(
         '/usr/src/app/node_modules/.bin/phantomjs',
         ['--ignore-ssl-errors=yes', '--load-images=no', '/usr/src/app/phantom.js', url.url]
     );
+
+    console.log((new Date()).toISOString() + ' PhantomJS started (' + url.id + ')');
 
     proc.stdout.setEncoding('utf8');
 
@@ -85,22 +90,44 @@ function startWatching(url) {
     });
 
     proc.on('close', () => {
-        console.log('PhantomJS exited.');
-        setTimeout(() => startWatching(url), delay);
+        console.log((new Date()).toISOString() + ' PhantomJS exited (' + url.id + ')');
+        currentPhantomCount--;
     });
 }
 
+function startBunchParsing(isFirstTime) {
+    if (!isFirstTime && !currentUrlIndex) {
+        setTimeout(() => { startBunchParsing(true) }, delay);
+        return;
+    }
 
+    for (let length = urlsToParse.length; currentUrlIndex < length; ) {
+        if (currentPhantomCount >= maxConcurrentlyPhantomCount) {
+            break;
+        }
+        let i = currentUrlIndex;
+        setTimeout(() => { parseUrl(urlsToParse[i]) }, 10);
+        currentPhantomCount++;
+        currentUrlIndex++;
+    }
+
+    if (urlsToParse.length === currentUrlIndex && !currentPhantomCount) {
+        currentUrlIndex = 0;
+    }
+
+    setTimeout(startBunchParsing, 30000);
+}
 
 module.exports = {
     start(urls, collection) {
         if (isStarted) {
             return;
         }
+
         isStarted = true;
         mongoCollection = collection;
-        for (const url of urls) {
-            setTimeout(() => startWatching(url), 10);
-        }
+        urlsToParse = urls;
+
+        startBunchParsing(true);
     }
 };
