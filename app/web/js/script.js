@@ -27,7 +27,7 @@ $(() => {
             return;
         }
 
-        calculateForecast1(teamAId, teamBId);
+        getForecast1(teamAId, teamBId);
     });
 
     //forecast (1st)
@@ -154,9 +154,9 @@ $(() => {
         });
     }
     
-    function calculateForecast1(teamAId, teamBId) {
+    function getForecast1(teamAId, teamBId) {
         ajaxCall(
-            '/forecast1',
+            '/forecast/1',
             {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
         ).done((data) => {
             for (const team of ['A', 'B']) {

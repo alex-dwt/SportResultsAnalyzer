@@ -69,9 +69,10 @@ app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
 /**
  * Forecast 1
  */
-app.get('/forecast1', (req, res, next) => {
+app.get('/forecast/:num', (req, res, next) => {
     fetcher
-        .getForecast1(
+        .getForecast(
+            req.params.num,
             mongoCollection,
             req.query.tournamentId,
             req.query.teamAId,
