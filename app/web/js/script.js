@@ -28,11 +28,18 @@ $(() => {
         }
 
         getForecast1(teamAId, teamBId);
+        getForecast2(teamAId, teamBId);
     });
 
     //forecast (1st)
     let $forecast1TeamATable = $('#forecast-1-table-a').find('tbody').eq(0);
     let $forecast1TeamBTable = $('#forecast-1-table-b').find('tbody').eq(0);
+
+    //forecast (2nd)
+    let $forecast2agfhTable = $('#forecast-2-table-agfh').find('tbody').eq(0);
+    let $forecast2agahTable = $('#forecast-2-table-agah').find('tbody').eq(0);
+    let $forecast2agfgTable = $('#forecast-2-table-agfg').find('tbody').eq(0);
+    let $forecast2agagTable = $('#forecast-2-table-agag').find('tbody').eq(0);
 
 
     let teamSelectors = [
@@ -183,6 +190,32 @@ $(() => {
                             <td>${match.score} - ${match.opponentScore}</td>
                         </tr>
                     `);
+                }
+            }
+        });
+    }
+
+    function getForecast2(teamAId, teamBId) {
+        ajaxCall(
+            '/forecast/2',
+            {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
+        ).done((data) => {
+            // $forecast2Table.empty();
+            for (const team of ['A', 'B']) {
+                for (const type of (team === 'A' ? ['agfh', 'agah'] : ['agfg', 'agag'])) {
+                    let table = (eval (`$forecast2${type}Table`)).empty();
+                    table.append(`
+                        <tr><td>
+                            ${data[team].team.teamName} (${type.toUpperCase()} - ${data[team].team.statistics[type]})
+                        </td></tr>
+                    `);
+                    for (const similarTeam of data[team].similarTeams[type]) {
+                        table.append(`
+                        <tr><td>
+                            ${similarTeam.teamName} (${type.toUpperCase()} - ${similarTeam.statistics[type]})
+                        </td></tr>
+                    `);
+                    }
                 }
             }
         });

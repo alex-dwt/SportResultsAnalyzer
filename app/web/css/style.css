@@ -8,3 +8,11 @@
     padding-bottom: 15px;
     margin-bottom: 10px;
 }
+
+.forecast-2-table {
+    width: 24%;
+    float: left;
+}
+.forecast-2-table th {
+    text-align: center;
+}
