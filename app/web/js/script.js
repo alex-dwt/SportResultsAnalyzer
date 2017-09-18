@@ -16,57 +16,29 @@ $(() => {
         () => buildTeamMatchesTable($tournamentsSelector.val(), $teamSelector.val())
     );
 
-    //forecast (1st)
-    let $forecast1TeamASelector = $('#team-a');
-    let $forecast1TeamBSelector = $('#team-b');
-    let $forecast1TeamATable = $('#forecast-1-table-a').find('tbody').eq(0);
-    let $forecast1TeamBTable = $('#forecast-1-table-b').find('tbody').eq(0);
-    let $forecast1GoBtn = $('#forecast-1-go-btn').click(() => {
-        let teamAId = $forecast1TeamASelector.val();
-        let teamBId = $forecast1TeamBSelector.val();
+    //forecast
+    let $teamASelector = $('#team-a');
+    let $teamBSelector = $('#team-b');
+    let $forecastGoBtn = $('#forecast-go-btn').click(() => {
+        let teamAId = $teamASelector.val();
+        let teamBId = $teamBSelector.val();
         if (!teamAId || !teamBId || teamAId === teamBId) {
             alert('Wrong teams!');
             return;
         }
 
-        ajaxCall(
-            '/forecast1',
-            {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
-        ).done((data) => {
-            for (const team of ['A', 'B']) {
-                let table = (eval (`$forecast1Team${team}Table`)).empty();
-                let teamId = data[`team${team}Id`];
-                table.append(`
-                        <tr>
-                            <td colspan="2" style="text-align: center">
-                                AGF - ${data.statistics.find(o => o.teamId === teamId).agf},
-                                AGA - ${data.statistics.find(o => o.teamId === teamId).aga}
-                            </td>
-                        </tr>
-                    `);
-                for (const match of data.matches[team]) {
-                    table.append(`
-                        <tr>
-                            <td>
-                                ${match.opponentName}
-                                (
-                                AGF - ${data.statistics.find(o => o.teamId === match.opponentId).agf},
-                                AGA - ${data.statistics.find(o => o.teamId === match.opponentId).aga}
-                                )
-                            </td>
-                            <td>${match.score} - ${match.opponentScore}</td>
-                        </tr>
-                    `);
-                }
-            }
-        });
+        calculateForecast1(teamAId, teamBId);
     });
+
+    //forecast (1st)
+    let $forecast1TeamATable = $('#forecast-1-table-a').find('tbody').eq(0);
+    let $forecast1TeamBTable = $('#forecast-1-table-b').find('tbody').eq(0);
 
 
     let teamSelectors = [
         $teamSelector,
-        $forecast1TeamASelector,
-        $forecast1TeamBSelector,
+        $teamASelector,
+        $teamBSelector,
     ];
 
     function fillTournamentsSelector() {
@@ -179,6 +151,40 @@ $(() => {
                         </tr>
                     `);
             });
+        });
+    }
+    
+    function calculateForecast1(teamAId, teamBId) {
+        ajaxCall(
+            '/forecast1',
+            {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
+        ).done((data) => {
+            for (const team of ['A', 'B']) {
+                let table = (eval (`$forecast1Team${team}Table`)).empty();
+                let teamId = data[`team${team}Id`];
+                table.append(`
+                        <tr>
+                            <td colspan="2" style="text-align: center">
+                                AGF - ${data.statistics.find(o => o.teamId === teamId).agf},
+                                AGA - ${data.statistics.find(o => o.teamId === teamId).aga}
+                            </td>
+                        </tr>
+                    `);
+                for (const match of data.matches[team]) {
+                    table.append(`
+                        <tr>
+                            <td>
+                                ${match.opponentName}
+                                (
+                                AGF - ${data.statistics.find(o => o.teamId === match.opponentId).agf},
+                                AGA - ${data.statistics.find(o => o.teamId === match.opponentId).aga}
+                                )
+                            </td>
+                            <td>${match.score} - ${match.opponentScore}</td>
+                        </tr>
+                    `);
+                }
+            }
         });
     }
 

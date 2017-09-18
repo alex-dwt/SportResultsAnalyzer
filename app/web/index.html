@@ -18,7 +18,7 @@
     <div class="container">
         <h3 class="text-muted"></h3>
 
-        <div class="jumbotron" style="padding-top: 10px; padding-bottom: 15px">
+        <div class="jumbotron my-div">
             <label for="sport-types">Sport type</label>
                 <select class="form-control" id="sport-types">
             </select>
@@ -27,11 +27,28 @@
             </select>
         </div>
 
+        <div class="jumbotron my-div">
+            <button style="float: right;margin-left: 1%;margin-top: 3%;" type="button" class="btn btn-primary" id="forecast-go-btn">
+                GO
+            </button>
+            <div style="width: 45%; float: right">
+                <label for="team-b">Team B</label>
+                <select class="form-control" id="team-b">
+                </select>
+            </div>
+            <div style="width: 45%;">
+                <label for="team-a">Team A</label>
+                <select class="form-control" id="team-a">
+                </select>
+            </div>
+        </div>
+
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#score-table-tab" role="tab">Score Table</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#all-matches-tab" role="tab">All Matches</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#team-matches-tab" role="tab">Team Matches</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-1-tab" role="tab">Forecast (1st)</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-2-tab" role="tab">Forecast (2nd)</a></li>
         </ul>
 
         <div class="tab-content">
@@ -91,24 +108,6 @@
 
             <div class="tab-pane" id="forecast-1-tab" role="tabpanel">
                 <div class="jumbotron my-tab">
-                    <button style="float: right;margin-left: 1%;margin-top: 3%;" type="button" class="btn btn-primary" id="forecast-1-go-btn">
-                        GO
-                    </button>
-
-                    <div style="width: 45%; float: right">
-                        <label for="team-b">Team B</label>
-                        <select class="form-control" id="team-b">
-                        </select>
-                    </div>
-
-                    <div style="width: 45%;">
-                        <label for="team-a">Team A</label>
-                        <select class="form-control" id="team-a">
-                        </select>
-                    </div>
-
-                    <div style="clear: both"></div>
-
                     <div style="width: 45%; float: right">
                         <table id="forecast-1-table-b" class="table table-hover">
                             <tbody>
@@ -117,6 +116,23 @@
                     </div>
                     <div style="width: 45%;">
                         <table id="forecast-1-table-a" class="table table-hover">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="forecast-2-tab" role="tabpanel">
+                <div class="jumbotron my-tab">
+                    <div style="width: 45%; float: right">
+                        <table id="forecast-2-table-b" class="table table-hover">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="width: 45%;">
+                        <table id="forecast-2-table-a" class="table table-hover">
                             <tbody>
                             </tbody>
                         </table>

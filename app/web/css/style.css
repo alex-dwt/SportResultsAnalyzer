@@ -2,3 +2,9 @@
     min-height: 500px;
     padding-top: 15px;
 }
+
+.my-div {
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+}
