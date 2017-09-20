@@ -44,6 +44,40 @@ $(() => {
     let $forecast2BScoreLine = $('#forecast-2-b-scoreline');
     let $forecast2AMatches = $('#forecast-2-table-a-matches').find('tbody').eq(0);
     let $forecast2BMatches = $('#forecast-2-table-b-matches').find('tbody').eq(0);
+    //fill selectors
+    $('.forecast-2-max-matches').each((i, el) => {
+        for (let i = 3; i <= 10; i++) {
+            $(el).append($('<option></option>').val(i).text(i));
+            if (i === 5) {
+                $(el).val(i);
+            }
+        }
+    });
+    $('.forecast-2-max-teams').each((i, el) => {
+        for (let i = 1; i <= 7; i++) {
+            $(el).append($('<option></option>').val(i).text(i));
+            if (i === 3) {
+                $(el).val(i);
+            }
+        }
+    });
+    $('.forecast-2-limit').each((i, el) => {
+        let val = 0;
+        while (val <= 0.5) {
+            $(el).append($('<option></option>').val(val).text(val));
+            if (val === 0.2) {
+                $(el).val(val);
+            }
+            val = Math.round((val + 0.01) * 100) / 100;
+        }
+    });
+    for (let el of ['forecast-2-limit', 'forecast-2-max-teams', 'forecast-2-max-matches']) {
+        $('#' + el).change(() => {
+            let val = $('#' + el).val();
+            $('.' + el).each((i, el) => {$(el).val(val);});
+        });
+    }
+
 
 
     let teamSelectors = [

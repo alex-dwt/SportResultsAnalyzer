@@ -20,3 +20,12 @@
 .table td {
     padding: 3px;
 }
+
+select.form-control:not([size]):not([multiple]) {
+    height: calc(2rem + 2px);
+}
+
+label {
+    margin-bottom: 0;
+    font-size: 14px;
+}
