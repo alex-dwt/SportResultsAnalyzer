@@ -211,13 +211,17 @@ $(() => {
                     let table = (eval (`$forecast2${type}Table`)).empty();
                     table.append(`
                         <tr><td>
-                            ${data[team].team.teamName} (${type.toUpperCase()} - ${data[team].team.statistics[type]})
+                            ${data[team].team.teamName} (${data[team].team.statistics[type]})
                         </td></tr>
                     `);
                     for (const similarTeam of data[team].similarTeams[type]) {
+                        let difference = Math.round((similarTeam.statistics[type] - data[team].team.statistics[type]) * 100) / 100;
+                        if (difference >= 0) {
+                            difference = '+' + difference;
+                        }
                         table.append(`
                         <tr><td>
-                            ${similarTeam.teamName} (${type.toUpperCase()} - ${similarTeam.statistics[type]})
+                            ${similarTeam.teamName} (${similarTeam.statistics[type]}, ${difference})
                         </td></tr>
                     `);
                     }
