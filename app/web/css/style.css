@@ -16,3 +16,7 @@
 .forecast-2-table th {
     text-align: center;
 }
+
+.table td {
+    padding: 3px;
+}

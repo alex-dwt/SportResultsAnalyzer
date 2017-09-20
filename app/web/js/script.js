@@ -40,6 +40,10 @@ $(() => {
     let $forecast2agahTable = $('#forecast-2-table-agah').find('tbody').eq(0);
     let $forecast2agfgTable = $('#forecast-2-table-agfg').find('tbody').eq(0);
     let $forecast2agagTable = $('#forecast-2-table-agag').find('tbody').eq(0);
+    let $forecast2AScoreLine = $('#forecast-2-a-scoreline');
+    let $forecast2BScoreLine = $('#forecast-2-b-scoreline');
+    let $forecast2AMatches = $('#forecast-2-table-a-matches').find('tbody').eq(0);
+    let $forecast2BMatches = $('#forecast-2-table-b-matches').find('tbody').eq(0);
 
 
     let teamSelectors = [
@@ -180,6 +184,7 @@ $(() => {
                 for (const match of data.matches[team]) {
                     table.append(`
                         <tr>
+                            <td>${match.date.slice(0, 10)}</td>
                             <td>
                                 ${match.opponentName}
                                 (
@@ -200,7 +205,7 @@ $(() => {
             '/forecast/2',
             {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
         ).done((data) => {
-            // $forecast2Table.empty();
+            // build teams
             for (const team of ['A', 'B']) {
                 for (const type of (team === 'A' ? ['agfh', 'agah'] : ['agfg', 'agag'])) {
                     let table = (eval (`$forecast2${type}Table`)).empty();
@@ -217,6 +222,27 @@ $(() => {
                     `);
                     }
                 }
+            }
+
+            //build matches
+            for (const team of ['A', 'B']) {
+                let table = (eval (`$forecast2${team}Matches`)).empty();
+                $.each(data[team].matches, (key, value) => {
+                    table
+                        .append(`
+                            <tr>
+                                <td>${value.date.slice(0, 10)}</td>
+                                <td>${value.homeTeamName}</td>
+                                <td>${value.homeScore} - ${value.guestScore}</td>
+                                <td>${value.guestTeamName}</td>
+                            </tr>
+                        `);
+                });
+            }
+
+            //build score lines
+            for (const team of ['A', 'B']) {
+                (eval (`$forecast2${team}ScoreLine`)).text(data[team].scoreLine);
             }
         });
     }

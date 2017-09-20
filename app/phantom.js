@@ -21,7 +21,16 @@ page.open(url, function(status) {
         var direction = 'next';
 
         console.log(page.evaluate(function() {
-            return document.title;
+            var country = '';
+            var el = document.getElementsByTagName('h2');
+            for (var i = 0, length = el.length; i < length; i++) {
+                if (el[i].innerHTML.indexOf('span') === -1) {
+                    country = el[i].innerHTML;
+                    break;
+                }
+            }
+
+            return country + ', ' + document.title.split(' -')[0];
         }));
 
         var fun = function () {
