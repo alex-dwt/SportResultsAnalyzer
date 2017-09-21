@@ -67,16 +67,14 @@ app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
 });
 
 /**
- * Forecast 1
+ * Forecast
  */
 app.get('/forecast/:num', (req, res, next) => {
     fetcher
         .getForecast(
             req.params.num,
             mongoCollection,
-            req.query.tournamentId,
-            req.query.teamAId,
-            req.query.teamBId
+            req.query
         )
         .then((result) => res.json(result));
 });
