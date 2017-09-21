@@ -1,4 +1,5 @@
 $.ajaxSetup ({cache: false});
+String.prototype.capitalizeFirstLetter = function(){ return this.charAt(0).toUpperCase() + this.slice(1)};
 
 $(() => {
     let $alert = $('#alert');
@@ -235,10 +236,23 @@ $(() => {
     }
 
     function getForecast2(teamAId, teamBId) {
-        ajaxCall(
-            '/forecast/2',
-            {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
-        ).done((data) => {
+        let queryParams = {
+            tournamentId: $tournamentsSelector.val(),
+            teamAId,
+            teamBId
+        };
+
+        // settings
+        for (const team of ['a', 'b']) {
+            queryParams['maxMatches' + team.toUpperCase()] =$('#forecast-2-max-matches-' + team).val();
+        }
+        for (const param of ['max-teams', 'limit']) {
+            for (const type of ['agfh', 'agah', 'agfg', 'agag']) {
+                queryParams[param.replace('-t', 'T') + type.capitalizeFirstLetter()] =$('#forecast-2-' + param + '-' + type).val();
+            }
+        }
+
+        ajaxCall('/forecast/2', queryParams).done((data) => {
             // build teams
             for (const team of ['A', 'B']) {
                 for (const type of (team === 'A' ? ['agfh', 'agah'] : ['agfg', 'agag'])) {
