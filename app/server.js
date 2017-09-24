@@ -79,20 +79,24 @@ app.get('/forecast/:num', (req, res, next) => {
         .then((result) => res.json(result));
 });
 
+function connectDB() {
+    mongoClient
+        .connect(mongoClientUrl)
+        .then((db) => {
+            mongoCollection = db.collection('matches');
 
-mongoClient
-    .connect(mongoClientUrl)
-    .then((db) => {
-        mongoCollection = db.collection('matches');
+            // start parsing sites forever
+            let urls = [15,32,22,35,28,37,8,122,70,440,59,67,68,];
+            parser.start(
+                urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
+                mongoCollection
+            );
+            
+            app.listen(80);
+        }).catch((err) =>  {
+            console.log('Trying connecting MongoDB...');
+            setTimeout(connectDB, 1000);
+        });
+}
 
-        // start parsing sites forever
-        let urls = [15,32,22,35,28,37,8,122,70,440,59,67,68,];
-        parser.start(
-            urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
-            mongoCollection
-        );
-    }).catch(
-        (err) =>  console.log('Sorry unable to connect to MongoDB Error:', err)
-    );
-
-app.listen(80);
+connectDB();

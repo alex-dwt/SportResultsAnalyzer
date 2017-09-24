@@ -47,15 +47,15 @@ $(() => {
     let $forecast2BMatches = $('#forecast-2-table-b-matches').find('tbody').eq(0);
     //fill selectors
     $('.forecast-2-max-matches').each((i, el) => {
-        for (let i = 3; i <= 10; i++) {
+        for (let i = 3; i <= 15; i++) {
             $(el).append($('<option></option>').val(i).text(i));
-            if (i === 5) {
+            if (i === 6) {
                 $(el).val(i);
             }
         }
     });
     $('.forecast-2-max-teams').each((i, el) => {
-        for (let i = 1; i <= 7; i++) {
+        for (let i = 1; i <= 10; i++) {
             $(el).append($('<option></option>').val(i).text(i));
             if (i === 3) {
                 $(el).val(i);
