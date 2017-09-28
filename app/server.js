@@ -11,6 +11,7 @@ const fetcher = require("./fetcher");
 const express = require("express");
 const bodyParser = require("body-parser");
 const SITE_URL = process.env.SITE_URL;
+const PASSWORD = process.env.PASSWORD;
 
 const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
@@ -19,6 +20,14 @@ let mongoCollection;
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('web'));
+
+app.use(function(req, res, next) {
+    if (typeof req.query.password !== 'undefined' &&  req.query.password === PASSWORD) {
+        next();
+    } else {
+        res.status(403).send();
+    }
+});
 
 /**
  * List of tournaments

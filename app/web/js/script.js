@@ -1,7 +1,20 @@
 $.ajaxSetup ({cache: false});
 String.prototype.capitalizeFirstLetter = function(){ return this.charAt(0).toUpperCase() + this.slice(1)};
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 $(() => {
+    // dates
+    let $dateFrom = $('#date-from').val(`${(new Date()).getFullYear()}-01-01`);
+    let $dateTill = $('#date-till').val(`${(new Date()).getFullYear()}-12-31`);
+
     let $alert = $('#alert');
     let $scoreTable = $('#score-table').find('tbody').eq(0);
     let $allMatchesTable = $('#all-matches-table').find('tbody').eq(0);
@@ -304,7 +317,12 @@ $(() => {
         return $.ajax({
             url: url,
             timeout: 5000,
-            data: queryParams
+            data: Object.assign({}, queryParams, {
+                dateFrom: $dateFrom.val(),
+                dateTill: $dateTill.val(),
+                password: getParameterByName('password')
+            })
+
         }).fail((jqXHR) => alert(jqXHR.status));
     }
 

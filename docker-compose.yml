@@ -15,6 +15,7 @@ services:
     environment:
       - NODE_ENV=production
       - SITE_URL
+      - PASSWORD
     volumes:
       - ./app:/usr/src/app
     ports:
