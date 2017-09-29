@@ -95,7 +95,7 @@ function connectDB() {
             mongoCollection = db.collection('matches');
 
             // start parsing sites forever
-            let urls = [15,32,22,35,28,37,8,122,70,440,59,67,68,24,59,30.39,76,119,120,440,16,17];
+            let urls = [15,32,22,35,28,37,8,122,70,440,59,67,68,24,59,30,39,76,119,120,16,17];
             parser.start(
                 urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
                 mongoCollection
