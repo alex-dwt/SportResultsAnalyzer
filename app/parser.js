@@ -6,7 +6,7 @@ const delay = 3 * 60 * 1000; // minutes
 let mongoCollection, isStarted, urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 2;
+const maxConcurrentlyPhantomCount = 1;
 
 function parseUrl(url) {
     let title = '';

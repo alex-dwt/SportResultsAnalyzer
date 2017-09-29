@@ -223,7 +223,7 @@ $(() => {
                 let teamId = data[`team${team}Id`];
                 table.append(`
                         <tr>
-                            <td colspan="2" style="text-align: center">
+                            <td colspan="3" style="text-align: center; border-bottom: 2px solid black">
                                 AGF - ${data.statistics.find(o => o.teamId === teamId).agf},
                                 AGA - ${data.statistics.find(o => o.teamId === teamId).aga}
                             </td>
@@ -244,6 +244,19 @@ $(() => {
                         </tr>
                     `);
                 }
+                table.append(`<tr><td colspan="3" style="border-bottom: 1px solid black"></td></tr>`);
+                for (const line of data.comparing[team]) {
+                    table.append(`
+                        <tr>
+                            <td colspan="3" style="text-align: center">
+                                ${line.eqType} ${line.count} (${line.text})
+                            </td>
+                        </tr>
+                    `);
+                }
+                table.append(`<tr><td colspan="3" style="border-top: 1px solid black">
+                    ${data.scoreLine[team]}
+                </td></tr>`);
             }
         });
     }
