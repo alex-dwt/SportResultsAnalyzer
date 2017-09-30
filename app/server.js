@@ -15,7 +15,7 @@ const PASSWORD = process.env.PASSWORD;
 
 const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
-let mongoCollection;
+let mongoDB;
 
 const app = express();
 app.use(bodyParser.json());
@@ -56,7 +56,7 @@ app.use(function(req, res, next) {
  */
 app.get('/tournaments', (req, res, next) => {
     fetcher
-        .getTournamentsList(mongoCollection)
+        .getTournamentsList(mongoDB.collection('matches'))
         .then((result) => res.json(result));
 });
 
@@ -65,7 +65,7 @@ app.get('/tournaments', (req, res, next) => {
  */
 app.get('/teams/:tournamentId', (req, res, next) => {
     fetcher
-        .getTeamsList(mongoCollection, req.params.tournamentId)
+        .getTeamsList(mongoDB.collection('matches'), req.params.tournamentId)
         .then((result) => res.json(result));
 });
 
@@ -75,7 +75,7 @@ app.get('/teams/:tournamentId', (req, res, next) => {
 app.get('/score-table/:tournamentId', (req, res, next) => {
     fetcher
         .getTournamentResults(
-            mongoCollection,
+            mongoDB.collection('matches'),
             req.params.tournamentId,
             {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
         )
@@ -86,7 +86,7 @@ app.get('/score-table/:tournamentId', (req, res, next) => {
  * All matches of tournament
  */
 app.get('/all-matches-table/:tournamentId', (req, res, next) => {
-    mongoCollection
+    mongoDB.collection('matches')
         .find({
             tournamentId: parseInt(req.params.tournamentId) || 0,
             date: {
@@ -104,7 +104,7 @@ app.get('/all-matches-table/:tournamentId', (req, res, next) => {
 app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
     fetcher
         .getTeamMatches(
-            mongoCollection,
+            mongoDB.collection('matches'),
             req.params.tournamentId,
             req.params.teamId,
             {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
@@ -119,7 +119,7 @@ app.get('/forecast/:num', (req, res, next) => {
     fetcher
         .getForecast(
             req.params.num,
-            mongoCollection,
+            mongoDB.collection('matches'),
             req.query
         )
         .then((result) => res.json(result));
@@ -129,13 +129,13 @@ function connectDB() {
     mongoClient
         .connect(mongoClientUrl)
         .then((db) => {
-            mongoCollection = db.collection('matches');
+            mongoDB = db;
 
             // start parsing sites forever
             let urls = [15,32,22,35,28,37,8,122,70,440,59,67,68,24,59,30,39,76,119,120,16,17,121,49,66,26,89,629,29,36,123,86,125,233,82,83,27];
             parser.start(
                 urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
-                mongoCollection
+                mongoDB
             );
             
             app.listen(80);

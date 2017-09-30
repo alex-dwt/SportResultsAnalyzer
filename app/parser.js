@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const request = require('request');
 
 const delay = 3 * 60 * 1000; // minutes
-let mongoCollection, isStarted, urlsToParse;
+let matchesCollection, scheduleCollection, isStarted, urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 4;
@@ -74,7 +74,7 @@ function parseUrl(url) {
                         date = date.split('/');
                         date = (new Date(date[1] + '/' + date[0] + '/' + date[2]));
 
-                        mongoCollection.insertOne({
+                        matchesCollection.insertOne({
                             _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
                             tournamentId: url.id,
                             tournamentName: title,
@@ -124,13 +124,14 @@ function startBunchParsing(isFirstTime) {
 }
 
 module.exports = {
-    start(urls, collection) {
+    start(urls, mongoDB) {
         if (isStarted) {
             return;
         }
 
         isStarted = true;
-        mongoCollection = collection;
+        matchesCollection = mongoDB.collection('matches');
+        scheduleCollection = mongoDB.collection('schedule');
         urlsToParse = urls;
 
         startBunchParsing(true);
