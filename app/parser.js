@@ -84,7 +84,7 @@ function parseUrl(url) {
                             guestTeamId,
                             guestTeamName,
                             guestScore,
-                            date: date.toISOString()
+                            date
                         }).catch(() => { });
                     });
                 });

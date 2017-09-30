@@ -12,8 +12,22 @@ function getParameterByName(name, url) {
 
 $(() => {
     // dates
-    let $dateFrom = $('#date-from').val(`${(new Date()).getFullYear()}-01-01`);
-    let $dateTill = $('#date-till').val(`${(new Date()).getFullYear()}-12-31`);
+    let $dateFrom = $('#date-from')
+        .val(`${(new Date()).getFullYear()}-01-01`)
+        .change(() => {
+            if (!$dateFrom.val()) {
+                $dateFrom.val(`${(new Date()).getFullYear()}-01-01`);
+            }
+            $tournamentsSelector.val('').change();
+        });
+    let $dateTill = $('#date-till')
+        .val(`${(new Date()).getFullYear()}-12-31`)
+        .change(() => {
+            if (!$dateTill.val()) {
+                $dateTill.val(`${(new Date()).getFullYear()}-12-31`);
+            }
+            $tournamentsSelector.val('').change();
+        });
 
     let $alert = $('#alert');
     let $scoreTable = $('#score-table').find('tbody').eq(0);
@@ -33,6 +47,19 @@ $(() => {
     //forecast
     let $teamASelector = $('#team-a');
     let $teamBSelector = $('#team-b');
+    $teamASelector.add($teamBSelector).change(() => {
+        $forecast1TeamATable
+            .add($forecast1TeamBTable)
+            .add($forecast2agfhTable)
+            .add($forecast2agahTable)
+            .add($forecast2agfgTable)
+            .add($forecast2agagTable)
+            .add($forecast2AScoreLine)
+            .add($forecast2BScoreLine)
+            .add($forecast2AMatches)
+            .add($forecast2BMatches)
+            .empty();
+    });
     let $forecastGoBtn = $('#forecast-go-btn').click(() => {
         let teamAId = $teamASelector.val();
         let teamBId = $teamBSelector.val();
@@ -114,7 +141,7 @@ $(() => {
 
     function fillTeamsSelector(tournamentId) {
         for (const selector of teamSelectors) {
-            selector.empty().append($('<option></option>').val(''));
+            selector.empty().append($('<option></option>').val('')).change();
         }
 
         if (!tournamentId) {

@@ -21,11 +21,33 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static('web'));
 
+/**
+ * Access Control
+ */
 app.use(function(req, res, next) {
     if (typeof req.query.password !== 'undefined' &&  req.query.password === PASSWORD) {
         next();
     } else {
         res.status(403).send();
+    }
+});
+
+/**
+ * Date period parameters checker
+ */
+app.use(function(req, res, next) {
+    let isValid = true;
+    for (const type of ['dateTill', 'dateFrom']) {
+        if (typeof req.query[type] === 'undefined' || req.query[type] === '') {
+            isValid = false;
+            break;
+        }
+    }
+
+    if (isValid) {
+        next();
+    } else {
+        res.status(422).send();
     }
 });
 
@@ -52,7 +74,11 @@ app.get('/teams/:tournamentId', (req, res, next) => {
  */
 app.get('/score-table/:tournamentId', (req, res, next) => {
     fetcher
-        .getTournamentResults(mongoCollection, req.params.tournamentId)
+        .getTournamentResults(
+            mongoCollection,
+            req.params.tournamentId,
+            {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
+        )
         .then((result) => res.json(result));
 });
 
@@ -61,7 +87,13 @@ app.get('/score-table/:tournamentId', (req, res, next) => {
  */
 app.get('/all-matches-table/:tournamentId', (req, res, next) => {
     mongoCollection
-        .find({tournamentId: parseInt(req.params.tournamentId) || 0})
+        .find({
+            tournamentId: parseInt(req.params.tournamentId) || 0,
+            date: {
+                $gte: (new Date(req.query.dateFrom)),
+                $lte: (new Date(req.query.dateTill))
+            }
+        })
         .sort({date: -1})
         .toArray((err, result) => res.json(result));
 });
@@ -71,7 +103,12 @@ app.get('/all-matches-table/:tournamentId', (req, res, next) => {
  */
 app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
     fetcher
-        .getTeamMatches(mongoCollection, req.params.tournamentId, req.params.teamId)
+        .getTeamMatches(
+            mongoCollection,
+            req.params.tournamentId,
+            req.params.teamId,
+            {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
+        )
         .then((result) => res.json(result));
 });
 
