@@ -6,7 +6,7 @@ const delay = 3 * 60 * 1000; // minutes
 let mongoCollection, isStarted, urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 2;
+const maxConcurrentlyPhantomCount = 4;
 
 function parseUrl(url) {
     let title = '';
@@ -34,6 +34,11 @@ function parseUrl(url) {
                     );
 
                     $('table').find('tr.match').each(function(i, elem) {
+                        // skip live matches
+                        if ($(this).hasClass('highlight')) {
+                            return true;
+                        }
+
                         let score = $(this).find('.score-time').eq(0).text().trim();
                         score = score.split('-');
                         if (score.length !== 2) {
