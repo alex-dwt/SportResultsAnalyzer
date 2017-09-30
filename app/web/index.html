@@ -20,246 +20,262 @@
 
         <div class="jumbotron my-div">
             <label for="sport-types">Sport type</label>
-                <select class="form-control" id="sport-types">
+            <select class="form-control" id="sport-types">
             </select>
-            <label for="tournaments">Tournament</label>
-                <select class="form-control" id="tournaments" style="margin-bottom: 20px;"></select>
-            <div style="width: 45%; float: right">
-                <label for="date-from">Date till</label>
-                <input type="date" id="date-till">
-            </div>
-            <div style="width: 45%;">
-                <label for="date-till">Date from</label>
-                <input type="date" id="date-from">
-            </div>
-        </div>
-
-        <div class="jumbotron my-div">
-            <button style="float: right;margin-left: 1%;margin-top: 2%;" type="button" class="btn btn-primary" id="forecast-go-btn">
-                GO
-            </button>
-            <div style="width: 45%; float: right">
-                <label for="team-b">Team B</label>
-                <select class="form-control" id="team-b">
-                </select>
-            </div>
-            <div style="width: 45%;">
-                <label for="team-a">Team A</label>
-                <select class="form-control" id="team-a">
-                </select>
-            </div>
         </div>
 
         <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#score-table-tab" role="tab">Score Table</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#all-matches-tab" role="tab">All Matches</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#team-matches-tab" role="tab">Team Matches</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-1-tab" role="tab">Forecast (1st)</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-2-tab" role="tab">Forecast (2nd)</a></li>
+            <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#played-matches-section" role="tab" onclick="setTimeout(() => $('#score-table-tab-label').click(), 200)">Played Matches</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#next-matches-section" role="tab">Next Matches</a></li>
         </ul>
 
         <div class="tab-content">
+            <div class="tab-pane active" id="played-matches-section" role="tabpanel">
 
-            <div class="tab-pane active" id="score-table-tab" role="tabpanel">
-                <div class="jumbotron my-tab">
-                    <table id="score-table" class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>MP</th>
-                            <th>W</th>
-                            <th>D</th>
-                            <th>L</th>
-                            <th>GF</th>
-                            <th>GA</th>
-                            <th>AGF</th>
-                            <th>AGA</th>
-                            <th>GD</th>
-                            <th>P</th>
-                            <th>Last 5</th>
-                            <th>AGFH</th>
-                            <th>AGAH</th>
-                            <th>AGFG</th>
-                            <th>AGAG</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-            <div class="tab-pane" id="all-matches-tab" role="tabpanel">
-                <div class="jumbotron my-tab">
-                    <table id="all-matches-table" class="table table-hover">
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-            <div class="tab-pane" id="team-matches-tab" role="tabpanel">
-                <div class="jumbotron my-tab">
-                    <label for="team">Team</label>
-                    <select class="form-control" id="team">
-                    </select>
-                    <table id="team-matches-table" class="table table-hover">
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-            <div class="tab-pane" id="forecast-1-tab" role="tabpanel">
-                <div class="jumbotron my-tab">
+                <div class="jumbotron my-div">
+                    <label for="tournaments">Tournament</label>
+                    <select class="form-control" id="tournaments" style="margin-bottom: 20px;"></select>
                     <div style="width: 45%; float: right">
-                        <table id="forecast-1-table-b" class="table table-hover" style="border-bottom: 1px solid black">
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <label for="date-from">Date till</label>
+                        <input type="date" id="date-till">
                     </div>
                     <div style="width: 45%;">
-                        <table id="forecast-1-table-a" class="table table-hover" style="border-bottom: 1px solid black">
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <label for="date-till">Date from</label>
+                        <input type="date" id="date-from">
                     </div>
                 </div>
-            </div>
 
-            <div class="tab-pane" id="forecast-2-tab" role="tabpanel">
-                <div class="jumbotron my-tab">
-                    <!--settings-->
-                    <div style="padding: 5px;   padding-top:0;   border: 1px solid grey;    border-radius: 10px; margin-bottom: 2px">
-                        <div style="width: 25%; float: right">
-                            <label for="forecast-2-limit">Limit</label>
-                            <select class="form-control forecast-2-limit" id="forecast-2-limit">
-                            </select>
-                        </div>
-                        <div style="width: 25%;float: right; margin-right: 12%">
-                            <label for="forecast-2-max-teams">Max teams</label>
-                            <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams">
-                            </select>
-                        </div>
-                        <div style="width: 25%;">
-                            <label for="forecast-2-max-matches">Max matches</label>
-                            <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches">
-                            </select>
-                        </div>
-                        <div style="clear: both"></div>
+                <div class="jumbotron my-div">
+                    <button style="float: right;margin-left: 1%;margin-top: 2%;" type="button" class="btn btn-primary" id="forecast-go-btn">
+                        GO
+                    </button>
+                    <div style="width: 45%; float: right">
+                        <label for="team-b">Team B</label>
+                        <select class="form-control" id="team-b">
+                        </select>
                     </div>
-
-                    <div style="padding: 5px; padding-top:0; border: 1px solid grey;border-radius: 10px;width: 38%;float: right;margin-right: 9%;">
-                        <div style="width: 25%; float: right">
-                            <label for="forecast-2-limit">Limit</label>
-                            <select class="form-control forecast-2-limit" id="forecast-2-limit-agag">
-                            </select>
-                        </div>
-                        <div style="width: 25%;">
-                            <label for="forecast-2-max-teams">Limit</label>
-                            <select class="form-control forecast-2-limit" id="forecast-2-limit-agfg">
-                            </select>
-                        </div>
-                        <div style="width: 25%; float: right">
-                            <label for="forecast-2-limit">Max teams</label>
-                            <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agag">
-                            </select>
-                        </div>
-                        <div style="width: 25%;float: right; margin-right: 12%">
-                            <label for="forecast-2-max-teams">Max matches</label>
-                            <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches-b">
-                            </select>
-                        </div>
-                        <div style="width: 25%;">
-                            <label for="forecast-2-max-matches">Max teams</label>
-                            <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agfg">
-                            </select>
-                        </div>
-                        <div style="clear: both"></div>
+                    <div style="width: 45%;">
+                        <label for="team-a">Team A</label>
+                        <select class="form-control" id="team-a">
+                        </select>
                     </div>
+                </div>
 
-                    <div style="padding: 5px; padding-top:0; border: 1px solid grey;border-radius: 10px;width: 38%;float: left;margin-left: 5%;">
-                        <div style="width: 25%; float: right">
-                            <label for="forecast-2-limit">Limit</label>
-                            <select class="form-control forecast-2-limit" id="forecast-2-limit-agah">
-                            </select>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#score-table-tab" role="tab" id="score-table-tab-label">Score Table</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#all-matches-tab" role="tab">All Matches</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#team-matches-tab" role="tab">Team Matches</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-1-tab" role="tab">Forecast (1st)</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#forecast-2-tab" role="tab">Forecast (2nd)</a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="score-table-tab" role="tabpanel">
+                        <div class="jumbotron my-tab">
+                            <table id="score-table" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>MP</th>
+                                    <th>W</th>
+                                    <th>D</th>
+                                    <th>L</th>
+                                    <th>GF</th>
+                                    <th>GA</th>
+                                    <th>AGF</th>
+                                    <th>AGA</th>
+                                    <th>GD</th>
+                                    <th>P</th>
+                                    <th>Last 5</th>
+                                    <th>AGFH</th>
+                                    <th>AGAH</th>
+                                    <th>AGFG</th>
+                                    <th>AGAG</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
-                        <div style="width: 25%;">
-                            <label for="forecast-2-max-teams">Limit</label>
-                            <select class="form-control forecast-2-limit" id="forecast-2-limit-agfh">
-                            </select>
-                        </div>
-                        <div style="width: 25%; float: right">
-                            <label for="forecast-2-limit">Max teams</label>
-                            <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agah">
-                            </select>
-                        </div>
-                        <div style="width: 25%;float: right; margin-right: 12%">
-                            <label for="forecast-2-max-teams">Max matches</label>
-                            <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches-a">
-                            </select>
-                        </div>
-                        <div style="width: 25%;">
-                            <label for="forecast-2-max-matches">Max teams</label>
-                            <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agfh">
-                            </select>
-                        </div>
-                        <div style="clear: both"></div>
                     </div>
 
 
-                    <div style="clear: both"></div>
-
-                    <!--settings END-->
-
-                    <table id="forecast-2-table-agfh" class="table table-hover forecast-2-table">
-                        <thead><tr><th>AGFH</th></tr></thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <table id="forecast-2-table-agah" class="table table-hover forecast-2-table">
-                        <thead><tr><th>AGAH</th></tr></thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <table id="forecast-2-table-agfg" class="table table-hover forecast-2-table">
-                        <thead><tr><th>AGFG</th></tr></thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <table id="forecast-2-table-agag" class="table table-hover forecast-2-table">
-                        <thead><tr><th>AGAG</th></tr></thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
-                    <div style="clear: both"></div>
-
-                    <div style="width: 45%;border-top: 1px solid grey; float: right">
-                        <table id="forecast-2-table-b-matches" class="table table-hover">
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="width: 45%;border-top: 1px solid grey;">
-                        <table id="forecast-2-table-a-matches" class="table table-hover">
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <div class="tab-pane" id="all-matches-tab" role="tabpanel">
+                        <div class="jumbotron my-tab">
+                            <table id="all-matches-table" class="table table-hover">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div style="clear: both"></div>
 
-                    <p id="forecast-2-b-scoreline" style="width: 45%; float: right;border-top: 1px solid grey;"></p>
-                    <p id="forecast-2-a-scoreline" style="width: 45%;border-top: 1px solid grey;"></p>
+                    <div class="tab-pane" id="team-matches-tab" role="tabpanel">
+                        <div class="jumbotron my-tab">
+                            <label for="team">Team</label>
+                            <select class="form-control" id="team">
+                            </select>
+                            <table id="team-matches-table" class="table table-hover">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane" id="forecast-1-tab" role="tabpanel">
+                        <div class="jumbotron my-tab">
+                            <div style="width: 45%; float: right">
+                                <table id="forecast-1-table-b" class="table table-hover" style="border-bottom: 1px solid black">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="width: 45%;">
+                                <table id="forecast-1-table-a" class="table table-hover" style="border-bottom: 1px solid black">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="forecast-2-tab" role="tabpanel">
+                        <div class="jumbotron my-tab">
+                            <!--settings-->
+                            <div style="padding: 5px;   padding-top:0;   border: 1px solid grey;    border-radius: 10px; margin-bottom: 2px">
+                                <div style="width: 25%; float: right">
+                                    <label for="forecast-2-limit">Limit</label>
+                                    <select class="form-control forecast-2-limit" id="forecast-2-limit">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;float: right; margin-right: 12%">
+                                    <label for="forecast-2-max-teams">Max teams</label>
+                                    <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;">
+                                    <label for="forecast-2-max-matches">Max matches</label>
+                                    <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches">
+                                    </select>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+
+                            <div style="padding: 5px; padding-top:0; border: 1px solid grey;border-radius: 10px;width: 38%;float: right;margin-right: 9%;">
+                                <div style="width: 25%; float: right">
+                                    <label for="forecast-2-limit">Limit</label>
+                                    <select class="form-control forecast-2-limit" id="forecast-2-limit-agag">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;">
+                                    <label for="forecast-2-max-teams">Limit</label>
+                                    <select class="form-control forecast-2-limit" id="forecast-2-limit-agfg">
+                                    </select>
+                                </div>
+                                <div style="width: 25%; float: right">
+                                    <label for="forecast-2-limit">Max teams</label>
+                                    <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agag">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;float: right; margin-right: 12%">
+                                    <label for="forecast-2-max-teams">Max matches</label>
+                                    <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches-b">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;">
+                                    <label for="forecast-2-max-matches">Max teams</label>
+                                    <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agfg">
+                                    </select>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+
+                            <div style="padding: 5px; padding-top:0; border: 1px solid grey;border-radius: 10px;width: 38%;float: left;margin-left: 5%;">
+                                <div style="width: 25%; float: right">
+                                    <label for="forecast-2-limit">Limit</label>
+                                    <select class="form-control forecast-2-limit" id="forecast-2-limit-agah">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;">
+                                    <label for="forecast-2-max-teams">Limit</label>
+                                    <select class="form-control forecast-2-limit" id="forecast-2-limit-agfh">
+                                    </select>
+                                </div>
+                                <div style="width: 25%; float: right">
+                                    <label for="forecast-2-limit">Max teams</label>
+                                    <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agah">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;float: right; margin-right: 12%">
+                                    <label for="forecast-2-max-teams">Max matches</label>
+                                    <select class="form-control forecast-2-max-matches" id="forecast-2-max-matches-a">
+                                    </select>
+                                </div>
+                                <div style="width: 25%;">
+                                    <label for="forecast-2-max-matches">Max teams</label>
+                                    <select class="form-control forecast-2-max-teams" id="forecast-2-max-teams-agfh">
+                                    </select>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+
+
+                            <div style="clear: both"></div>
+
+                            <!--settings END-->
+
+                            <table id="forecast-2-table-agfh" class="table table-hover forecast-2-table">
+                                <thead><tr><th>AGFH</th></tr></thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table id="forecast-2-table-agah" class="table table-hover forecast-2-table">
+                                <thead><tr><th>AGAH</th></tr></thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table id="forecast-2-table-agfg" class="table table-hover forecast-2-table">
+                                <thead><tr><th>AGFG</th></tr></thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table id="forecast-2-table-agag" class="table table-hover forecast-2-table">
+                                <thead><tr><th>AGAG</th></tr></thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
+                            <div style="clear: both"></div>
+
+                            <div style="width: 45%;border-top: 1px solid grey; float: right">
+                                <table id="forecast-2-table-b-matches" class="table table-hover">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="width: 45%;border-top: 1px solid grey;">
+                                <table id="forecast-2-table-a-matches" class="table table-hover">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="clear: both"></div>
+
+                            <p id="forecast-2-b-scoreline" style="width: 45%; float: right;border-top: 1px solid grey;"></p>
+                            <p id="forecast-2-a-scoreline" style="width: 45%;border-top: 1px solid grey;"></p>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
-
+            <div class="tab-pane" id="next-matches-section" role="tabpanel">
+            </div>
         </div>
+
     </div>
 
     <script src="/js/jquery-3.2.1.min.js"></script>

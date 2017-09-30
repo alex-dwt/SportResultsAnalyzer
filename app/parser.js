@@ -39,19 +39,6 @@ function parseUrl(url) {
                             return true;
                         }
 
-                        let score = $(this).find('.score-time').eq(0).text().trim();
-                        score = score.split('-');
-                        if (score.length !== 2) {
-                            return true;
-                        }
-
-                        let homeScore = parseInt(score[0]);
-                        let guestScore = parseInt(score[1]);
-
-                        if (isNaN(homeScore) || isNaN(guestScore)) {
-                            return true;
-                        }
-
                         let homeTeamId = $(this).find('.team-a').eq(0).find('a').eq(0).attr('href');
                         let pos = homeTeamId.indexOf('&id=');
                         if (pos !== -1) {
@@ -72,7 +59,40 @@ function parseUrl(url) {
                         let guestTeamName = $(this).find('.team-b').eq(0).text().trim();
                         let date = $(this).find('.date').eq(0).text().trim();
                         date = date.split('/');
-                        date = (new Date(date[1] + '/' + date[0] + '/' + date[2]));
+                        date = new Date(date[1] + '/' + date[0] + '/' + date[2]);
+
+                        let score = $(this).find('.score-time').eq(0).text().trim();
+
+                        // check match is in future
+                        if (score.indexOf(':') !== -1) {
+                            if (date <= (new Date()).setDate((new Date()).getDate() + 5)) {
+                                scheduleCollection.insertOne({
+                                    _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
+                                    tournamentId: url.id,
+                                    tournamentName: title,
+                                    homeTeamId,
+                                    homeTeamName,
+                                    guestTeamId,
+                                    guestTeamName,
+                                    date,
+                                    time: score
+                                }).catch(() => { });
+                            }
+
+                            return true;
+                        }
+
+                        score = score.split('-');
+                        if (score.length !== 2) {
+                            return true;
+                        }
+
+                        let homeScore = parseInt(score[0]);
+                        let guestScore = parseInt(score[1]);
+
+                        if (isNaN(homeScore) || isNaN(guestScore)) {
+                            return true;
+                        }
 
                         matchesCollection.insertOne({
                             _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
@@ -85,6 +105,9 @@ function parseUrl(url) {
                             guestTeamName,
                             guestScore,
                             date
+                        }).catch(() => { });
+                        scheduleCollection.remove({
+                            _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
                         }).catch(() => { });
                     });
                 });
