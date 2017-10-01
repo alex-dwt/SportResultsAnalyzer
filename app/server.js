@@ -10,6 +10,7 @@ const parser = require("./parser");
 const fetcher = require("./fetcher");
 const express = require("express");
 const bodyParser = require("body-parser");
+const includes = require('array-includes');
 const SITE_URL = process.env.SITE_URL;
 const PASSWORD = process.env.PASSWORD;
 
@@ -123,6 +124,65 @@ app.get('/forecast/:num', (req, res, next) => {
             req.query
         )
         .then((result) => res.json(result));
+});
+
+/**
+ * Forecast for next matches
+ */
+app.get('/next-matches', (req, res, next) => {
+    mongoDB.collection('schedule')
+        .find({})
+        .sort({tournamentName: 1, tournamentId: 1, date: 1, homeTeamName: 1})
+        .toArray((err, result) => {
+            let promises = [];
+            const forecastsCount = 2;
+            let alreadyCalculated = {};
+            result.forEach((el, index) => {
+                result[index].scores = [];
+
+                for (let num = 1; num <= forecastsCount; num++) {
+                    if (typeof alreadyCalculated[el.tournamentId] !== 'undefined'
+                        && (
+                            includes(alreadyCalculated[el.tournamentId], el.homeTeamId) ||
+                            includes(alreadyCalculated[el.tournamentId], el.guestTeamId)
+                        )
+                    ) {
+                        promises.push(new Promise((resolve) => resolve(null)));
+                    } else {
+                        promises.push(fetcher.getForecast(num, mongoDB.collection('matches'), {
+                            tournamentId: el.tournamentId,
+                            teamAId: el.homeTeamId,
+                            teamBId: el.guestTeamId,
+                            dateFrom: '1970-01-01',
+                            dateTill: '2500-01-01',
+                        }));
+                    }
+                }
+
+                if (typeof alreadyCalculated[el.tournamentId] === 'undefined') {
+                    alreadyCalculated[el.tournamentId] = [];
+                }
+                alreadyCalculated[el.tournamentId].push(
+                    el.homeTeamId,
+                    el.guestTeamId
+                );
+            });
+
+            Promise.all(promises).then((promiseRes) => {
+                let resInd = 0, fInd = 0;
+                promiseRes.forEach((el) => {
+                    fInd++;
+                    if (el) {
+                        result[resInd].scores.push(`${fInd}) ${el.scoreLineShort}`);
+                    }
+                    if (fInd === forecastsCount) {
+                        fInd = 0;
+                        resInd++;
+                    }
+                });
+                res.json(result);
+            });
+        });
 });
 
 function connectDB() {

@@ -25,7 +25,7 @@
         </div>
 
         <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#played-matches-section" role="tab" onclick="setTimeout(() => $('#score-table-tab-label').click(), 200)">Played Matches</a></li>
+            <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#played-matches-section" role="tab" onclick="setTimeout(() => {$('#score-table-tab-label').click(); $('#next-matches-section').removeClass('active')}, 200)">Played Matches</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#next-matches-section" role="tab">Next Matches</a></li>
         </ul>
 
@@ -273,6 +273,12 @@
                 </div>
             </div>
             <div class="tab-pane" id="next-matches-section" role="tabpanel">
+                <div class="jumbotron my-tab">
+                    <table id="next-matches-table" class="table table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

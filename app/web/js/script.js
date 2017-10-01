@@ -103,7 +103,7 @@ $(() => {
         }
     });
     $('.forecast-2-limit').each((i, el) => {
-        let val = 0;
+        let val = 0.01;
         while (val <= 0.5) {
             $(el).append($('<option></option>').val(val).text(val));
             if (val === 0.2) {
@@ -372,4 +372,29 @@ $(() => {
 
 
     fillTournamentsSelector();
+
+    // next matches tab
+    let $nextMatchesTable = $('#next-matches-table').find('tbody').eq(0);
+    ajaxCall('/next-matches').done((data) => {
+        $nextMatchesTable.empty();
+        let previousTournamentId = null;
+        $.each(data, (key, value) => {
+            if (previousTournamentId !== null && previousTournamentId !== value.tournamentId) {
+                $nextMatchesTable
+                    .append('<tr><td colspan="6" style="border-top: 3px solid black">&nbsp;</td></tr>');
+            }
+            previousTournamentId = value.tournamentId;
+            $nextMatchesTable
+                .append(`
+                        <tr>
+                            <td>${value.tournamentName}</td>
+                            <td>${value.date.slice(0, 10)}</td>
+                            <td>${value.time}</td>
+                            <td>${value.homeTeamName}</td>
+                            <td>${value.guestTeamName}</td>
+                            <td>${value.scores.join('<br>')}</td>
+                        </tr>
+                `);
+        });
+    });
 });
