@@ -42,7 +42,7 @@ function parseUrl(url) {
                         let homeTeamId = $(this).find('.team-a').eq(0).find('a').eq(0).attr('href');
                         let pos = homeTeamId.indexOf('&id=');
                         if (pos !== -1) {
-                            homeTeamId = parseInt(homeTeamId.substring(pos + 4))
+                            homeTeamId = parseInt(homeTeamId.substring(pos + 4));
                             if (isNaN(homeTeamId)) {
                                 return true;
                             }
@@ -65,7 +65,7 @@ function parseUrl(url) {
 
                         // check match is in future
                         if (score.indexOf(':') !== -1) {
-                            if (date <= (new Date()).setDate((new Date()).getDate() + 3)) {
+                            if (date <= (new Date()).setDate((new Date()).getDate() + 4)) {
                                 scheduleCollection.insertOne({
                                     _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
                                     tournamentId: url.id,
