@@ -134,7 +134,7 @@ app.get('/next-matches', (req, res, next) => {
     today.setHours(0,0,0,0);
     mongoDB.collection('schedule')
         .find({date: {$gte: new Date(today)}})
-        .sort({tournamentName: 1, tournamentId: 1, date: 1, homeTeamName: 1})
+        .sort({date: 1, tournamentName: 1, tournamentId: 1, homeTeamName: 1})
         .toArray((err, result) => {
             let promises = [];
             const forecastsCount = 2;

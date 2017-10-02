@@ -390,13 +390,13 @@ $(() => {
     let $nextMatchesTable = $('#next-matches-table').find('tbody').eq(0);
     ajaxCall('/next-matches').done((data) => {
         $nextMatchesTable.empty();
-        let previousTournamentId = null;
+        let previousDate = null;
         $.each(data, (key, value) => {
-            if (previousTournamentId !== null && previousTournamentId !== value.tournamentId) {
+            if (previousDate !== null && previousDate !== value.date) {
                 $nextMatchesTable
                     .append('<tr><td colspan="6" style="border-top: 3px solid black">&nbsp;</td></tr>');
             }
-            previousTournamentId = value.tournamentId;
+            previousDate = value.date;
             $nextMatchesTable
                 .append(`
                         <tr>
