@@ -11,6 +11,13 @@ function getParameterByName(name, url) {
 }
 
 $(() => {
+    $('table').on('click', 'tbody tr', function(event) {
+        let action = $(this).hasClass('active-row')
+            ? 'removeClass'
+            : 'addClass';
+        $(this)[action]('active-row');
+    });
+
     // dates
     let $dateFrom = $('#date-from')
         .val(`${(new Date()).getFullYear()}-01-01`)
