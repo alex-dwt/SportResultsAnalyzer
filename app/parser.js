@@ -65,7 +65,7 @@ function parseUrl(url) {
 
                         // check match is in future
                         if (score.indexOf(':') !== -1) {
-                            if (date <= (new Date()).setDate((new Date()).getDate() + 5)) {
+                            if (date <= (new Date()).setDate((new Date()).getDate() + 3)) {
                                 scheduleCollection.insertOne({
                                     _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
                                     tournamentId: url.id,
