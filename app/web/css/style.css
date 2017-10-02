@@ -29,3 +29,7 @@ label {
     margin-bottom: 0;
     font-size: 14px;
 }
+
+.bold {
+    font-weight: bold;
+}

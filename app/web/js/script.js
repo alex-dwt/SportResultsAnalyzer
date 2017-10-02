@@ -227,13 +227,19 @@ $(() => {
 
         ajaxCall('/team-matches-table/' + tournamentId + '/' + teamId).done((data) => {
             $.each(data, (key, value) => {
+                let res = 0;
+                if (parseInt(teamId) === value.homeTeamId) {
+                    res = value.homeScore - value.guestScore;
+                } else {
+                    res = value.guestScore - value.homeScore;
+                }
                 $teamMatchesTable
                     .append(`
-                        <tr>
+                        <tr class="${(res > 0 ? 'table-success' : (res < 0 ? 'table-danger' : ''))}">
                             <td>${value.date.slice(0, 10)}</td>
-                            <td>${value.homeTeamName}</td>
+                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">${value.homeTeamName}</td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td>${value.guestTeamName}</td>
+                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName}</td>
                         </tr>
                     `);
             });
