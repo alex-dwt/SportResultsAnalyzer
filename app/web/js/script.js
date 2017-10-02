@@ -369,7 +369,7 @@ $(() => {
     function ajaxCall(url, queryParams = {}) {
         return $.ajax({
             url: url,
-            timeout: 35000,
+            timeout: 15000,
             data: Object.assign({}, queryParams, {
                 dateFrom: $dateFrom.val(),
                 dateTill: $dateTill.val(),
@@ -391,10 +391,19 @@ $(() => {
     ajaxCall('/next-matches').done((data) => {
         $nextMatchesTable.empty();
         let previousDate = null;
-        $.each(data, (key, value) => {
+        $.each(data.items, (key, value) => {
+            let positionsDiff = data.statistics[value.tournamentId]['teams'][`${value.homeTeamId}-${value.guestTeamId}`];
+            let range = Math.round(data.statistics[value.tournamentId]['positionsCount'] / 3);
+            let positionType = 'low';
+            if (positionsDiff < range) {
+                positionType = 'high';
+            } else if (positionsDiff < range * 2) {
+                positionType = 'medium';
+            }
+
             if (previousDate !== null && previousDate !== value.date) {
                 $nextMatchesTable
-                    .append('<tr><td colspan="6" style="border-top: 3px solid black">&nbsp;</td></tr>');
+                    .append('<tr><td colspan="7" style="border-top: 3px solid black">&nbsp;</td></tr>');
             }
             previousDate = value.date;
             $nextMatchesTable
@@ -405,6 +414,7 @@ $(() => {
                             <td>${value.time}</td>
                             <td>${value.homeTeamName}</td>
                             <td>${value.guestTeamName}</td>
+                            <td><span class="team-position ${positionType}">${positionsDiff} / ${data.statistics[value.tournamentId]['positionsCount']}</span></td>
                             <td>${value.scores.join('<br>')}</td>
                         </tr>
                 `);

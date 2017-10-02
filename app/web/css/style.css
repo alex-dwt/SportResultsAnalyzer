@@ -37,3 +37,22 @@ label {
 .active-row {
     background-color:rgba(0,0,0,.2) !important;
 }
+
+.team-position {
+    border: 1px solid grey;
+    display: block;
+    width: 60px;
+    text-align: center;
+}
+
+.team-position.medium {
+    background-color: #ffffb3;
+}
+
+.team-position.high {
+    background-color: #ff9999;
+}
+
+.team-position.low {
+    background-color: #40bf80;
+}

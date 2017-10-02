@@ -135,7 +135,32 @@ app.get('/next-matches', (req, res, next) => {
     mongoDB.collection('schedule')
         .find({date: {$gte: new Date(today)}})
         .sort({date: 1, tournamentName: 1, tournamentId: 1, homeTeamName: 1})
-        .toArray((err, result) => {
+        .toArray((err, result) => (async () => {
+            let statistics = {};
+            let period = {
+                dateFrom: '1970-01-01',
+                dateTill: '2500-01-01',
+            };
+            for (let i = 0, length = result.length; i < length; i++) {
+                let item = result[i];
+                if (typeof statistics[item.tournamentId] === 'undefined') {
+                    statistics[item.tournamentId] = {
+                        positionsCount: await fetcher.getTeamPositionsCountInScoreTable(
+                            mongoDB.collection('matches'),
+                            item.tournamentId,
+                            period
+                        ),
+                        teams: {}
+                    };
+                }
+                statistics[item.tournamentId]['teams'][`${item.homeTeamId}-${item.guestTeamId}`] = await fetcher.getTeamPositionsDifference(
+                    mongoDB.collection('matches'),
+                    item.tournamentId, period,
+                    item.homeTeamId,
+                    item.guestTeamId
+                )
+            }
+
             let promises = [];
             const forecastsCount = 2;
             let alreadyCalculated = {};
@@ -151,13 +176,13 @@ app.get('/next-matches', (req, res, next) => {
                     ) {
                         promises.push(new Promise((resolve) => resolve(null)));
                     } else {
-                        promises.push(fetcher.getForecast(num, mongoDB.collection('matches'), {
-                            tournamentId: el.tournamentId,
-                            teamAId: el.homeTeamId,
-                            teamBId: el.guestTeamId,
-                            dateFrom: '1970-01-01',
-                            dateTill: '2500-01-01',
-                        }));
+                        promises.push(fetcher.getForecast(num, mongoDB.collection('matches'),
+                            Object.assign({
+                                tournamentId: el.tournamentId,
+                                teamAId: el.homeTeamId,
+                                teamBId: el.guestTeamId
+                            }, period)
+                        ));
                     }
                 }
 
@@ -182,9 +207,12 @@ app.get('/next-matches', (req, res, next) => {
                         resInd++;
                     }
                 });
-                res.json(result);
+                res.json({
+                    items: result,
+                    statistics
+                });
             });
-        });
+        })());
 });
 
 function connectDB() {
