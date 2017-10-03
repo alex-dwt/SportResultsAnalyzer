@@ -11,6 +11,11 @@ function getParameterByName(name, url) {
 }
 
 $(() => {
+    // tournament links to external site
+    let $openScoreTableHref = $('#open-score-table-href');
+    let $openMatchesTableHref = $('#open-matches-table-href');
+
+    // higlight tables rows on click
     $('table').on('click', 'tbody tr', function(event) {
         let action = $(this).hasClass('active-row')
             ? 'removeClass'
@@ -46,6 +51,16 @@ $(() => {
         buildScoreTable(id);
         buildAllMatchesTable(id);
         buildTeamMatchesTable();
+        // set links to external site
+        if (id) {
+            ajaxCall(`/site_urls/${id}`).done((data) => {
+                $openScoreTableHref.attr('href', data.scoreTableUrl);
+                $openMatchesTableHref.attr('href', data.matchesUrl);
+                $openScoreTableHref.add($openMatchesTableHref).show();
+            });
+        } else {
+            $openScoreTableHref.add($openMatchesTableHref).hide();
+        }
     });
     let $teamSelector = $('#team').change(
         () => buildTeamMatchesTable($tournamentsSelector.val(), $teamSelector.val())

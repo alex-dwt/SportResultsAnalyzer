@@ -127,6 +127,17 @@ app.get('/forecast/:num', (req, res, next) => {
 });
 
 /**
+ * Get site url
+ */
+app.get('/site_urls/:tournamentId', (req, res, next) => {
+    let scoreTableUrl = `${SITE_URL}/?sport=soccer&page=competition&id=${parseInt(req.params.tournamentId) || 0}`;
+    res.json({
+        matchesUrl: `${scoreTableUrl}&view=matches`,
+        scoreTableUrl,
+    });
+});
+
+/**
  * Forecast for next matches
  */
 app.get('/next-matches', (req, res, next) => {
