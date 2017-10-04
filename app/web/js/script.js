@@ -384,7 +384,7 @@ $(() => {
     function ajaxCall(url, queryParams = {}) {
         return $.ajax({
             url: url,
-            timeout: 15000,
+            timeout: 30000,
             data: Object.assign({}, queryParams, {
                 dateFrom: $dateFrom.val(),
                 dateTill: $dateTill.val(),
