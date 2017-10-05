@@ -56,3 +56,8 @@ label {
 .team-position.low {
     background-color: #40bf80;
 }
+
+.office-href {
+    display: none;
+    margin-left: 30px;
+}

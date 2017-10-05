@@ -57,9 +57,16 @@ $(() => {
                 $openScoreTableHref.attr('href', data.scoreTableUrl);
                 $openMatchesTableHref.attr('href', data.matchesUrl);
                 $openScoreTableHref.add($openMatchesTableHref).show();
+
+                $('.office-href').each((i, el) => {
+                    $(el)
+                        .text(data.officesUrls[i].match(/\/\/([^\/]+)\//g)[0].replace(/\//g, ''))
+                        .attr('href', data.officesUrls[i])
+                }).show();
             });
         } else {
             $openScoreTableHref.add($openMatchesTableHref).hide();
+            $('.office-href').hide();
         }
     });
     let $teamSelector = $('#team').change(

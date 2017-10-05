@@ -12,7 +12,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const includes = require('array-includes');
 const SITE_URL = process.env.SITE_URL;
+const OFFICE0_SITE = process.env.OFFICE1_SITE;
+const OFFICE1_SITE = process.env.OFFICE2_SITE;
+const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
+const URLS = require("./sites").urls;
 
 const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
@@ -130,10 +134,13 @@ app.get('/forecast/:num', (req, res, next) => {
  * Get site url
  */
 app.get('/site_urls/:tournamentId', (req, res, next) => {
-    let scoreTableUrl = `${SITE_URL}/?sport=soccer&page=competition&id=${parseInt(req.params.tournamentId) || 0}`;
+    let id = parseInt(req.params.tournamentId) || 0;
+
+    let scoreTableUrl = `${SITE_URL}/?sport=soccer&page=competition&id=${id}`;
     res.json({
         matchesUrl: `${scoreTableUrl}&view=matches`,
         scoreTableUrl,
+        officesUrls: (URLS[id] || ['', '', '']).map((val, index) => eval(`OFFICE${index}_SITE`) + val)
     });
 });
 
@@ -233,15 +240,8 @@ function connectDB() {
             mongoDB = db;
 
             // start parsing sites forever
-            let urls = [
-                573,
-                63,100,216,19,97,61,109,110,64,90,136,
-                15,32,22,35,28,37,8,122,70,440,59,67,68,24,59,30,39,76,119,120,
-                16,17,121,49,66,26,89,629,29,36,123,86,125,233,82,83,27,163,9,
-                11,622,107,206,117,31,38,7,12,13,14,215,51,1,5,
-            ];
             parser.start(
-                urls.map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
+                Object.keys(URLS).map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
                 mongoDB
             );
             
