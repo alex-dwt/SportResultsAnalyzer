@@ -23,7 +23,8 @@ const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
 let mongoDB;
 
 const app = express();
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(express.static('web'));
 
 /**
@@ -231,6 +232,24 @@ app.get('/next-matches', (req, res, next) => {
                 });
             });
         })());
+});
+
+/**
+ * Mark future game as favorite
+ */
+app.put('/favorite_game', (req, res, next) => {
+    mongoDB
+        .collection('schedule')
+        .update({ _id: `${req.body.id}` }, { $set: {isFavorite: true} }, () => res.json({}));
+});
+
+/**
+ * Unmark future game as favorite
+ */
+app.delete('/favorite_game', (req, res, next) => {
+    mongoDB
+        .collection('schedule')
+        .update({ _id: `${req.body.id}` }, { $set: {isFavorite: false} }, () => res.json({}));
 });
 
 function connectDB() {

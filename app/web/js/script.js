@@ -17,6 +17,10 @@ $(() => {
 
     // higlight tables rows on click
     $('table').on('click', 'tbody tr', function(event) {
+        if ($(event.target).hasClass('make-favorite-game-sign')) {
+            return;
+        }
+
         let action = $(this).hasClass('active-row')
             ? 'removeClass'
             : 'addClass';
@@ -388,16 +392,14 @@ $(() => {
     }
 
 
-    function ajaxCall(url, queryParams = {}) {
+    function ajaxCall(url, queryParams = {}, method = 'GET') {
         return $.ajax({
-            url: url,
+            method,
+            url: url + '?password=' +encodeURIComponent(getParameterByName('password'))
+            + '&dateFrom=' +encodeURIComponent($dateFrom.val())
+            + '&dateTill=' +encodeURIComponent($dateTill.val()),
             timeout: 30000,
-            data: Object.assign({}, queryParams, {
-                dateFrom: $dateFrom.val(),
-                dateTill: $dateTill.val(),
-                password: getParameterByName('password')
-            })
-
+            data: queryParams,
         }).fail((jqXHR) => alert(jqXHR.status));
     }
 
@@ -425,12 +427,13 @@ $(() => {
 
             if (previousDate !== null && previousDate !== value.date) {
                 $nextMatchesTable
-                    .append('<tr><td colspan="7" style="border-top: 3px solid black">&nbsp;</td></tr>');
+                    .append('<tr><td colspan="8" style="border-top: 3px solid black">&nbsp;</td></tr>');
             }
             previousDate = value.date;
             $nextMatchesTable
                 .append(`
-                        <tr>
+                        <tr data-id="${value._id}">
+                            <td><span class="icon-star${value.isFavorite ? '' : '-empty'} make-favorite-game-sign"></span></td>
                             <td>${value.tournamentName}</td>
                             <td>${value.date.slice(0, 10)}</td>
                             <td>${value.time}</td>
@@ -441,5 +444,16 @@ $(() => {
                         </tr>
                 `);
         });
+    });
+
+    // make-favorite-unfavorite
+    $('body').on('click', '.make-favorite-game-sign', function(e) {
+        let $this = $(e.target);
+        let isEmpty = $this.hasClass('icon-star-empty');
+        ajaxCall(
+            '/favorite_game',
+            {id: $this.closest('tr').data('id')},
+            isEmpty ? 'put' : 'delete'
+        ).done(() => $this.removeClass('icon-star-empty icon-star').addClass(isEmpty ? 'icon-star' : 'icon-star-empty'));
     });
 });

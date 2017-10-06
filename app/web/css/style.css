@@ -61,3 +61,23 @@ label {
     display: none;
     margin-left: 30px;
 }
+
+.make-favorite-game-sign {
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.make-favorite-game-sign:hover {
+    transform: scale(1.5);
+}
+
+.icon-star {
+    transform: scale(2);
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1330px;
+    }
+}
