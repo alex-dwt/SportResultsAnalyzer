@@ -419,9 +419,9 @@ $(() => {
             let positionsDiff = data.statistics[value.tournamentId]['teams'][`${value.homeTeamId}-${value.guestTeamId}`];
             let range = Math.round(data.statistics[value.tournamentId]['positionsCount'] / 3);
             let positionType = 'low';
-            if (positionsDiff < range) {
+            if (Math.abs(positionsDiff) < range) {
                 positionType = 'high';
-            } else if (positionsDiff < range * 2) {
+            } else if (Math.abs(positionsDiff) < range * 2) {
                 positionType = 'medium';
             }
 

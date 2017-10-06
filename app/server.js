@@ -176,7 +176,8 @@ app.get('/next-matches', (req, res, next) => {
                     mongoDB.collection('matches'),
                     item.tournamentId, period,
                     item.homeTeamId,
-                    item.guestTeamId
+                    item.guestTeamId,
+                    false
                 )
             }
 
