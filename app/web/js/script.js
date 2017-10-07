@@ -241,9 +241,10 @@ $(() => {
                     .append(`
                         <tr>
                             <td>${value.date.slice(0, 10)}</td>
-                            <td>${value.homeTeamName}</td>
+                            <td>(${value.extraInfo.positions.home}) ${value.homeTeamName}</td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td>${value.guestTeamName}</td>
+                            <td>${value.guestTeamName} (${value.extraInfo.positions.guest}) </td>
+                            <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
             });
@@ -399,7 +400,7 @@ $(() => {
             url: url + '?password=' +encodeURIComponent(getParameterByName('password'))
             + '&dateFrom=' +encodeURIComponent($dateFrom.val())
             + '&dateTill=' +encodeURIComponent($dateTill.val()),
-            timeout: 30000,
+            timeout: 60000,
             data: queryParams,
         }).fail((jqXHR) => alert(jqXHR.status));
     }

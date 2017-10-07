@@ -92,16 +92,14 @@ app.get('/score-table/:tournamentId', (req, res, next) => {
  * All matches of tournament
  */
 app.get('/all-matches-table/:tournamentId', (req, res, next) => {
-    mongoDB.collection('matches')
-        .find({
-            tournamentId: parseInt(req.params.tournamentId) || 0,
-            date: {
-                $gte: (new Date(req.query.dateFrom)),
-                $lte: (new Date(req.query.dateTill))
-            }
-        })
-        .sort({date: -1})
-        .toArray((err, result) => res.json(result));
+    fetcher
+        .getTournamentMatches(
+            mongoDB.collection('matches'),
+            req.params.tournamentId,
+            {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill},
+            true
+        )
+        .then((result) => res.json(result));
 });
 
 /**
