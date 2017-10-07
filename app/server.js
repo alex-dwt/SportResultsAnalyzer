@@ -113,7 +113,8 @@ app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) => {
             mongoDB.collection('matches'),
             req.params.tournamentId,
             req.params.teamId,
-            {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
+            {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill},
+            true
         )
         .then((result) => res.json(result));
 });
@@ -174,7 +175,8 @@ app.get('/next-matches', (req, res, next) => {
                 }
                 statistics[item.tournamentId]['teams'][`${item.homeTeamId}-${item.guestTeamId}`] = await fetcher.getTeamPositionsDifference(
                     mongoDB.collection('matches'),
-                    item.tournamentId, period,
+                    item.tournamentId,
+                    period,
                     item.homeTeamId,
                     item.guestTeamId,
                     false
@@ -273,3 +275,9 @@ function connectDB() {
 }
 
 connectDB();
+
+
+// db.getCollection('schedule').createIndex({date: -1})
+// db.getCollection('schedule').createIndex({tournamentId: 1})
+// db.getCollection('matches').createIndex({homeTeamId: 1})
+// db.getCollection('matches').createIndex({guestTeamId: 1})

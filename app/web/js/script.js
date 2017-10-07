@@ -270,9 +270,10 @@ $(() => {
                     .append(`
                         <tr class="${(res > 0 ? 'table-success' : (res < 0 ? 'table-danger' : ''))}">
                             <td>${value.date.slice(0, 10)}</td>
-                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">${value.homeTeamName}</td>
+                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">(${value.extraInfo.positions.home}) ${value.homeTeamName}</td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName}</td>
+                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName} (${value.extraInfo.positions.guest}) </td>
+                           <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
             });
