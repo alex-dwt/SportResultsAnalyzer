@@ -6,7 +6,7 @@ const delay = 3 * 60 * 1000; // minutes
 let matchesCollection, scheduleCollection, isStarted, urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 2;
+const maxConcurrentlyPhantomCount = 0;
 
 function parseUrl(url) {
     url.id = parseInt(url.id);

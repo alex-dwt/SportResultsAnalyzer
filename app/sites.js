@@ -22,7 +22,7 @@ module.exports = {
         70: ['/', '/su/betting/Football/England/Championship/', '/sport/futbol/anglija-chempionship'],
         440: ['/', '/', '/'],
         67: ['/', '/', '/'],
-        68: ['/', '/', '/'],
+        68: ['/', '/', '/sport/futbol/vengrija-liga-nb-ii'],
         24: ['/v3/ru/line/bets/period=0;chmp=a:3507;', '/', '/'],
         59: ['/', '/', '/'],
         30: ['/v3/ru/line/bets/period=0;chmp=a:1321;', '/su/betting/Football/Denmark/Superliga/', '/sport/futbol/danija-superliga'],
