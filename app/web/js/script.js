@@ -91,6 +91,7 @@ $(() => {
             .add($forecast2BScoreLine)
             .add($forecast2AMatches)
             .add($forecast2BMatches)
+            .add($forecast3Table)
             .empty();
     });
     let $forecastGoBtn = $('#forecast-go-btn').click(() => {
@@ -103,7 +104,11 @@ $(() => {
 
         getForecast1(teamAId, teamBId);
         getForecast2(teamAId, teamBId);
+        getForecast3(teamAId, teamBId);
     });
+
+    //forecast (3d)
+    let $forecast3Table = $('#forecast-3-table').find('tbody').eq(0);
 
     //forecast (1st)
     let $forecast1TeamATable = $('#forecast-1-table-a').find('tbody').eq(0);
@@ -400,6 +405,45 @@ $(() => {
             for (const team of ['A', 'B']) {
                 (eval (`$forecast2${team}ScoreLine`)).text(data[team].scoreLine);
             }
+        });
+    }
+
+    function getForecast3(teamAId, teamBId) {
+        ajaxCall(
+            '/forecast/3',
+            {
+                tournamentId: $tournamentsSelector.val(),
+                teamAId,
+                teamBId,
+            }
+        ).done((data) => {
+            $forecast3Table.empty();
+            $forecast3Table.append(`
+                    <tr>
+                        <td style="text-decoration: underline; text-align: center">${data.positionsDifference}</td>
+                        <td style="font-weight: bold">(${data.positions.home}) TeamA</td>
+                        <td style="font-weight: bold">TeamB (${data.positions.guest})</td>
+                        <td style="font-weight: bold"></td>
+                    </tr>
+            `);
+            for (const type of ['ag', 'aghAgg']) {
+                $forecast3Table.append(`
+                    <tr>
+                        <td>${data[type].label}</td>
+                        <td>${data[type].home}</td>
+                        <td>${data[type].guest}</td>
+                        <td>${data[type].result}</td>
+                    </tr>
+            `);
+            }
+            $forecast3Table.append(`
+                    <tr style="border-top: 2px solid black">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>${data.scoreLineShort}</td>
+                    </tr>
+            `);
         });
     }
 
