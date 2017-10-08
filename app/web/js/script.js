@@ -108,6 +108,11 @@ $(() => {
     //forecast (1st)
     let $forecast1TeamATable = $('#forecast-1-table-a').find('tbody').eq(0);
     let $forecast1TeamBTable = $('#forecast-1-table-b').find('tbody').eq(0);
+    let $forecast1MaxMatches = $('#forecast-1-max-matches');
+    //fill selector
+    for (let i = 2; i <= 5; i++) {
+        $forecast1MaxMatches.append($('<option></option>').val(i).text(i));
+    }
 
     //forecast (2nd)
     let $forecast2agfhTable = $('#forecast-2-table-agfh').find('tbody').eq(0);
@@ -284,7 +289,12 @@ $(() => {
     function getForecast1(teamAId, teamBId) {
         ajaxCall(
             '/forecast/1',
-            {tournamentId: $tournamentsSelector.val(), teamAId, teamBId}
+            {
+                tournamentId: $tournamentsSelector.val(),
+                teamAId,
+                teamBId,
+                maxMatches: $forecast1MaxMatches.val(),
+            }
         ).done((data) => {
             for (const team of ['A', 'B']) {
                 let table = (eval (`$forecast1Team${team}Table`)).empty();
