@@ -420,7 +420,7 @@ $(() => {
             $forecast3Table.empty();
             $forecast3Table.append(`
                     <tr>
-                        <td style="text-decoration: underline; text-align: center">${data.positionsDifference}</td>
+                        <td></td>
                         <td style="font-weight: bold">(${data.positions.home}) TeamA</td>
                         <td style="font-weight: bold">TeamB (${data.positions.guest})</td>
                         <td style="font-weight: bold"></td>
@@ -432,7 +432,7 @@ $(() => {
                         <td>${data[type].label}</td>
                         <td>${data[type].home}</td>
                         <td>${data[type].guest}</td>
-                        <td>${data[type].result}</td>
+                        <td>${data[type].sign} ${data[type].count}</td>
                     </tr>
             `);
             }

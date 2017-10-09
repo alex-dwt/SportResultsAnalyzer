@@ -178,9 +178,3 @@ function connectDB() {
 }
 
 connectDB();
-
-
-// db.getCollection('schedule').createIndex({date: -1})
-// db.getCollection('schedule').createIndex({tournamentId: 1})
-// db.getCollection('matches').createIndex({homeTeamId: 1})
-// db.getCollection('matches').createIndex({guestTeamId: 1})
