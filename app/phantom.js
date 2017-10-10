@@ -18,6 +18,9 @@ page.onResourceRequested = function(request) {
 
 page.open(url, function(status) {
     if(status === "success") {
+        // send first page to parse
+        console.log(url);
+
         var direction = 'next';
 
         console.log(page.evaluate(function() {

@@ -32,10 +32,12 @@ function parseUrl(url) {
                     }
 
                     const $ = cheerio.load(
-                        JSON.parse(body).commands.filter(obj => obj.name === 'updateContainer')[0].parameters.content
+                        dataLine === url.url
+                            ? body
+                            : JSON.parse(body).commands.filter(obj => obj.name === 'updateContainer')[0].parameters.content
                     );
 
-                    $('table').find('tr.match').each(function(i, elem) {
+                    $('table.matches').find('tr.match').each(function(i, elem) {
                         // skip live matches
                         if ($(this).hasClass('highlight')) {
                             return true;
