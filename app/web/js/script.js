@@ -251,9 +251,9 @@ $(() => {
                     .append(`
                         <tr>
                             <td>${value.date.slice(0, 10)}</td>
-                            <td>(${value.extraInfo.positions.home}) ${value.homeTeamName}</td>
+                            <td>(${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}</td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td>${value.guestTeamName} (${value.extraInfo.positions.guest}) </td>
+                            <td>${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>) </td>
                             <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
@@ -281,9 +281,9 @@ $(() => {
                     .append(`
                         <tr class="${(res > 0 ? 'table-success' : (res < 0 ? 'table-danger' : ''))}">
                             <td>${value.date.slice(0, 10)}</td>
-                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">(${value.extraInfo.positions.home}) ${value.homeTeamName}</td>
+                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">(${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}</td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName} (${value.extraInfo.positions.guest}) </td>
+                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>) </td>
                            <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
