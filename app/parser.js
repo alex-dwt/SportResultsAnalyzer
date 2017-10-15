@@ -9,8 +9,6 @@ let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 2;
 
 function parseUrl(url) {
-    url.id = parseInt(url.id);
-
     let title = '';
     let proc = spawn(
         '/usr/src/app/node_modules/.bin/phantomjs',
@@ -73,7 +71,7 @@ function parseUrl(url) {
                                 scheduleCollection.insertOne({
                                     _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
                                     tournamentId: url.id,
-                                    tournamentName: title,
+                                    tournamentName: `${title} (${url.id})`,
                                     homeTeamId,
                                     homeTeamName,
                                     guestTeamId,
@@ -101,7 +99,7 @@ function parseUrl(url) {
                         matchesCollection.insertOne({
                             _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
                             tournamentId: url.id,
-                            tournamentName: title,
+                            tournamentName: `${title} (${url.id})`,
                             homeTeamId,
                             homeTeamName,
                             homeScore,

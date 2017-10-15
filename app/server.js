@@ -126,13 +126,16 @@ app.get('/forecast/:num', (req, res, next) =>
  * Get site url
  */
 app.get('/site_urls/:tournamentId', (req, res, next) => {
-    let id = parseInt(req.params.tournamentId) || 0;
+    let id = `${req.params.tournamentId}`;
+    let info = URLS.find(o => o.id == id);
+    let officesUrls = info
+        ? info.urls
+        : ['', '', ''];
 
-    let scoreTableUrl = `${SITE_URL}/?sport=soccer&page=competition&id=${id}`;
     res.json({
-        matchesUrl: `${scoreTableUrl}&view=matches`,
-        scoreTableUrl,
-        officesUrls: (URLS[id] || ['', '', '']).map((val, index) => eval(`OFFICE${index}_SITE`) + val)
+        matchesUrl: createUrl(id, true),
+        scoreTableUrl: createUrl(id),
+        officesUrls: officesUrls.map((val, index) => eval(`OFFICE${index}_SITE`) + val)
     });
 });
 
@@ -166,7 +169,7 @@ function connectDB() {
 
             // start parsing sites forever
             parser.start(
-                Object.keys(URLS).map((id) => ({id, url: `${SITE_URL}/?sport=soccer&page=competition&id=${id}&view=matches`})),
+                URLS.map((o) => ({id: o.id, url: createUrl(o.id, true)})),
                 mongoDB
             );
             
@@ -175,6 +178,21 @@ function connectDB() {
             console.log('Trying connecting MongoDB...');
             setTimeout(connectDB, 1000);
         });
+}
+
+function createUrl(tournamentId, isMatchesUrl) {
+    let result = '';
+
+    let info = URLS.find(o => o.id == tournamentId);
+    if (info) {
+        result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId)}&page=`;
+        result += (tournamentId.indexOf('r') === -1 ? 'competition' : 'round');
+        if (isMatchesUrl) {
+            result += '&view=matches';
+        }
+    }
+
+    return result;
 }
 
 connectDB();
