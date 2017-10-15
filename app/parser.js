@@ -5,7 +5,6 @@ const request = require('request');
 const delay = 3 * 60 * 1000; // minutes
 let matchesCollection,
     scheduleCollection,
-    archiveCollection,
     archiveCompletedCollection,
     isStarted,
     urlsToParse;
@@ -14,6 +13,7 @@ let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 2;
 
 function parseUrl(url) {
+    const isArchived = !! url.isArchive;
     let title = '';
     let proc = spawn(
         '/usr/src/app/node_modules/.bin/phantomjs',
@@ -72,7 +72,7 @@ function parseUrl(url) {
 
                         // check match is in future
                         if (score.indexOf(':') !== -1) {
-                            if (url.isArchive || false) {
+                            if (isArchived) {
                                 return true;
                             }
 
@@ -105,13 +105,9 @@ function parseUrl(url) {
                             return true;
                         }
 
-                        let collection = (url.isArchive || false)
-                            ? archiveCollection
-                            : matchesCollection;
-
-                        collection.insertOne({
-                            _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
-                            tournamentId: url.id,
+                        matchesCollection.insertOne({
+                            _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};${+ isArchived};`,
+                            tournamentId: (isArchived ? 'a' : '') + url.id,
                             tournamentName: `${title} (${url.id})`,
                             homeTeamId,
                             homeTeamName,
@@ -119,10 +115,11 @@ function parseUrl(url) {
                             guestTeamId,
                             guestTeamName,
                             guestScore,
-                            date
+                            date,
+                            isArchived,
                         }).catch(() => { });
 
-                        if (!(url.isArchive || false)) {
+                        if (!isArchived) {
                             scheduleCollection.remove({
                                 _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
                             }).catch(() => { });
@@ -136,7 +133,7 @@ function parseUrl(url) {
     });
 
     proc.on('close', () => {
-        if (url.isArchive || false) {
+        if (isArchived) {
             archiveCompletedCollection.insertOne({
                 _id: `${url.id}`,
             }).catch(() => { });
@@ -197,7 +194,6 @@ module.exports = {
         isStarted = true;
         matchesCollection = mongoDB.collection('matches');
         scheduleCollection = mongoDB.collection('schedule');
-        archiveCollection = mongoDB.collection('archive');
         archiveCompletedCollection = mongoDB.collection('archive_completed');
         urlsToParse = urls;
 

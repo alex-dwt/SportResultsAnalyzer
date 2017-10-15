@@ -61,7 +61,7 @@ app.use(function(req, res, next) {
  */
 app.get('/tournaments', (req, res, next) =>
     fetcher
-        .getTournamentsList()
+        .getTournamentsList(!!req.query.isArchived)
         .then((result) => res.json(result))
 );
 
@@ -130,7 +130,7 @@ app.get('/site_urls/:tournamentId', (req, res, next) => {
     let info = URLS.urls.find(o => o.id == id);
     let officesUrls = info
         ? info.urls
-        : ['', '', ''];
+        : ['/', '/', '/'];
 
     res.json({
         matchesUrl: createUrl(id, true),
@@ -191,7 +191,7 @@ function connectDB() {
 }
 
 function createUrl(tournamentId, isMatchesUrl) {
-    let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId)}&page=`;
+    let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
     result += (tournamentId.indexOf('r') === -1 ? 'competition' : 'round');
     if (isMatchesUrl) {
         result += '&view=matches';

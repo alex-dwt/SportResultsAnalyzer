@@ -179,6 +179,15 @@ $(() => {
                     .val(value.tournamentId)
                     .text(value.tournamentName));
             });
+            ajaxCall('/tournaments', {isArchived: 1}).done((data) => {
+                $tournamentsSelector.append($('<option disabled>──────────</option>'));
+                $.each(data, (key, value) => {
+                    $tournamentsSelector
+                        .append($('<option></option>')
+                            .val(value.tournamentId)
+                            .text(value.tournamentName));
+                });
+            });
         });
     }
 
