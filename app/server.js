@@ -15,7 +15,7 @@ const OFFICE0_SITE = process.env.OFFICE1_SITE;
 const OFFICE1_SITE = process.env.OFFICE2_SITE;
 const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
-const URLS = require("./sites").urls;
+const URLS = require("./sites");
 
 const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
@@ -127,7 +127,7 @@ app.get('/forecast/:num', (req, res, next) =>
  */
 app.get('/site_urls/:tournamentId', (req, res, next) => {
     let id = `${req.params.tournamentId}`;
-    let info = URLS.find(o => o.id == id);
+    let info = URLS.urls.find(o => o.id == id);
     let officesUrls = info
         ? info.urls
         : ['', '', ''];
@@ -169,7 +169,17 @@ function connectDB() {
 
             // start parsing sites forever
             parser.start(
-                URLS.map((o) => ({id: o.id, url: createUrl(o.id, true)})),
+                URLS.archive.map((o) => ({
+                    id: o.id,
+                    url: createUrl(o.id, true),
+                    isArchive: true,
+                }))
+                .concat(
+                    URLS.urls.map((o) => ({
+                        id: o.id,
+                        url: createUrl(o.id, true)
+                    }))
+                ),
                 mongoDB
             );
             
@@ -181,15 +191,10 @@ function connectDB() {
 }
 
 function createUrl(tournamentId, isMatchesUrl) {
-    let result = '';
-
-    let info = URLS.find(o => o.id == tournamentId);
-    if (info) {
-        result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId)}&page=`;
-        result += (tournamentId.indexOf('r') === -1 ? 'competition' : 'round');
-        if (isMatchesUrl) {
-            result += '&view=matches';
-        }
+    let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId)}&page=`;
+    result += (tournamentId.indexOf('r') === -1 ? 'competition' : 'round');
+    if (isMatchesUrl) {
+        result += '&view=matches';
     }
 
     return result;

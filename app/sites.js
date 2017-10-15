@@ -11,7 +11,6 @@ module.exports = {
         {id: '64', urls:['/', '/', '/']},
         {id: '90', urls:['/', '/', '/']},
         {id: '39335r', urls:['/', '/', '/']},
-        {id: '39336r', urls:['/', '/', '/']},
         {id: '15', urls:['/v3/ru/line/bets/period=0;chmp=a:97;', '/su/betting/Football/England/League+1/', '/sport/futbol/anglija-liga-1']},
         {id: '32', urls:['/v3/ru/line/bets/period=0;chmp=a:7859;', '/su/betting/Football/England/League+2/', '/sport/futbol/anglija-liga-2']},
         {id: '22', urls:['/', '/su/betting/Football/Finland/Veikkausliiga/', '/sport/futbol/finljandija-veikkausliiga']},
@@ -55,8 +54,6 @@ module.exports = {
         {id: '107', urls:['/', '/', '/']},
         {id: '206', urls:['/', '/', '/']},
         {id: '117', urls:['/', '/', '/']},
-        {id: '31', urls:['/', '/', '/']},
-        {id: '38', urls:['/', '/', '/']},
         {id: '7', urls:['/v3/ru/line/bets/period=0;chmp=a:75175;', '/su/betting/Football/Spain/Primera+Division/', '/sport/futbol/ispanija-primera']},
         {id: '12', urls:['/', '/su/betting/Football/Spain/Segunda+Division/', '/sport/futbol/ispanija-segunda']},
         {id: '13', urls:['/v3/ru/line/bets/period=0;chmp=a:75173;', '/su/betting/Football/Italy/Serie+A/', '/sport/futbol/italija-serija-a']},
@@ -66,5 +63,10 @@ module.exports = {
         {id: '1', urls:['/v3/ru/line/bets/period=0;chmp=a:15;', '/', '/sport/futbol/niderlandy-eredivisie']},
         {id: '5', urls:['/v3/ru/line/bets/period=0;chmp=a:6315;', '/su/betting/Football/Netherlands/Eerste+Divisie/', '/sport/futbol/niderlandy-pervyjj-divizion']},
         {id: '573', urls:['/v3/ru/line/bets/period=0;chmp=a:14566;', '/', '/']},
+    ],
+    archive: [
+        {id: '31'},
+        {id: '38'},
+        {id: '39336r'},
     ]
 };

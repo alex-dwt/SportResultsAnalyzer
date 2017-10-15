@@ -3,7 +3,12 @@ const cheerio = require('cheerio');
 const request = require('request');
 
 const delay = 3 * 60 * 1000; // minutes
-let matchesCollection, scheduleCollection, isStarted, urlsToParse;
+let matchesCollection,
+    scheduleCollection,
+    archiveCollection,
+    archiveCompletedCollection,
+    isStarted,
+    urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 2;
@@ -67,6 +72,10 @@ function parseUrl(url) {
 
                         // check match is in future
                         if (score.indexOf(':') !== -1) {
+                            if (url.isArchive || false) {
+                                return true;
+                            }
+
                             if (date <= (new Date()).setDate((new Date()).getDate() + 4)) {
                                 scheduleCollection.insertOne({
                                     _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
@@ -96,7 +105,11 @@ function parseUrl(url) {
                             return true;
                         }
 
-                        matchesCollection.insertOne({
+                        let collection = (url.isArchive || false)
+                            ? archiveCollection
+                            : matchesCollection;
+
+                        collection.insertOne({
                             _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};`,
                             tournamentId: url.id,
                             tournamentName: `${title} (${url.id})`,
@@ -108,9 +121,12 @@ function parseUrl(url) {
                             guestScore,
                             date
                         }).catch(() => { });
-                        scheduleCollection.remove({
-                            _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
-                        }).catch(() => { });
+
+                        if (!(url.isArchive || false)) {
+                            scheduleCollection.remove({
+                                _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
+                            }).catch(() => { });
+                        }
                     });
                 });
             } else if (title === '') {
@@ -120,12 +136,18 @@ function parseUrl(url) {
     });
 
     proc.on('close', () => {
+        if (url.isArchive || false) {
+            archiveCompletedCollection.insertOne({
+                _id: `${url.id}`,
+            }).catch(() => { });
+        }
+
         console.log((new Date()).toISOString() + ' PhantomJS exited (' + url.id + ')');
         currentPhantomCount--;
     });
 }
 
-function startBunchParsing(isFirstTime) {
+async function startBunchParsing(isFirstTime) {
     if (!isFirstTime && !currentUrlIndex) {
         setTimeout(() => { startBunchParsing(true) }, delay);
         return;
@@ -136,8 +158,16 @@ function startBunchParsing(isFirstTime) {
             break;
         }
         let i = currentUrlIndex;
-        setTimeout(() => { parseUrl(urlsToParse[i]) }, 10);
-        currentPhantomCount++;
+
+        if ((urlsToParse[i].isArchive || false) &&
+            (await isTournamentAlreadyArchived(urlsToParse[i].id))
+        ) {
+            ;
+        } else {
+            setTimeout(() => { parseUrl(urlsToParse[i]) }, 10);
+            currentPhantomCount++;
+        }
+
         currentUrlIndex++;
     }
 
@@ -146,6 +176,16 @@ function startBunchParsing(isFirstTime) {
     }
 
     setTimeout(startBunchParsing, 30000);
+}
+
+function isTournamentAlreadyArchived(tournamentId) {
+    return new Promise((resolve) => {
+        archiveCompletedCollection
+            .find({_id: `${tournamentId}` })
+            .toArray((err, result) => {
+                resolve(!!result.length);
+            });
+    });
 }
 
 module.exports = {
@@ -157,6 +197,8 @@ module.exports = {
         isStarted = true;
         matchesCollection = mongoDB.collection('matches');
         scheduleCollection = mongoDB.collection('schedule');
+        archiveCollection = mongoDB.collection('archive');
+        archiveCompletedCollection = mongoDB.collection('archive_completed');
         urlsToParse = urls;
 
         startBunchParsing(true);
