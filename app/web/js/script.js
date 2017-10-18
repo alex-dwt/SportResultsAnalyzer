@@ -29,10 +29,10 @@ $(() => {
 
     // dates
     let $dateFrom = $('#date-from')
-        .val(`${(new Date()).getFullYear()}-01-01`)
+        .val('2000-01-01')
         .change(() => {
             if (!$dateFrom.val()) {
-                $dateFrom.val(`${(new Date()).getFullYear()}-01-01`);
+                $dateFrom.val('2000-01-01');
             }
             $tournamentsSelector.val('').change();
         });
