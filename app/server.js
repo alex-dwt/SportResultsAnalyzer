@@ -192,7 +192,13 @@ function connectDB() {
 
 function createUrl(tournamentId, isMatchesUrl) {
     let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
-    result += (tournamentId.indexOf('r') === -1 ? 'competition' : 'round');
+    if (tournamentId.indexOf('r') !== -1) {
+        result += 'round';
+    } else if (tournamentId.indexOf('s') !== -1) {
+        result += 'season';
+    } else {
+        result += 'competition';
+    }
     if (isMatchesUrl) {
         result += '&view=matches';
     }
