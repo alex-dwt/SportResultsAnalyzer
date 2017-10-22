@@ -17,6 +17,9 @@ const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
 const URLS = require("./sites");
 
+const parserB = require("./parser-bookmakers");
+
+
 const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
 let mongoDB;
@@ -168,18 +171,20 @@ function connectDB() {
             mongoDB = db;
 
             // start parsing sites forever
-            parser.start(
-                URLS.archive.map((o) => ({
-                    id: o.id,
-                    url: createUrl(o.id, true),
-                    isArchive: true,
-                }))
-                .concat(
-                    URLS.urls.map((o) => ({
-                        id: o.id,
-                        url: createUrl(o.id, true)
-                    }))
-                ),
+            parserB.start(
+                    URLS.urls.map((o) => {
+                        let url = o.urls[1];
+                        if (url === '/') {
+                            return {
+                                id: o.id,
+                                url: ''
+                            };
+                        }
+                        return {
+                            id: o.id,
+                            url: `${OFFICE1_SITE}${url}`
+                        };
+                    }),
                 mongoDB
             );
             
