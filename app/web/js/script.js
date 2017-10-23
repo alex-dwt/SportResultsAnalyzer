@@ -259,10 +259,18 @@ $(() => {
                 $allMatchesTable
                     .append(`
                         <tr>
-                            <td>${value.date.slice(0, 10)}</td>
-                            <td>(${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}</td>
-                            <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td>${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>) </td>
+                            <td style="width:100px;">${value.date.slice(0, 10)}</td>
+                            <td  style="width:280px;">
+                            (${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}
+                            <br/>
+                            ${value.extraInfo.serial.home.join(' ').toUpperCase()}
+                            </td>
+                            <td style="width:60px;">${value.homeScore} - ${value.guestScore}</td>
+                            <td style="width:280px;">
+                            ${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>)
+                            <br/>
+                            ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
+                            </td>
                             <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
@@ -290,9 +298,17 @@ $(() => {
                     .append(`
                         <tr class="${(res > 0 ? 'table-success' : (res < 0 ? 'table-danger' : ''))}">
                             <td>${value.date.slice(0, 10)}</td>
-                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">(${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}</td>
+                            <td class="${parseInt(teamId) === value.homeTeamId ? 'bold' : ''}">
+                            (${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}
+                            <br/>
+                            ${value.extraInfo.serial.home.join(' ').toUpperCase()}
+                            </td>
                             <td>${value.homeScore} - ${value.guestScore}</td>
-                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>) </td>
+                            <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">
+                            ${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>)
+                            <br/>
+                            ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
+                            </td>
                            <td>${value.extraInfo.scores.join('<br>')}</td>
                         </tr>
                     `);
