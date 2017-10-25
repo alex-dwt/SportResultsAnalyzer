@@ -163,38 +163,6 @@ app.delete('/favorite_game', (req, res, next) =>
     fetcher.markGameAsFavorite(req.body.id, false).then(() => res.json({}))
 );
 
-function connectDB() {
-    mongoClient
-        .connect(mongoClientUrl)
-        .then((db) => {
-            fetcher.setMongoDb(db);
-            mongoDB = db;
-
-            // start parsing sites forever
-            parserB.start(
-                    URLS.urls.map((o) => {
-                        let url = o.urls[1];
-                        if (url === '/') {
-                            return {
-                                id: o.id,
-                                url: ''
-                            };
-                        }
-                        return {
-                            id: o.id,
-                            url: `${OFFICE1_SITE}${url}`
-                        };
-                    }),
-                mongoDB
-            );
-            
-            app.listen(80);
-        }).catch((err) =>  {
-            console.log('Trying connecting MongoDB...');
-            setTimeout(connectDB, 1000);
-        });
-}
-
 function createUrl(tournamentId, isMatchesUrl) {
     let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
     if (tournamentId.indexOf('r') !== -1) {
@@ -211,4 +179,6 @@ function createUrl(tournamentId, isMatchesUrl) {
     return result;
 }
 
-connectDB();
+
+
+parserB.start();

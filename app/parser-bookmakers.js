@@ -8,107 +8,95 @@ let bookmakersCollection,
     urls;
 
 module.exports = {
-    start(urlsToParse, mongoDB) {
-        if (isStarted) {
-            return;
-        }
+    start() {
+        fs.readdirSync('./teams/').every(file => {
+            file = './teams/' + file;
 
-        isStarted = true;
-        urls = urlsToParse;
-        bookmakersCollection = mongoDB.collection('bookmakers');
+            let contents = fs.readFileSync(file, 'utf8');
+            contents = JSON.parse(contents);
 
-        setTimeout(() => parse(), 500);
+            let url = contents.url;
+
+            request(url, function (error, response, body) {
+                if (error || response.statusCode !== 200) {
+                    console.log('Failed download page');
+                }
+
+                console.log('Downloaded! ' + url);
+                const $ = cheerio.load(body);
+                let teams = [];
+
+                let $table = $('table.foot-market');
+                if ($table.length !== 1) {
+                    console.log('Skip!');
+                }
+
+                $table.children().each(function(i, elem) {
+                    let res = $(this).data('eventName');
+                    if (!res) {
+                        return true;
+                    }
+                    let arr = res.split(' - ');
+                    if (arr.length == 2) {
+                        teams = teams.concat(arr);
+                    }
+                });
+                teams = teams.map(o => o.toLowerCase());
+                teams = teams.filter(function(elem, pos) {
+                    return teams.indexOf(elem) == pos;
+                });
+
+                teams.sort((a, b) => sortStringsAlphabetically(a, b));
+
+                if (teams.length) {
+
+                    let newTeams = [];
+                    let teamNames = contents.teamNames;
+
+                    teams.forEach(t => {
+                        let founded = contents.teamsToDo.find(o => o.name === t);
+                        if (!founded) {
+                            let value = '';
+
+                            for (let j = 0; j < teamNames.length; j++) {
+                                if (teamNames[j].indexOf(t + '@') === 0) {
+                                    value = teamNames[j];
+                                    teamNames[j] = '';
+                                    break;
+                                }
+                            }
+
+                            newTeams.push({
+                                name: t,
+                                value
+                            });
+                        }
+                    });
+
+                    if (newTeams.length) {
+                        let o = {
+                            id: contents.id,
+                            url: contents.url,
+                            tournamentName: contents.tournamentName,
+                            teamsToDo: contents.teamsToDo.concat(newTeams),
+                            teamNames: teamNames.filter(o => o !== ''),
+                        };
+
+                        fs.writeFile(file, JSON.stringify(o), function(err) {
+                            console.log('Done');
+                        });
+                    }
+                }
+            });
+
+            return true;
+        });
+
     }
 };
 
-async function parse() {
-    while (true) {
-        let url = urls.pop();
-        if (!url) {
-            console.log('done done done done');
-            break;
-        }
-        await parseOne(url);
-    }
-}
 
-async function parseOne(url) {
-    return new Promise((resolve) => {
-        request(url.url, function (error, response, body) {
-            if (error || response.statusCode !== 200) {
-                console.log('Failed download page');
-                resolve('');
-            }
 
-            console.log('Downloaded! ' + url.url);
-            const $ = cheerio.load(body);
-            let teams = [];
-
-            let $table = $('table.foot-market');
-            if ($table.length !== 1) {
-                console.log('Skip!');
-                resolve('');
-            }
-
-            $table.children().each(function(i, elem) {
-                let res = $(this).data('eventName');
-                if (!res) {
-                    return true;
-                }
-                let arr = res.split(' - ');
-                if (arr.length == 2) {
-                    teams = teams.concat(arr);
-                }
-            });
-            teams = teams.map(o => o.toLowerCase());
-            teams = teams.filter(function(elem, pos) {
-                return teams.indexOf(elem) == pos;
-            });
-
-            teams.sort((a, b) => sortStringsAlphabetically(a, b));
-
-            if (teams.length) {
-                fetcher
-                    .getTeamsList(url.id)
-                    .then((teamNames) => {
-                        fetcher
-                            .getTournamentsList(false)
-                            .then((tournamentsList) => {
-                                let tournamentName = tournamentsList.find(o => o.tournamentId === url.id).tournamentName;
-                                teamNames= teamNames.map(o => `${o.teamName.toLowerCase()}@${o.teamId}`);
-                                let teamsToDo = teams.map(o => ({name: o, value: ''}));
-
-                                for (let i = 0; i < teamsToDo.length; i++) {
-                                    for (let j = 0; j < teamNames.length; j++) {
-                                        if (teamNames[j].indexOf(teamsToDo[i].name + '@') === 0) {
-                                            teamsToDo[i].value = teamNames[j];
-                                            teamNames[j] = '';
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                let o = {
-                                    id: url.id,
-                                    url: url.url,
-                                    tournamentName,
-                                    teamsToDo,
-                                    teamNames: teamNames.filter(o => o !== '')
-                                };
-
-                                fs.writeFile('/usr/src/app/teams/' + url.id + '.json', JSON.stringify(o), function(err) {
-                                    console.log('Done');
-                                    resolve('');
-                                });
-                        });
-                        }
-                    )
-            }
-
-            resolve('');
-        });
-    });
-}
 
 function sortStringsAlphabetically(a, b, field) {
     if (a < b) {
