@@ -515,11 +515,9 @@ $(() => {
                 .append(`
                         <tr data-id="${value._id}">
                             <td><span class="icon-star${value.isFavorite ? '' : '-empty'} make-favorite-game-sign"></span></td>
-                            <td>${value.tournamentName}</td>
-                            <td>${value.date.slice(0, 10)}</td>
-                            <td>${value.time}</td>
-                            <td>${value.homeTeamName}</td>
-                            <td>${value.guestTeamName}</td>
+                            <td style="width: 350px">${value.tournamentName}<br/>${value.date.slice(0, 10)}  &nbsp;&nbsp; ${value.time.split(' : ').join(':')}</td>
+                            <td>${value.homeTeamName}<br/>${data.statistics[value.tournamentId].teamsSerial[value.homeTeamId].join(' ').toUpperCase()}</td>
+                            <td>${value.guestTeamName}<br/>${data.statistics[value.tournamentId].teamsSerial[value.guestTeamId].join(' ').toUpperCase()}</td>
                             <td><span class="team-position ${positionType}">${positionsDiff} / ${data.statistics[value.tournamentId]['positionsCount']}</span></td>
                             <td>${value.scores.join('<br>')}</td>
                         </tr>
