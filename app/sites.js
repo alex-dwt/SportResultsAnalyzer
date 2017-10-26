@@ -4,7 +4,7 @@ module.exports = {
         {id: '100', urls:['/', '/su/betting/Football/Portugal/Segunda+Liga/', '/']},
         {id: '216', urls:['/v3/ru/line/bets/period=0;chmp=a:11168;', '/su/betting/Football/Saudi+Arabia/Pro+League/', '/sport/futbol/saudovskaja-aravija-pro-liga']},
         {id: '19', urls:['/v3/ru/line/bets/period=0;chmp=a:10353;', '/su/betting/Football/Turkey/Super+League/', '/sport/futbol/turcija-superliga']},
-        {id: '97', urls:['/v3/ru/line/bets/period=0;chmp=a:10353;', '/su/betting/Football/Turkey/Super+League/', '/sport/futbol/turcija-superliga']},
+        {id: '97', urls:['/v3/ru/line/bets/period=0;chmp=a:10353;', '/su/betting/Football/Turkey/1st+League/', '/sport/futbol/turcija-liga-1']},
         {id: '61', urls:['/v3/ru/line/bets/period=0;chmp=a:5367;', '/su/betting/Football/Croatia/1st+League/', '/sport/futbol/khorvatija-liga-1']},
         {id: '109', urls:['/v3/ru/line/bets/period=0;chmp=a:11633;', '/su/betting/Football/Japan/J.League/Division+1/', '/sport/futbol/japonija-j1-liga']},
         {id: '110', urls:['/v3/ru/line/bets/period=0;chmp=a:12201;', '/su/betting/Football/Japan/J.League/Division+2/', '/sport/futbol/japonija-j2-liga']},
