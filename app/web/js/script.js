@@ -271,10 +271,12 @@ $(() => {
                             <br/>
                             ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
                             </td>
-                            <td>${value.extraInfo.scores.join('<br>')}</td>
+                            <td>${printScores(value.extraInfo.scores)}</td>
                         </tr>
                     `);
             });
+            //redraw canvases
+            redrawForecast4Canvases($allMatchesTable);
         });
     }
 
@@ -309,10 +311,12 @@ $(() => {
                             <br/>
                             ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
                             </td>
-                           <td>${value.extraInfo.scores.join('<br>')}</td>
+                           <td>${printScores(value.extraInfo.scores)}</td>
                         </tr>
                     `);
             });
+            //redraw canvases
+            redrawForecast4Canvases($teamMatchesTable);
         });
     }
     
@@ -519,10 +523,12 @@ $(() => {
                             <td>${value.homeTeamName}<br/>${data.statistics[value.tournamentId].teamsSerial[value.homeTeamId].join(' ').toUpperCase()}</td>
                             <td>${value.guestTeamName}<br/>${data.statistics[value.tournamentId].teamsSerial[value.guestTeamId].join(' ').toUpperCase()}</td>
                             <td><span class="team-position ${positionType}">${positionsDiff} / ${data.statistics[value.tournamentId]['positionsCount']}</span></td>
-                            <td>${value.scores.join('<br>')}</td>
+                            <td>${printScores(value.scores)}</td>
                         </tr>
                 `);
         });
+        //redraw canvases
+        redrawForecast4Canvases($nextMatchesTable);
     });
 
     // make-favorite-unfavorite
@@ -535,4 +541,123 @@ $(() => {
             isEmpty ? 'put' : 'delete'
         ).done(() => $this.removeClass('icon-star-empty icon-star').addClass(isEmpty ? 'icon-star' : 'icon-star-empty'));
     });
+
+    function printScores(scores) {
+        let res = '';
+        for (const score of scores) {
+            res += `${score.forecastNum}) `;
+            if (score.forecastNum === 4) {
+                res += '<br/>';
+                for (const value of score.value) {
+                    res += `<canvas class="forecast4-canvas" data-params="${btoa(JSON.stringify(value))}"></canvas>`;
+                }
+            } else {
+                res += score.value.join('; ');
+            }
+            res += '<br/>';
+        }
+
+        return res;
+    }
+
+    function redrawForecast4Canvases($parent) {
+        $parent.find('.forecast4-canvas').each((i, el) =>
+            drawForecast4Canvas(
+                el,
+                JSON.parse(atob($(el).data('params')))
+            )
+        );
+    }
 });
+
+function drawForecast4Canvas(canvas, items)
+{
+    if (!canvas.getContext) {
+        return;
+    }
+
+    let maxGoals = 0;
+    let scoresCount = [];
+    for (const item of items) {
+        maxGoals = Math.max(maxGoals, Math.abs(item.score));
+        let id = `${item.sign}${item.score}`;
+        let index = scoresCount.findIndex(o => o.id === id);
+        if (index !== -1) {
+            scoresCount[index].count++;
+        } else {
+            scoresCount.push({id, count: 1, currentCount: 0});
+        }
+    }
+
+    for(let i = 0; i < scoresCount.length; i++) {
+        scoresCount[i].angle = parseInt(85 / (scoresCount[i].count + 1));
+    }
+
+    let divLength = 12;
+    let strokeLength = 80;
+    if (maxGoals < 5) {
+        divLength = 20;
+    } else if (maxGoals >= 5 && maxGoals < 8) {
+        divLength = 18;
+    }
+
+    let ctx = canvas.getContext('2d');
+
+    ctx.font = '20px serif';
+    ctx.translate(150, 100);
+
+    // draw coordinates
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    for (const sign of ['-', '+']) {
+        let x = 0;
+        for (let i = 0; i <= maxGoals; i++) {
+            if (sign === '+' && i === 0) {
+                ;
+            } else {
+                drawCanvasDiv(
+                    ctx,
+                    x,
+                    i * (sign === '-' ? -1 : 1)
+                );
+            }
+            ctx.moveTo(x,0);
+            x = eval(`${x} ${sign} ${divLength}`);
+            ctx.lineTo(x,0);
+            ctx.moveTo(x,0);
+        }
+    }
+    ctx.stroke();
+
+    // draw goals
+    ctx.lineWidth = 2;
+    for (const item of items) {
+        let id = `${item.sign}${item.score}`;
+        let o = scoresCount.find(o => o.id === id);
+        let ind = scoresCount.findIndex(o => o.id === id);
+        let angle = o.angle + o.currentCount * o.angle;
+        scoresCount[ind].currentCount++;
+
+        if (item.sign === '<') {
+            angle = 180 - angle;
+        }
+        let x = item.score * divLength;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.setLineDash(item.type === 'a' ? [5] : []);
+        ctx.lineTo(x + strokeLength * Math.cos(Math.PI * angle / 180.0), -1 * strokeLength * Math.sin(Math.PI * angle / 180.0));
+        ctx.stroke();
+    }
+}
+
+function drawCanvasDiv(ctx, x, num) {
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,20);
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,-20);
+    let textX = x - 5;
+    if (num < 0) {
+        textX = x - 8
+    }
+    ctx.fillText(num, textX, 40);
+}

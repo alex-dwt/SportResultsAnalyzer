@@ -91,3 +91,9 @@ label {
 .then-position {
     font-size: 10pt;
 }
+
+.forecast4-canvas {
+    width: 370px;
+    height: 70px;
+    margin-bottom: -5px;
+}
