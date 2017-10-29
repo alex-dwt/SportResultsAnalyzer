@@ -97,3 +97,9 @@ label {
     height: 70px;
     margin-bottom: -5px;
 }
+
+.bookmakers-stats-table td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 0 7px;
+}

@@ -533,7 +533,7 @@ $(() => {
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>${data.scoreLineShort}</td>
+                        <td>${data.scoreLineShort.value[0]}</td>
                     </tr>
             `);
         });
@@ -587,6 +587,26 @@ $(() => {
                             <td>${value.guestTeamName}<br/>${data.statistics[value.tournamentId].teamsSerial[value.guestTeamId].join(' ').toUpperCase()}</td>
                             <td><span class="team-position ${positionType}">${positionsDiff} / ${data.statistics[value.tournamentId]['positionsCount']}</span></td>
                             <td>${printScores(value.scores)}</td>
+                            
+                            <tr>
+                                <td colspan="6">
+                                <table class="bookmakers-stats-table">
+                                <tr>
+                                <td>1</td><td>X</td><td>2</td><td>1X</td><td>12</td><td>2X</td><td>F1</td><td>F2</td>
+                                </tr>
+                                <tr>
+                                <td>${value.bookmakersStats[1]}</td>
+                                <td>${value.bookmakersStats.x}</td>
+                                <td>${value.bookmakersStats[2]}</td>
+                                <td>${value.bookmakersStats.x1}</td>
+                                <td>${value.bookmakersStats[12]}</td>
+                                <td>${value.bookmakersStats.x2}</td>
+                                <td>(${value.bookmakersStats.f1.count}) ${value.bookmakersStats.f1.value}</td>
+                                <td>(${value.bookmakersStats.f2.count}) ${value.bookmakersStats.f2.value}</td>
+                                </tr>
+                                </table>
+                                </td>
+                            </tr>
                         </tr>
                 `);
         });
