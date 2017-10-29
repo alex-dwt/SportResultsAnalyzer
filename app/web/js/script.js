@@ -105,6 +105,7 @@ $(() => {
         getForecast1(teamAId, teamBId);
         getForecast2(teamAId, teamBId);
         getForecast3(teamAId, teamBId);
+        getForecast4(teamAId, teamBId);
     });
 
     //forecast (3d)
@@ -117,6 +118,16 @@ $(() => {
     //fill selector
     for (let i = 2; i <= 5; i++) {
         $forecast1MaxMatches.append($('<option></option>').val(i).text(i));
+    }
+
+    //forecast (4th)
+    let $forecast4TeamATable = $('#forecast-4-table-a').find('tbody').eq(0);
+    let $forecast4TeamBTable = $('#forecast-4-table-b').find('tbody').eq(0);
+    let $forecast4MaxMatches = $('#forecast-4-max-matches');
+    let $forecast4CanvasDiv = $('#forecast-4-canvas-div');
+    //fill selector
+    for (let i = 2; i <= 5; i++) {
+        $forecast4MaxMatches.append($('<option></option>').val(i).text(i));
     }
 
     //forecast (2nd)
@@ -373,6 +384,58 @@ $(() => {
         });
     }
 
+    function getForecast4(teamAId, teamBId) {
+        ajaxCall(
+            '/forecast/4',
+            {
+                tournamentId: $tournamentsSelector.val(),
+                teamAId,
+                teamBId,
+                maxMatches: $forecast4MaxMatches.val(),
+            }
+        ).done((data) => {
+            $forecast4CanvasDiv.children().remove();
+            $forecast4CanvasDiv.append(
+                `<canvas class="forecast4-canvas" data-params="${btoa(JSON.stringify(data.scoreLineShort.value[0]))}"></canvas>`
+            );
+            redrawForecast4Canvases($forecast4CanvasDiv);
+
+            for (const team of ['A', 'B']) {
+                let table = (eval (`$forecast4Team${team}Table`)).empty();
+                let teamId = data[`team${team}Id`];
+                table.append(`
+                    <tr>
+                        <td colspan="3" style="text-align: center; border-bottom: 2px solid black">
+                            (${data.positions[teamId]})
+                        </td>
+                    </tr>
+                `);
+                for (const match of data.matches[team]) {
+                    table.append(`
+                        <tr>
+                            <td>${match.date.slice(0, 10)}</td>
+                            <td>
+                                ${match.opponentName}
+                                (${data.positions[match.opponentId]})
+                            </td>
+                            <td>${match.score} - ${match.opponentScore}</td>
+                        </tr>
+                    `);
+                }
+                table.append(`<tr><td colspan="3" style="border-bottom: 1px solid black"></td></tr>`);
+                for (const line of data.comparing[team]) {
+                    table.append(`
+                        <tr>
+                            <td colspan="3" style="text-align: center">
+                                ${line.sign} ${line.score}
+                            </td>
+                        </tr>
+                    `);
+                }
+            }
+        });
+    }
+
     function getForecast2(teamAId, teamBId) {
         let queryParams = {
             tournamentId: $tournamentsSelector.val(),
@@ -593,12 +656,24 @@ function drawForecast4Canvas(canvas, items)
         scoresCount[i].angle = parseInt(85 / (scoresCount[i].count + 1));
     }
 
-    let divLength = 12;
+    let divLength = 14;
     let strokeLength = 80;
-    if (maxGoals < 5) {
-        divLength = 20;
-    } else if (maxGoals >= 5 && maxGoals < 8) {
-        divLength = 18;
+    switch (true) {
+        case (maxGoals <= 1):
+            divLength = 45;
+            break;
+        case (maxGoals <= 2):
+            divLength = 33;
+            break;
+        case (maxGoals <= 4):
+            divLength = 26;
+            break;
+        case (maxGoals <= 6):
+            divLength = 20;
+            break;
+        case (maxGoals <= 8):
+            divLength = 16;
+            break;
     }
 
     let ctx = canvas.getContext('2d');
@@ -644,7 +719,7 @@ function drawForecast4Canvas(canvas, items)
         let x = item.score * divLength;
         ctx.beginPath();
         ctx.moveTo(x, 0);
-        ctx.setLineDash(item.type === 'a' ? [5] : []);
+        ctx.setLineDash(item.type === 'b' ? [5] : []);
         ctx.lineTo(x + strokeLength * Math.cos(Math.PI * angle / 180.0), -1 * strokeLength * Math.sin(Math.PI * angle / 180.0));
         ctx.stroke();
     }
