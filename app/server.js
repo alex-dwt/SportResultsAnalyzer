@@ -7,6 +7,7 @@
 'use strict';
 
 const parser = require("./parser");
+const parserBookmakersMatches = require("./parser-bookmakers-matches");
 const fetcher = require("./fetcher");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -166,6 +167,17 @@ function connectDB() {
         .then((db) => {
             fetcher.setMongoDb(db);
             mongoDB = db;
+
+            // start parsing bookmakers matches forever
+            parserBookmakersMatches.start(
+                URLS.urls
+                    .filter((o) => o.urls[1] !== '/')
+                    .map((o) => ({
+                        id: o.id,
+                        url: `${OFFICE1_SITE}${o.urls[1]}`
+                    })),
+                mongoDB
+            );
 
             // start parsing sites forever
             parser.start(
