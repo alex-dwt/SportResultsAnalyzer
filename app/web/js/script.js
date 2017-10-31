@@ -270,19 +270,19 @@ $(() => {
                 $allMatchesTable
                     .append(`
                         <tr>
-                            <td style="width:100px;">${value.date.slice(0, 10)}</td>
-                            <td  style="width:280px;">
+                            <td style=";">${value.date.slice(0, 10)}</td>
+                            <td  style=";">
                             (${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}
                             <br/>
                             ${value.extraInfo.serial.home.join(' ').toUpperCase()}
                             </td>
-                            <td style="width:60px;">${value.homeScore} - ${value.guestScore}</td>
-                            <td style="width:280px;">
+                            <td style=";" class="goals-td">${value.homeScore} - ${value.guestScore}</td>
+                            <td style=";">
                             ${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>)
                             <br/>
                             ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
                             </td>
-                            <td>${printScores(value.extraInfo.scores)}</td>
+                            <td class="score-td">${printScores(value.extraInfo.scores)}</td>
                         </tr>
                     `);
             });

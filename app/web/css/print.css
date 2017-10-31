@@ -1,0 +1,23 @@
+@media print {
+    .container {
+        max-width: 3000px;
+        padding: 0;
+    }
+    #tournaments-div, #teams-div, #tabs-div, #nav-tabs-div {
+        display: none;
+    }
+
+    #all-matches-table .forecast4-canvas {
+        transform: scale(0.7);
+        margin-top: -55px;
+    }
+
+    #all-matches-table * {
+        font-size: 12px !important;
+    }
+
+    #all-matches-table .score-td {
+        width: 300px;
+        max-width: 300px;
+    }
+}

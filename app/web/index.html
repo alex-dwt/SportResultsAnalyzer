@@ -7,7 +7,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/icons.css" rel="stylesheet">
-
+    <link href="/css/print.css" rel="stylesheet">
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     <div class="container">
         <h3 class="text-muted"></h3>
 
-        <ul class="nav nav-tabs" role="tablist">
+        <ul class="nav nav-tabs" role="tablist" id="nav-tabs-div">
             <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#played-matches-section" role="tab" onclick="setTimeout(() => {$('#score-table-tab-label').click(); $('#next-matches-section').removeClass('active')}, 200)">Played Matches</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#next-matches-section" role="tab">Next Matches</a></li>
         </ul>
@@ -27,7 +27,7 @@
         <div class="tab-content">
             <div class="tab-pane active" id="played-matches-section" role="tabpanel">
 
-                <div class="jumbotron my-div">
+                <div class="jumbotron my-div" id="tournaments-div">
                     <label for="tournaments">Tournament</label>
                     <select class="form-control" id="tournaments" style="margin-bottom: 10px;"></select>
                     <div style="clear: both"></div>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="jumbotron my-div">
+                <div class="jumbotron my-div" id="teams-div">
                     <button style="float: right;margin-left: 1%;margin-top: 2%;" type="button" class="btn btn-primary" id="forecast-go-btn">
                         GO
                     </button>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
 
-                <ul class="nav nav-tabs" role="tablist">
+                <ul class="nav nav-tabs" role="tablist" id="tabs-div">
                     <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#score-table-tab" role="tab" id="score-table-tab-label">Score Table</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#all-matches-tab" role="tab">All Matches</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#team-matches-tab" role="tab">Team Matches</a></li>

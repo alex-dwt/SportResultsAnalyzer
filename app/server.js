@@ -169,15 +169,15 @@ function connectDB() {
             mongoDB = db;
 
             // start parsing bookmakers matches forever
-            parserBookmakersMatches.start(
-                URLS.urls
-                    .filter((o) => o.urls[1] !== '/')
-                    .map((o) => ({
-                        id: o.id,
-                        url: `${OFFICE1_SITE}${o.urls[1]}`
-                    })),
-                mongoDB
-            );
+            // parserBookmakersMatches.start(
+            //     URLS.urls
+            //         .filter((o) => o.urls[1] !== '/')
+            //         .map((o) => ({
+            //             id: o.id,
+            //             url: `${OFFICE1_SITE}${o.urls[1]}`
+            //         })),
+            //     mongoDB
+            // );
 
             // start parsing sites forever
             parser.start(
