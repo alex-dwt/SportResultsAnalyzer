@@ -592,17 +592,24 @@ $(() => {
                                 <td colspan="6">
                                 <table class="bookmakers-stats-table">
                                 <tr>
+                                <td colspan="8">
+                                <a target="_blank" href="${value.bookmakersStats ? value.bookmakersStats.url : ''}">${value.bookmakersStats ? value.bookmakersStats.homeTeamName : ''} - ${value.bookmakersStats ? value.bookmakersStats.guestTeamName : ''}</a>
+                                <br/>
+                                ${value.bookmakersStats ? value.bookmakersStats.date.slice(0, 10) : ''} ${value.bookmakersStats ? value.bookmakersStats.time : ''}
+                                </td>
+                                </tr>
+                                <tr>
                                 <td>1</td><td>X</td><td>2</td><td>1X</td><td>12</td><td>2X</td><td>F1</td><td>F2</td>
                                 </tr>
                                 <tr>
-                                <td>${value.bookmakersStats[1]}</td>
-                                <td>${value.bookmakersStats.x}</td>
-                                <td>${value.bookmakersStats[2]}</td>
-                                <td>${value.bookmakersStats.x1}</td>
-                                <td>${value.bookmakersStats[12]}</td>
-                                <td>${value.bookmakersStats.x2}</td>
-                                <td>(${value.bookmakersStats.f1.count}) ${value.bookmakersStats.f1.value}</td>
-                                <td>(${value.bookmakersStats.f2.count}) ${value.bookmakersStats.f2.value}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates[1] : ''}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates.x : ''}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates[2] : ''}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates['1x'] : ''}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates[12] : ''}</td>
+                                <td>${value.bookmakersStats ? value.bookmakersStats.rates.x2 : ''}</td>
+                                <td>(${value.bookmakersStats ? value.bookmakersStats.rates.f1.count : ''}) ${value.bookmakersStats ? value.bookmakersStats.rates.f1.value : ''}</td>
+                                <td>(${value.bookmakersStats ? value.bookmakersStats.rates.f2.count : ''}) ${value.bookmakersStats ? value.bookmakersStats.rates.f2.value : ''}</td>
                                 </tr>
                                 </table>
                                 </td>

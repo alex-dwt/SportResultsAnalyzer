@@ -94,8 +94,7 @@ function parseUrl(index = 0) {
                         date = new Date();
                         date.addHours(HOURS_DIFF);
                     }
-                    date.setHours(0, 0, 0);
-                    date.setMilliseconds(0);
+                    date.setHours(0, 0, 0, 0);
 
                     // rates
                     $item = $item.find('.main-row-buttons').eq(0);

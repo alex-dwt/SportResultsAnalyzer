@@ -169,31 +169,31 @@ function connectDB() {
             mongoDB = db;
 
             // start parsing bookmakers matches forever
-            parserBookmakersMatches.start(
-                URLS.urls
-                    .filter((o) => o.urls[1] !== '/')
-                    .map((o) => ({
-                        id: o.id,
-                        url: `${OFFICE1_SITE}${o.urls[1]}`
-                    })),
-                mongoDB
-            );
-
-            // // start parsing sites forever
-            // parser.start(
-            //     URLS.archive.map((o) => ({
-            //         id: o.id,
-            //         url: createUrl(o.id, true),
-            //         isArchive: true,
-            //     }))
-            //     .concat(
-            //         URLS.urls.map((o) => ({
+            // parserBookmakersMatches.start(
+            //     URLS.urls
+            //         .filter((o) => o.urls[1] !== '/')
+            //         .map((o) => ({
             //             id: o.id,
-            //             url: createUrl(o.id, true)
-            //         }))
-            //     ),
+            //             url: `${OFFICE1_SITE}${o.urls[1]}`
+            //         })),
             //     mongoDB
             // );
+
+            // start parsing sites forever
+            parser.start(
+                URLS.archive.map((o) => ({
+                    id: o.id,
+                    url: createUrl(o.id, true),
+                    isArchive: true,
+                }))
+                .concat(
+                    URLS.urls.map((o) => ({
+                        id: o.id,
+                        url: createUrl(o.id, true)
+                    }))
+                ),
+                mongoDB
+            );
             
             app.listen(80);
         }).catch((err) =>  {
