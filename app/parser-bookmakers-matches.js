@@ -1,13 +1,15 @@
 const cheerio = require('cheerio');
 const request = require('request');
 
+const HOURS_DIFF = 3;
 const delay = 3 * 60 * 1000; // minutes
-let bookmakersMatches,
+let bookmakersMatchesCollection,
     isStarted,
     urlsToParse;
 
 function parseUrl(index = 0) {
     let url = urlsToParse[index];
+    let tournamentId = url.id;
 
     request(url.url, (error, response, body) => {
         console.log('Loading bookmakers matches on ' + url.url);
@@ -36,7 +38,66 @@ function parseUrl(index = 0) {
                     if (!date) {
                         return true;
                     }
+
+                    // date
                     date = trim(date);
+                    let time = '-';
+                    let dateParts = date.split(' ');
+                    if (dateParts.length === 3) {
+                        let year = (new Date()).addHours(HOURS_DIFF).getFullYear();
+                        let day = parseInt(dateParts[0]);
+                        day = isNaN(day) ? 1 : day;
+                        let month = 0;
+                        switch (trim(dateParts[1].toLowerCase())) {
+                            case 'янв':
+                                month = 0;
+                                break;
+                            case 'фев':
+                                month = 1;
+                                break;
+                            case 'мар':
+                                month = 2;
+                                break;
+                            case 'апр':
+                                month = 3;
+                                break;
+                            case 'мая':
+                                month = 4;
+                                break;
+                            case 'июня':
+                                month = 5;
+                                break;
+                            case 'июля':
+                                month = 6;
+                                break;
+                            case 'авг':
+                                month = 7;
+                                break;
+                            case 'сен':
+                                month = 8;
+                                break;
+                            case 'окт':
+                                month = 9;
+                                break;
+                            case 'ноя':
+                                month = 10;
+                                break;
+                            case 'дек':
+                                month = 11;
+                                break;
+                        }
+                        time = dateParts[2];
+                        date = new Date(year, month, day);
+                    } else {
+                        // today
+                        time = dateParts[0];
+                        date = new Date();
+                        date.addHours(HOURS_DIFF);
+                    }
+                    date.setHours(0, 0, 0);
+                    date.setMilliseconds(0);
+
+                    // rates
                     $item = $item.find('.main-row-buttons').eq(0);
                     if (!$item) {
                         return true;
@@ -53,8 +114,14 @@ function parseUrl(index = 0) {
                             let i = text.indexOf(')');
                             let count = '-', value = '-';
                             if (i !== -1) {
-                                count = text.substring(1, i);
+                                count = parseFloat(text.substring(1, i));
+                                if (isNaN(count)) {
+                                    count = '-';
+                                }
                                 value = parseFloat(text.substring(i + 1));
+                                if (isNaN(value)) {
+                                    value = '-';
+                                }
                             }
                             rates[prop] = {
                                 count,
@@ -62,18 +129,28 @@ function parseUrl(index = 0) {
                             };
                         } else {
                             rates[prop] = parseFloat(text);
+                            if (isNaN(rates[prop])) {
+                                rates[prop] = '-';
+                            }
                         }
                         $item = $next;
                     }
 
-                    console.log({
-                        bookmakerId: 2,
+                    // to DB
+                    let bookmakerId = 2;
+                    let id = `${bookmakerId};${tournamentId};${date.getTime()};${homeTeamName};${guestTeamName};`;
+
+                    bookmakersMatchesCollection.remove({_id: id}).catch(() => { });
+                    bookmakersMatchesCollection.insertOne({
+                        _id: id,
+                        bookmakerId,
+                        tournamentId,
                         homeTeamName,
                         guestTeamName,
                         date,
+                        time,
                         rates
-                    })
-
+                    }).catch(() => { });
                 });
             } else {
                 console.log($table.length + ' - skip!');
@@ -96,6 +173,11 @@ function trim(string) {
     return string.replace(/^\s*|\s*$/g, '');
 }
 
+Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
+}
+
 module.exports = {
     start(urls, mongoDB) {
         if (isStarted || !urls) {
@@ -103,7 +185,7 @@ module.exports = {
         }
 
         isStarted = true;
-        bookmakersMatches = mongoDB.collection('bookmakers_matches');
+        bookmakersMatchesCollection = mongoDB.collection('bookmakers_matches');
         urlsToParse = urls;
 
         parseUrl();
