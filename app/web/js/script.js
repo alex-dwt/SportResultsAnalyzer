@@ -713,7 +713,7 @@ function drawForecast4Canvas(canvas, items)
                 drawCanvasDiv(
                     ctx,
                     x,
-                    i * (sign === '-' ? -1 : 1)
+                    i
                 );
             }
             ctx.moveTo(x,0);
@@ -735,6 +735,8 @@ function drawForecast4Canvas(canvas, items)
 
         if (item.sign === '<') {
             angle = 180 - angle;
+        } else if (item.sign === '=') {
+            angle = 90;
         }
         let x = item.score * divLength;
         ctx.beginPath();

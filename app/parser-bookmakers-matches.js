@@ -8,11 +8,11 @@ let bookmakersMatchesCollection,
     urlsToParse;
 
 function parseUrl(index = 0) {
-    let url = urlsToParse[index];
-    let tournamentId = url.id;
+    let tournamentId = urlsToParse[index].id;
+    let url = urlsToParse[index].url;
 
-    request(url.url, (error, response, body) => {
-        console.log('Loading bookmakers matches on ' + url.url);
+    request(url, (error, response, body) => {
+        console.log('Loading bookmakers matches on ' + url);
 
         if (!error && response.statusCode === 200) {
             const $ = cheerio.load(body);
@@ -144,6 +144,7 @@ function parseUrl(index = 0) {
                     bookmakersMatchesCollection.insertOne({
                         _id: id,
                         bookmakerId,
+                        url,
                         tournamentId,
                         homeTeamName,
                         guestTeamName,
