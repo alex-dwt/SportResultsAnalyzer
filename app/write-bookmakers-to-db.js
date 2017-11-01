@@ -26,10 +26,16 @@ module.exports = {
             for (let j = 0; j < contents.teamsToDo.length; j++) {
                 let pos = contents.teamsToDo[j].value.indexOf('@');
                 if (pos !== -1) {
+                    let bookmakerId = 2;
+                    let tournamentId = contents.id;
+                    let teamId = parseInt(contents.teamsToDo[j].value.substring(pos + 1));
+                    let id = `${bookmakerId};${tournamentId};${teamId};`;
+
                     collection.insertOne({
-                        bookmakerId: 2,
-                        tournamentId: contents.id,
-                        teamId: parseInt(contents.teamsToDo[j].value.substring(pos + 1)),
+                        _id: id,
+                        bookmakerId,
+                        tournamentId,
+                        teamId,
                         teamName: trim(contents.teamsToDo[j].name.toLowerCase()),
                     }).catch(() => { });
 
