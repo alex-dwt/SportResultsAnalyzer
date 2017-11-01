@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const request = require('request');
 
 const HOURS_DIFF = 3;
-const delay = 3 * 60 * 1000; // minutes
+const delay = 5 * 60 * 60 * 1000; // hours
 let bookmakersMatchesCollection,
     isStarted,
     urlsToParse;
@@ -28,8 +28,8 @@ function parseUrl(index = 0) {
                     if (arr.length !== 2) {
                         return true;
                     }
-                    let homeTeamName = trim(arr[0].toLowerCase());
-                    let guestTeamName = trim(arr[1].toLowerCase());
+                    let homeTeamName = arr[0].toLowerCase().trim();
+                    let guestTeamName = arr[1].toLowerCase().trim();
                     $item = $item.children('.event-header').eq(0);
                     if (!$item) {
                         return true;
@@ -40,7 +40,7 @@ function parseUrl(index = 0) {
                     }
 
                     // date
-                    date = trim(date);
+                    date = date.trim();
                     let time = '-';
                     let dateParts = date.split(' ');
                     if (dateParts.length === 3) {
@@ -48,7 +48,7 @@ function parseUrl(index = 0) {
                         let day = parseInt(dateParts[0]);
                         day = isNaN(day) ? 1 : day;
                         let month = 0;
-                        switch (trim(dateParts[1].toLowerCase())) {
+                        switch (dateParts[1].toLowerCase().trim()) {
                             case 'янв':
                                 month = 0;
                                 break;
@@ -108,7 +108,7 @@ function parseUrl(index = 0) {
                         if (!$next) {
                             return true;
                         }
-                        let text = trim($next.text());
+                        let text = $next.text().trim();
                         if (prop === 'f1' || prop === 'f2') {
                             let i = text.indexOf(')');
                             let count = '-', value = '-';
@@ -167,10 +167,6 @@ function parseUrl(index = 0) {
             setTimeout(() => parseUrl(i), 2000);
         }
     });
-}
-
-function trim(string) {
-    return string.replace(/^\s*|\s*$/g, '');
 }
 
 Date.prototype.addHours = function(h) {

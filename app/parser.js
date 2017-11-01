@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const cheerio = require('cheerio');
 const request = require('request');
 
+const HOURS_DIFF = 2;
 const delay = 3 * 60 * 1000; // minutes
 let matchesCollection,
     scheduleCollection,
@@ -67,6 +68,7 @@ function parseUrl(url) {
                         let date = $(this).find('.date').eq(0).text().trim();
                         date = date.split('/');
                         date = new Date(date[1] + '/' + date[0] + '/' + date[2]);
+                        date.setHours(0, 0, 0, 0);
 
                         let score = $(this).find('.score-time').eq(0).text().trim();
 
@@ -75,6 +77,16 @@ function parseUrl(url) {
                             if (isArchived) {
                                 return true;
                             }
+
+                            // correct date
+                            let time = score.split(':');
+                            if (time.length !== 2) {
+                                return true;
+                            }
+                            date.setHours(time[0].trim(), time[1].trim(), 0, 0);
+                            date.addHours(HOURS_DIFF);
+                            score = `${date.getHours()}:${time[1].trim()}`;
+                            date.setHours(0, 0, 0, 0);
 
                             if (date <= (new Date()).setDate((new Date()).getDate() + 4)) {
                                 scheduleCollection.insertOne({
@@ -183,6 +195,11 @@ function isTournamentAlreadyArchived(tournamentId) {
                 resolve(!!result.length);
             });
     });
+}
+
+Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
 }
 
 module.exports = {
