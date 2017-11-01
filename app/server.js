@@ -31,10 +31,16 @@ function connectDB() {
             contents = JSON.parse(contents);
 
             for (const item of contents) {
+                let bookmakerId = 2;
+                let tournamentId = item.tournamentId;
+                let teamId = item.teamId;
+                let id = `${bookmakerId};${tournamentId};${teamId};`;
+
                 collection.insertOne({
-                    bookmakerId: 2,
-                    tournamentId: item.tournamentId,
-                    teamId: item.teamId,
+                    _id: id,
+                    bookmakerId,
+                    tournamentId,
+                    teamId,
                     teamName: item.teamName,
                 }).catch(() => { });
             }
