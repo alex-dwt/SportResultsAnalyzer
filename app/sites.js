@@ -40,7 +40,7 @@ module.exports = {
         {id: '629', urls:['/v3/ru/line/bets/period=0;chmp=a:101509;', '/su/betting/Football/Indonesia/Liga+1/', '/sport/futbol/indonezija-chempionat-a']},
         {id: '29', urls:['/v3/ru/line/bets/period=0;chmp=a:2291;', '/su/betting/Football/Norway/Eliteserien/', '/sport/futbol/norvegija-ehlitserija']},
         {id: '36', urls:['/', '/su/betting/Football/Norway/1st+Division/', '/sport/futbol/norvegija-divizion-1']},
-        {id: '123', urls:['/v3/ru/line/bets/period=0;chmp=a:2737;', '/su/betting/Football/Slovenia/1st+League/', '/sport/futbol/slovakija-superliga']},
+        {id: '123', urls:['/v3/ru/line/bets/period=0;chmp=a:2737;', '/su/betting/Football/Slovakia/Fortuna+Liga/', '/sport/futbol/slovakija-superliga']},
         {id: '86', urls:['/v3/ru/line/bets/period=0;chmp=a:3045;', '/su/betting/Football/Slovenia/1st+League/', '/sport/futbol/slovenija-liga-1']},
         {id: '125', urls:['/v3/ru/line/bets/period=0;chmp=a:2737;', '/su/betting/Football/Ukraine/Premier+League/', '/sport/futbol/ukraina-premer-liga']},
         {id: '233', urls:['/v3/ru/line/bets/period=0;chmp=a:15517;', '/su/betting/Football/Ukraine/1st+League/', '/sport/futbol/ukraina-pervaja-liga']},
