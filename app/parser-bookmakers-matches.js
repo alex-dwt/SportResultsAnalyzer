@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const request = require('request');
 
 const HOURS_DIFF = 3;
-const delay = 5 * 60 * 60 * 1000; // hours
+const delay = 8 * 60 * 60 * 1000; // hours
 let bookmakersMatchesCollection,
     isStarted,
     urlsToParse;
@@ -135,21 +135,16 @@ function parseUrl(index = 0) {
                         $item = $next;
                     }
 
-                    // to DB
-                    let bookmakerId = 2;
-                    let id = `${bookmakerId};${tournamentId};${date.getTime()};${homeTeamName};${guestTeamName};`;
-
-                    bookmakersMatchesCollection.remove({_id: id}).catch(() => { });
                     bookmakersMatchesCollection.insertOne({
-                        _id: id,
-                        bookmakerId,
+                        bookmakerId: 2,
                         url,
                         tournamentId,
                         homeTeamName,
                         guestTeamName,
                         date,
                         time,
-                        rates
+                        rates,
+                        createdAt: (new Date()).getTime(),
                     }).catch(() => { });
                 });
             } else {
