@@ -26,6 +26,7 @@ const app = express();
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(express.static('web'));
+app.use('/front', express.static('front/public'));
 
 /**
  * Access Control
