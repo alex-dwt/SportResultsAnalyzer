@@ -11,6 +11,7 @@ function parseUrl(index = 0) {
     let tournamentId = urlsToParse[index].id;
     let url = urlsToParse[index].url;
 
+    // request({url, 'proxy':'http://localhost:8123'}, (error, response, body) => {
     request(url, (error, response, body) => {
         console.log('Loading bookmakers matches on ' + url);
 
