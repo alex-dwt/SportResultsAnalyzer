@@ -578,6 +578,14 @@ $(() => {
                     .append('<tr><td colspan="8" style="border-top: 3px solid black">&nbsp;</td></tr>');
             }
             previousDate = value.date;
+
+
+            let bookmakerWarning = '';
+            if (typeof value.bookmakersStats === 'string') {
+                bookmakerWarning = value.bookmakersStats;
+                value.bookmakersStats = null;
+            }
+
             $nextMatchesTable
                 .append(`
                         <tr data-id="${value._id}">
@@ -590,7 +598,10 @@ $(() => {
                             
                             <tr>
                                 <td colspan="6">
-                                <table class="bookmakers-stats-table">
+                                <table class="bookmakers-stats-table ${value.bookmakersStats ? '' : 'not-show-stats'}">
+                                
+                                <tr style="display: block"><td colspan="8">${bookmakerWarning}</td></tr>
+                                
                                 <tr>
                                 <td colspan="8">
                                 <a target="_blank" href="${value.bookmakersStats ? value.bookmakersStats.url : ''}">${value.bookmakersStats ? value.bookmakersStats.homeTeamName : ''} - ${value.bookmakersStats ? value.bookmakersStats.guestTeamName : ''}</a>
