@@ -18,6 +18,7 @@ module.exports = {
 
 
         fs.readdirSync('./teams/').every(file => {
+            let outputFile = './teams-out/' + file;
             file = './teams/' + file;
 
             let contents = fs.readFileSync(file, 'utf8');
@@ -45,9 +46,12 @@ module.exports = {
 
             contents.teamsToDo = contents.teamsToDo.filter(o => o.name !== '');
 
-            fs.writeFile(file, JSON.stringify(contents), function(err) {
-                console.log('Done ' + file);
-            });
+            if (contents.teamNames.length && contents.teamsToDo.length) {
+                fs.writeFile(outputFile, JSON.stringify(contents), function(err) {
+                    console.log('Done ' + outputFile);
+                });
+            }
+
 
             return true;
         });
