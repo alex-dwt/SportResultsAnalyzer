@@ -6,6 +6,7 @@
 
 'use strict';
 const fs = require('fs');
+let unique = require('array-unique');
 
 const parser = require("./parser");
 const fetcher = require("./fetcher");
@@ -22,28 +23,138 @@ const mongoClient = require('mongodb').MongoClient;
 const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
 let mongoDB;
 
+function sortStringsAlphabetically(a, b) {
+    a = a.replace(/ /g, '').toLowerCase();
+    b = b.replace(/ /g, '').toLowerCase();
+    if (a < b) {
+        return -1;
+    }
+    if (a > b) {
+        return 1;
+    }
+    return 0;
+}
+
 function connectDB() {
     mongoClient
         .connect(mongoClientUrl)
         .then((db) => {
-            let collection = db.collection('bookmakers_teams');
-            let contents = fs.readFileSync('./1.json', 'utf8');
-            contents = JSON.parse(contents);
+            fetcher.setMongoDb(db);
 
-            for (const item of contents) {
-                let bookmakerId = 2;
-                let tournamentId = item.tournamentId;
-                let teamId = item.teamId;
-                let id = `${bookmakerId};${tournamentId};${teamId};`;
+            for (const item of URLS.urls) {
 
-                collection.insertOne({
-                    _id: id,
-                    bookmakerId,
-                    tournamentId,
-                    teamId,
-                    teamName: item.teamName,
-                }).catch(() => { });
+                db.collection('bookmakers_matches')
+                    .find({
+                        bookmakerId: 2,
+                        tournamentId: item.id,
+                    })
+                    .toArray((err, result) => {
+                        let teams = [];
+
+                        for (const res of result) {
+                            teams.push(res.guestTeamName.trim().toLowerCase());
+                            teams.push(res.homeTeamName.trim().toLowerCase());
+                        }
+
+                        unique(teams);
+
+                        teams = teams.sort((a, b) => sortStringsAlphabetically(a, b));
+                        let teamsToDo = teams.map(name => ({name, value: ''}));
+
+                        fetcher
+                            .getTeamsList(item.id)
+                            .then((res) => {
+                                let teamNames = res.map(o => `${o.teamName.toLowerCase()}@${o.teamId}`);
+
+                                // correlate already in DB
+                                let correlated = 0;
+                                for (let j = 0; j < teamNames.length; j++) {
+                                    let teamId = parseInt(teamNames[j].substring(teamNames[j].indexOf('@') + 1));
+                                    let teamName = teamNames[j];
+                                    let teamIndex = j;
+
+                                    db.collection('bookmakers_teams')
+                                        .find({
+                                            bookmakerId: 2,
+                                            tournamentId: item.id,
+                                            teamId,
+                                        })
+                                        .toArray((err, result) => {
+                                            if (result.length) {
+                                                for (let i = 0; i < teamsToDo.length; i++) {
+                                                    if (teamsToDo[i].name === result[0].teamName) {
+                                                        teamsToDo[i].value = teamName;
+                                                        teamNames[teamIndex] = '';
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            correlated++;
+                                        });
+                                }
+
+                                setInterval(() => {
+                                    if (correlated === teamNames.length) {
+                                        correlated = -1;
+
+                                        teamNames = teamNames.filter(o => o !== '');
+
+                                        // auto correlate
+                                        for (let i = 0; i < teamsToDo.length; i++) {
+                                            for (let j = 0; j < teamNames.length; j++) {
+                                                if (teamNames[j].indexOf(teamsToDo[i].name + '@') === 0) {
+                                                    teamsToDo[i].value = teamNames[j];
+                                                    teamNames[j] = '';
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        teamNames = teamNames.filter(o => o !== '');
+
+
+                                        // write
+                                        let o = {
+                                            id: item.id,
+                                            url: item.urls[1],
+                                            teamNames,
+                                            teamsToDo,
+                                        };
+
+                                        fs.writeFile('/usr/src/app/teams/' + item.id + '.json', JSON.stringify(o), function(err) {
+                                            console.log('Done');
+                                        });
+                                    }
+                                }, 1000);
+                            });
+                });
             }
+        });
+
+
+
+
+
+            //
+            //
+            //
+            //     let collection = db.collection('bookmakers_teams');
+            // let contents = fs.readFileSync('./1.json', 'utf8');
+            // contents = JSON.parse(contents);
+            //
+            // for (const item of contents) {
+            //     let bookmakerId = 2;
+            //     let tournamentId = item.tournamentId;
+            //     let teamId = item.teamId;
+            //     let id = `${bookmakerId};${tournamentId};${teamId};`;
+            //
+            //     collection.insertOne({
+            //         _id: id,
+            //         bookmakerId,
+            //         tournamentId,
+            //         teamId,
+            //         teamName: item.teamName,
+            //     }).catch(() => { });
+            // }
 
 
             // fs.readdirSync('./teams/').every(file => {
@@ -64,7 +175,7 @@ function connectDB() {
 
 
 
-                    });
+                    // });
 }
 
 

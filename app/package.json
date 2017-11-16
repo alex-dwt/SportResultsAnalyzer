@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "array-includes": "^3.0.3",
+    "array-unique": "^0.3.2",
     "body-parser": "^1.17.2",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.4",
