@@ -127,16 +127,17 @@ app.get('/forecast/:num', (req, res, next) =>
 /**
  * Get site url
  */
-app.get('/site_urls/:tournamentId', (req, res, next) => {
+app.get('/site_urls/:sport/:tournamentId', (req, res, next) => {
     let id = `${req.params.tournamentId}`;
-    let info = URLS.urls.find(o => o.id == id);
+    let sport = `${req.params.sport}`;
+    let info = URLS.sports[sport].urls.find(o => o.id == id);
     let officesUrls = info
         ? info.urls
         : ['/', '/', '/'];
 
     res.json({
-        matchesUrl: createUrl(id, true),
-        scoreTableUrl: createUrl(id),
+        matchesUrl: createUrl(sport, id, true),
+        scoreTableUrl: createUrl(sport, id),
         officesUrls: officesUrls.map((val, index) => eval(`OFFICE${index}_SITE`) + val)
     });
 });
@@ -169,32 +170,38 @@ function connectDB() {
             fetcher.setMongoDb(db);
             mongoDB = db;
 
-            // start parsing bookmakers matches forever
-            parserBookmakersMatches.start(
-                URLS.urls
-                    .filter((o) => o.urls[1] !== '/')
-                    .map((o) => ({
+            let urlsToParseMatches = [];
+            let urlsToParseBookmakers = [];
+            for (const [sport, value] of Object.entries(URLS.sports)) {
+                urlsToParseBookmakers = urlsToParseBookmakers.concat(
+                    value.urls
+                        .filter((o) => o.urls[1] !== '/')
+                        .map((o) => ({
+                            id: o.id,
+                            url: `${OFFICE1_SITE}${o.urls[1]}`,
+                            sport,
+                        }))
+                );
+                urlsToParseMatches = urlsToParseMatches.concat(
+                    value.archive.map((o) => ({
                         id: o.id,
-                        url: `${OFFICE1_SITE}${o.urls[1]}`
+                        url: createUrl(sport, o.id, true),
+                        isArchive: true,
+                        sport,
                     })),
-                mongoDB
-            );
+                    value.urls.map((o) => ({
+                        id: o.id,
+                        url: createUrl(sport, o.id, true),
+                        sport,
+                    }))
+                );
+            }
+
+            // start parsing bookmakers matches forever
+            parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
 
             // start parsing sites forever
-            parser.start(
-                URLS.archive.map((o) => ({
-                    id: o.id,
-                    url: createUrl(o.id, true),
-                    isArchive: true,
-                }))
-                .concat(
-                    URLS.urls.map((o) => ({
-                        id: o.id,
-                        url: createUrl(o.id, true)
-                    }))
-                ),
-                mongoDB
-            );
+            parser.start(urlsToParseMatches, mongoDB);
             
             app.listen(80);
         }).catch((err) =>  {
@@ -203,8 +210,8 @@ function connectDB() {
         });
 }
 
-function createUrl(tournamentId, isMatchesUrl) {
-    let result = `${SITE_URL}/?sport=soccer&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
+function createUrl(sport, tournamentId, isMatchesUrl) {
+    let result = `${SITE_URL}/?sport=${sport}&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
     if (tournamentId.indexOf('r') !== -1) {
         result += 'round';
     } else if (tournamentId.indexOf('s') !== -1) {

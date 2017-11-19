@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const cheerio = require('cheerio');
 const request = require('request');
 
+const SPORT_TYPE_BASKETBALL = 'basketball';
 const HOURS_DIFF = 2;
 const delay = 3 * 60 * 1000; // minutes
 let matchesCollection,
@@ -11,10 +12,11 @@ let matchesCollection,
     urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 2;
+const maxConcurrentlyPhantomCount = 4;
 
 function parseUrl(url) {
     const isArchived = !! url.isArchive;
+    const sport = url.sport;
     let title = '';
     let proc = spawn(
         '/usr/src/app/node_modules/.bin/phantomjs',
@@ -42,12 +44,14 @@ function parseUrl(url) {
                     );
 
                     $('table.matches').find('tr.match').each(function(i, elem) {
+                        let $this = $(this);
+
                         // skip live matches
-                        if ($(this).hasClass('highlight')) {
+                        if ($this.hasClass('highlight')) {
                             return true;
                         }
 
-                        let homeTeamId = $(this).find('.team-a').eq(0).find('a').eq(0).attr('href');
+                        let homeTeamId = $this.find('.team-a').eq(0).find('a').eq(0).attr('href');
                         let pos = homeTeamId.indexOf('&id=');
                         if (pos !== -1) {
                             homeTeamId = parseInt(homeTeamId.substring(pos + 4));
@@ -55,8 +59,8 @@ function parseUrl(url) {
                                 return true;
                             }
                         }
-                        let homeTeamName = $(this).find('.team-a').eq(0).text().trim();
-                        let guestTeamId = $(this).find('.team-b').eq(0).find('a').eq(0).attr('href');
+                        let homeTeamName = $this.find('.team-a').eq(0).text().trim();
+                        let guestTeamId = $this.find('.team-b').eq(0).find('a').eq(0).attr('href');
                         pos = guestTeamId.indexOf('&id=');
                         if (pos !== -1) {
                             guestTeamId = parseInt(guestTeamId.substring(pos + 4));
@@ -64,33 +68,35 @@ function parseUrl(url) {
                                 return true;
                             }
                         }
-                        let guestTeamName = $(this).find('.team-b').eq(0).text().trim();
-                        let date = $(this).find('.date').eq(0).text().trim();
+                        let guestTeamName = $this.find('.team-b').eq(0).text().trim();
+                        let date = $this.find('.date').eq(0).text().trim();
                         date = date.split('/');
                         date = new Date(date[1] + '/' + date[0] + '/' + date[2]);
                         date.setHours(0, 0, 0, 0);
 
-                        let score = $(this).find('.score-time').eq(0).text().trim();
+                        let scoreLine = $this.find('.score-time').eq(0);
+                        let score = scoreLine.find('.scoring');
 
                         // check match is in future
-                        if (score.indexOf(':') !== -1) {
+                        if (!score.length) {
                             if (isArchived) {
                                 return true;
                             }
 
                             // correct date
-                            let time = score.split(':');
+                            let time = scoreLine.text().trim().split(':');
                             if (time.length !== 2) {
                                 return true;
                             }
                             date.setHours(time[0].trim(), time[1].trim(), 0, 0);
                             date.addHours(HOURS_DIFF);
-                            score = `${date.getHours()}:${time[1].trim()}`;
+                            time = `${date.getHours()}:${time[1].trim()}`;
                             date.setHours(0, 0, 0, 0);
 
                             if (date <= (new Date()).setDate((new Date()).getDate() + 4)) {
                                 scheduleCollection.insertOne({
-                                    _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
+                                    _id: `${sport};${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
+                                    sport,
                                     tournamentId: url.id,
                                     tournamentName: `${title} (${url.id})`,
                                     homeTeamId,
@@ -98,14 +104,14 @@ function parseUrl(url) {
                                     guestTeamId,
                                     guestTeamName,
                                     date,
-                                    time: score
+                                    time,
                                 }).catch(() => { });
                             }
 
                             return true;
                         }
 
-                        score = score.split('-');
+                        score = score.text().trim().split('-');
                         if (score.length !== 2) {
                             return true;
                         }
@@ -117,8 +123,9 @@ function parseUrl(url) {
                             return true;
                         }
 
-                        matchesCollection.insertOne({
-                            _id: `${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};${+ isArchived};`,
+                        let item = {
+                            _id: `${sport};${date.getTime()};${url.id};${homeTeamId};${homeScore};${guestTeamId};${guestScore};${+ isArchived};`,
+                            sport,
                             tournamentId: (isArchived ? 'a' : '') + url.id,
                             tournamentName: `${title} (${url.id})`,
                             homeTeamId,
@@ -129,11 +136,15 @@ function parseUrl(url) {
                             guestScore,
                             date,
                             isArchived,
-                        }).catch(() => { });
+                        };
+                        if (sport === SPORT_TYPE_BASKETBALL) {
+                            item = {...item, overtime: !! scoreLine.find('.score-addition').length};
+                        }
+                        matchesCollection.insertOne(item).catch(() => { });
 
                         if (!isArchived) {
                             scheduleCollection.remove({
-                                _id: `${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
+                                _id: `${sport};${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`
                             }).catch(() => { });
                         }
                     });
@@ -147,7 +158,7 @@ function parseUrl(url) {
     proc.on('close', () => {
         if (isArchived) {
             archiveCompletedCollection.insertOne({
-                _id: `${url.id}`,
+                _id: `${url.sport};${url.id}`,
             }).catch(() => { });
         }
 
@@ -169,7 +180,7 @@ async function startBunchParsing(isFirstTime) {
         let i = currentUrlIndex;
 
         if ((urlsToParse[i].isArchive || false) &&
-            (await isTournamentAlreadyArchived(urlsToParse[i].id))
+            (await isTournamentAlreadyArchived(urlsToParse[i].sport, urlsToParse[i].id))
         ) {
             ;
         } else {
@@ -187,10 +198,10 @@ async function startBunchParsing(isFirstTime) {
     setTimeout(startBunchParsing, 30000);
 }
 
-function isTournamentAlreadyArchived(tournamentId) {
+function isTournamentAlreadyArchived(sport, tournamentId) {
     return new Promise((resolve) => {
         archiveCompletedCollection
-            .find({_id: `${tournamentId}` })
+            .find({_id: `${sport};${tournamentId}` })
             .toArray((err, result) => {
                 resolve(!!result.length);
             });
@@ -200,7 +211,7 @@ function isTournamentAlreadyArchived(tournamentId) {
 Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
-}
+};
 
 module.exports = {
     start(urls, mongoDB) {

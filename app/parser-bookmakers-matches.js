@@ -10,6 +10,7 @@ let bookmakersMatchesCollection,
 function parseUrl(index = 0) {
     let tournamentId = urlsToParse[index].id;
     let url = urlsToParse[index].url;
+    const sport = urlsToParse[index].sport;
 
     // request({url, 'proxy':'http://localhost:8123'}, (error, response, body) => {
     request(url, (error, response, body) => {
@@ -137,6 +138,7 @@ function parseUrl(index = 0) {
                     }
 
                     bookmakersMatchesCollection.insertOne({
+                        sport,
                         bookmakerId: 2,
                         url,
                         tournamentId,
@@ -168,7 +170,7 @@ function parseUrl(index = 0) {
 Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
-}
+};
 
 module.exports = {
     start(urls, mongoDB) {
