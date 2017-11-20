@@ -19,6 +19,13 @@
     <div class="container">
         <h3 class="text-muted"></h3>
 
+        <label for="sport">Sport</label>
+        <select class="form-control" id="sport" style="margin-bottom: 20px;">
+            <option></option>
+            <option value="soccer">Football</option>
+            <option value="basketball">Basketball</option>
+        </select>
+
         <ul class="nav nav-tabs" role="tablist" id="nav-tabs-div">
             <li class="nav-item"><a class="nav-link active " data-toggle="tab" href="#played-matches-section" role="tab" onclick="setTimeout(() => {$('#score-table-tab-label').click(); $('#next-matches-section').removeClass('active')}, 200)">Played Matches</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#next-matches-section" role="tab">Next Matches</a></li>

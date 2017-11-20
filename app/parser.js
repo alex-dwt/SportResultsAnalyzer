@@ -12,7 +12,7 @@ let matchesCollection,
     urlsToParse;
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 4;
+const maxConcurrentlyPhantomCount = 2;
 
 function parseUrl(url) {
     const isArchived = !! url.isArchive;

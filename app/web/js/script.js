@@ -49,6 +49,10 @@ $(() => {
     let $scoreTable = $('#score-table').find('tbody').eq(0);
     let $allMatchesTable = $('#all-matches-table').find('tbody').eq(0);
     let $teamMatchesTable = $('#team-matches-table').find('tbody').eq(0);
+    let $sportSelector = $('#sport').change(() => {
+        $tournamentsSelector.val('').change();
+        fillTournamentsSelector();
+    });
     let $tournamentsSelector = $('#tournaments').change(() => {
         let id = $tournamentsSelector.val();
         fillTeamsSelector(id);
@@ -57,7 +61,7 @@ $(() => {
         buildTeamMatchesTable();
         // set links to external site
         if (id) {
-            ajaxCall(`/site_urls/${id}`).done((data) => {
+            ajaxCall(`/site_urls/${$sportSelector.val()}/${id}`).done((data) => {
                 $openScoreTableHref.attr('href', data.scoreTableUrl);
                 $openMatchesTableHref.attr('href', data.matchesUrl);
                 $openScoreTableHref.add($openMatchesTableHref).show();
@@ -165,6 +169,12 @@ $(() => {
             }
             val = Math.round((val + 0.01) * 100) / 100;
         }
+
+        val = 1;
+        while (val <= 10) {
+            $(el).append($('<option></option>').val(val).text(val));
+            val++;
+        }
     });
     for (let el of ['forecast-2-limit', 'forecast-2-max-teams', 'forecast-2-max-matches']) {
         $('#' + el).change(() => {
@@ -182,15 +192,20 @@ $(() => {
     ];
 
     function fillTournamentsSelector() {
-        $tournamentsSelector.empty().append($('<option></option>').val(''));
-        ajaxCall('/tournaments').done((data) => {
+        $tournamentsSelector.empty();
+        if (!$sportSelector.val()) {
+            return;
+        }
+
+        $tournamentsSelector.append($('<option></option>').val(''));
+        ajaxCall('/tournaments/' + $sportSelector.val()).done((data) => {
             $.each(data, (key, value) => {
                 $tournamentsSelector
                     .append($('<option></option>')
                     .val(value.tournamentId)
                     .text(value.tournamentName));
             });
-            ajaxCall('/tournaments', {isArchived: 1}).done((data) => {
+            ajaxCall('/tournaments/' + $sportSelector.val(), {isArchived: 1}).done((data) => {
                 $tournamentsSelector.append($('<option disabled>──────────</option>'));
                 $.each(data, (key, value) => {
                     $tournamentsSelector
@@ -211,7 +226,7 @@ $(() => {
             return;
         }
 
-        ajaxCall('/teams/' + tournamentId).done((data) => {
+        ajaxCall('/teams/' + $sportSelector.val() + '/' + tournamentId).done((data) => {
             $.each(data, (key, value) => {
                 for (const selector of teamSelectors) {
                     selector
@@ -230,7 +245,7 @@ $(() => {
             return;
         }
 
-        ajaxCall('/score-table/' + tournamentId).done((data) => {
+        ajaxCall('/score-table/' + $sportSelector.val() + '/' + tournamentId).done((data) => {
             $.each(data, (key, value) => {
                 $scoreTable
                     .append(`
@@ -265,7 +280,7 @@ $(() => {
             return;
         }
 
-        ajaxCall('/all-matches-table/' + tournamentId).done((data) => {
+        ajaxCall('/all-matches-table/' + $sportSelector.val() + '/' + tournamentId).done((data) => {
             $.each(data, (key, value) => {
                 $allMatchesTable
                     .append(`
@@ -299,7 +314,7 @@ $(() => {
             return;
         }
 
-        ajaxCall('/team-matches-table/' + tournamentId + '/' + teamId).done((data) => {
+        ajaxCall('/team-matches-table/' + $sportSelector.val() + '/' + tournamentId + '/' + teamId).done((data) => {
             $.each(data, (key, value) => {
                 let res = 0;
                 if (parseInt(teamId) === value.homeTeamId) {
@@ -335,6 +350,7 @@ $(() => {
         ajaxCall(
             '/forecast/1',
             {
+                sport: $sportSelector.val(),
                 tournamentId: $tournamentsSelector.val(),
                 teamAId,
                 teamBId,
@@ -388,6 +404,7 @@ $(() => {
         ajaxCall(
             '/forecast/4',
             {
+                sport: $sportSelector.val(),
                 tournamentId: $tournamentsSelector.val(),
                 teamAId,
                 teamBId,
@@ -438,6 +455,7 @@ $(() => {
 
     function getForecast2(teamAId, teamBId) {
         let queryParams = {
+            sport: $sportSelector.val(),
             tournamentId: $tournamentsSelector.val(),
             teamAId,
             teamBId
@@ -504,6 +522,7 @@ $(() => {
         ajaxCall(
             '/forecast/3',
             {
+                sport: $sportSelector.val(),
                 tournamentId: $tournamentsSelector.val(),
                 teamAId,
                 teamBId,
@@ -556,11 +575,9 @@ $(() => {
     }
 
 
-    fillTournamentsSelector();
-
     // next matches tab
     let $nextMatchesTable = $('#next-matches-table').find('tbody').eq(0);
-    ajaxCall('/next-matches').done((data) => {
+    ajaxCall('/next-matches/soccer').done((data) => {
         $nextMatchesTable.empty();
         let previousDate = null;
         $.each(data.items, (key, value) => {

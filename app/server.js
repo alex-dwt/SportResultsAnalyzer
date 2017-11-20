@@ -61,27 +61,28 @@ app.use(function(req, res, next) {
 /**
  * List of tournaments
  */
-app.get('/tournaments', (req, res, next) =>
+app.get('/tournaments/:sport', (req, res, next) =>
     fetcher
-        .getTournamentsList(!!req.query.isArchived)
+        .getTournamentsList(req.params.sport, !!req.query.isArchived)
         .then((result) => res.json(result))
 );
 
 /**
  * List of teams in tournament
  */
-app.get('/teams/:tournamentId', (req, res, next) =>
+app.get('/teams/:sport/:tournamentId', (req, res, next) =>
     fetcher
-        .getTeamsList(req.params.tournamentId)
+        .getTeamsList(req.params.sport, req.params.tournamentId)
         .then((result) => res.json(result))
 );
 
 /**
  * Score table of tournament
  */
-app.get('/score-table/:tournamentId', (req, res, next) =>
+app.get('/score-table/:sport/:tournamentId', (req, res, next) =>
     fetcher
         .getTournamentResults(
+            req.params.sport,
             req.params.tournamentId,
             {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill}
         )
@@ -91,9 +92,10 @@ app.get('/score-table/:tournamentId', (req, res, next) =>
 /**
  * All matches of tournament
  */
-app.get('/all-matches-table/:tournamentId', (req, res, next) =>
+app.get('/all-matches-table/:sport/:tournamentId', (req, res, next) =>
     fetcher
         .getTournamentMatches(
+            req.params.sport,
             req.params.tournamentId,
             {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill},
             true
@@ -104,9 +106,10 @@ app.get('/all-matches-table/:tournamentId', (req, res, next) =>
 /**
  * All matches of one team in tournament
  */
-app.get('/team-matches-table/:tournamentId/:teamId', (req, res, next) =>
+app.get('/team-matches-table/:sport/:tournamentId/:teamId', (req, res, next) =>
     fetcher
         .getTeamMatches(
+            req.params.sport,
             req.params.tournamentId,
             req.params.teamId,
             {dateFrom: req.query.dateFrom, dateTill: req.query.dateTill},
@@ -145,8 +148,8 @@ app.get('/site_urls/:sport/:tournamentId', (req, res, next) => {
 /**
  * Forecast for next matches
  */
-app.get('/next-matches', (req, res, next) =>
-    fetcher.getNextMatches().then((result) => res.json(result))
+app.get('/next-matches/:sport', (req, res, next) =>
+    fetcher.getNextMatches(req.params.sport).then((result) => res.json(result))
 );
 
 /**
@@ -198,7 +201,7 @@ function connectDB() {
             }
 
             // start parsing bookmakers matches forever
-            parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
+            // parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
 
             // start parsing sites forever
             parser.start(urlsToParseMatches, mongoDB);
