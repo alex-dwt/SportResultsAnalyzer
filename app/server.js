@@ -149,7 +149,7 @@ app.get('/site_urls/:sport/:tournamentId', (req, res, next) => {
  * Forecast for next matches
  */
 app.get('/next-matches/:sport', (req, res, next) =>
-    fetcher.getNextMatches(req.params.sport).then((result) => res.json(result))
+    fetcher.getNextMatches(req.params.sport, req.query.date).then((result) => res.json(result))
 );
 
 /**
