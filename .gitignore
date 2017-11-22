@@ -3,3 +3,4 @@ app/fetcher.js
 app/package-lock.json
 app/front/node_modules
 app/front/package-lock.json
+app/front/public/bundle.js
