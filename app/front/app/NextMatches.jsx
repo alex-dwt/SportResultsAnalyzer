@@ -6,11 +6,20 @@ import { Table } from 'semantic-ui-react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Dropdown } from 'semantic-ui-react'
-
-// stateOptions = [ { key: 'AL', value: 'AL', text: 'Alabama' }, ...  ]
-
+import ScoreTable from './ScoreTable.jsx';
+import MatchForecastsOverall from './MatchForecastsOverall.jsx';
 
 import 'react-datepicker/dist/react-datepicker.css';
+
+axios.interceptors.request.use((config) => {
+    let params = config.params || {};
+    params.password = getParameterByName('password');
+    params.timestamp = + new Date();
+    params.dateFrom = '2000-01-01';
+    params.dateTill = '2020-12-31';
+
+    return {...config, params};
+});
 
 export default class extends React.Component {
     constructor(props) {
@@ -26,7 +35,7 @@ export default class extends React.Component {
 
     handleClick() {
         axios
-            .get('http://localhost/next-matches/soccer?password=password&dateFrom=2000-01-01&dateTill=2017-12-31&date=' + this.state.date.format('YYYY-MM-DD'))
+            .get('http://localhost/next-matches/soccer?date=' + this.state.date.format('YYYY-MM-DD'))
             .then((res) => {
                 let ids = [];
                 this.setState({
@@ -57,6 +66,10 @@ export default class extends React.Component {
     }
 
     render() {
+        let activeColumns = {
+
+        };
+
         return (
             <div>
                 <DatePicker
@@ -73,25 +86,74 @@ export default class extends React.Component {
 
                 <p>Total matches: {this.state.matchesData.items.length}</p>
 
-                {this.state.matchesData.items.map((item) =>
-                    <div key={item._id} style={{marginBottom: '5px'}}>
-                        <Table fixed>
-                            <Table.Body>
-                                <Table.Row>
-                                    <Table.Cell>{item.tournamentName}</Table.Cell>
-                                    <Table.Cell>{item.date.slice(0, 10)} {item.time}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell>{item.homeTeamName}</Table.Cell>
-                                    <Table.Cell>{item.guestTeamName}</Table.Cell>
-                                </Table.Row>
-                            </Table.Body>
-                        </Table>
-                    </div>
-                )}
+                {this.state.matchesData.items.map((item) => {
+                    let teamsVar = item.homeTeamId + '-' + item.guestTeamId;
+                    return (
+                        <div key={item._id} style={{marginBottom: '40px'}}>
+                            <Table fixed>
+                                <Table.Body>
 
+                                    <Table.Row>
+                                        <Table.Cell style={{width: '50px'}}>
+                                            <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {item.tournamentName}<br/>
+                                            {item.date.slice(0, 10)} {item.time}
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {item.homeTeamName}<br/>
+                                            {this.state.matchesData.statistics[item.tournamentId].teams[item.homeTeamId].statistics.serial.join(' ').toUpperCase()}
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {item.guestTeamName}<br/>
+                                            {this.state.matchesData.statistics[item.tournamentId].teams[item.guestTeamId].statistics.serial.join(' ').toUpperCase()}
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <span className={'team-position'}>
+                                                {this.state.matchesData.statistics[item.tournamentId].teams[teamsVar]}
+                                                /
+                                                {this.state.matchesData.statistics[item.tournamentId]['positionsCount']}
+                                            </span>
+                                        </Table.Cell>
+                                        <Table.Cell style={{width: '390px'}}>
+                                            <MatchForecastsOverall forecasts={item.scores}/>
+                                        </Table.Cell>
+                                    </Table.Row>
+
+                                    <Table.Row>
+                                        <Table.Cell colSpan='6'>
+                                            <ScoreTable
+                                                activeRows={{
+                                                    [item.homeTeamId]: "home",
+                                                    [item.guestTeamId]: "guest"
+                                                }}
+                                                items={[
+                                                    this.state.matchesData.statistics[item.tournamentId].teams[item.homeTeamId],
+                                                    this.state.matchesData.statistics[item.tournamentId].teams[item.guestTeamId],
+                                                ].sort((a, b) => a.position - b.position)}
+                                            />
+                                        </Table.Cell>
+                                    </Table.Row>
+
+                                </Table.Body>
+                            </Table>
+                        </div>
+                        );
+                    }
+                )}
 
             </div>
         );
     }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }

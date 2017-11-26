@@ -1,0 +1,30 @@
+p {
+    margin: 0;
+}
+
+
+
+
+.make-favorite-game-sign {
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.make-favorite-game-sign:hover {
+    transform: scale(1.5);
+}
+
+.icon-star {
+    transform: scale(2);
+}
+
+
+
+
+
+.forecast4-canvas {
+    width: 370px;
+    height: 70px;
+    margin-bottom: -5px;
+}
