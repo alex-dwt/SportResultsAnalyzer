@@ -5,10 +5,13 @@
 version: '3.3'
 services:
   node:
-    image: "node:8"
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: "bash -c '
-      cd /usr/src/app ;
       [ ! -d 'node_modules' ] && npm install ;
+      service tor start &
+      polipo socksParentProxy=localhost:9050 &
       npm start
       '"
 #    command: bash -c 'sleep 10000'

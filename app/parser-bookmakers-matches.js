@@ -12,8 +12,8 @@ function parseUrl(index = 0) {
     let url = urlsToParse[index].url;
     const sport = urlsToParse[index].sport;
 
-    //request({url, 'proxy':'http://localhost:8123', agentOptions: {rejectUnauthorized: false}}, (error, response, body) => {
-   request(url, (error, response, body) => {
+    request({url, 'proxy':'http://localhost:8123', agentOptions: {rejectUnauthorized: false}}, (error, response, body) => {
+   // request(url, (error, response, body) => {
         console.log('Loading bookmakers matches on ' + url);
 
         if (!error && response.statusCode === 200) {
@@ -162,7 +162,7 @@ function parseUrl(index = 0) {
             setTimeout(() => parseUrl(), delay);
         } else {
             let i = index;
-            setTimeout(() => parseUrl(i), 2000);
+            setTimeout(() => parseUrl(i), 20000);
         }
     });
 }

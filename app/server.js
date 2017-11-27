@@ -201,7 +201,7 @@ function connectDB() {
             }
 
             // start parsing bookmakers matches forever
-            // parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
+            parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
 
             // start parsing sites forever
             parser.start(urlsToParseMatches, mongoDB);
