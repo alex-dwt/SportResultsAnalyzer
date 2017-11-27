@@ -8,6 +8,7 @@ import moment from 'moment';
 import { Dropdown } from 'semantic-ui-react'
 import ScoreTable from './ScoreTable.jsx';
 import MatchForecastsOverall from './MatchForecastsOverall.jsx';
+import BookmakerStatsTable from './BookmakerStatsTable.jsx';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -66,10 +67,6 @@ export default class extends React.Component {
     }
 
     render() {
-        let activeColumns = {
-
-        };
-
         return (
             <div>
                 <DatePicker
@@ -138,6 +135,8 @@ export default class extends React.Component {
 
                                 </Table.Body>
                             </Table>
+
+                            <BookmakerStatsTable data={item.bookmakersStats}/>
                         </div>
                         );
                     }
