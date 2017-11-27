@@ -9,6 +9,7 @@ import { Dropdown } from 'semantic-ui-react'
 import ScoreTable from './ScoreTable.jsx';
 import MatchForecastsOverall from './MatchForecastsOverall.jsx';
 import BookmakerStatsTable from './BookmakerStatsTable.jsx';
+import { Tab } from 'semantic-ui-react'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -89,7 +90,6 @@ export default class extends React.Component {
                         <div key={item._id} style={{marginBottom: '40px'}}>
                             <Table fixed>
                                 <Table.Body>
-
                                     <Table.Row>
                                         <Table.Cell style={{width: '50px'}}>
                                             <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
@@ -100,43 +100,48 @@ export default class extends React.Component {
                                         </Table.Cell>
                                         <Table.Cell>
                                             {item.homeTeamName}<br/>
-                                            {this.state.matchesData.statistics[item.tournamentId].teams[item.homeTeamId].statistics.serial.join(' ').toUpperCase()}
+                                            {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.homeTeamId)[0].statistics.serial.join(' ').toUpperCase()}
                                         </Table.Cell>
                                         <Table.Cell>
                                             {item.guestTeamName}<br/>
-                                            {this.state.matchesData.statistics[item.tournamentId].teams[item.guestTeamId].statistics.serial.join(' ').toUpperCase()}
+                                            {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.guestTeamId)[0].statistics.serial.join(' ').toUpperCase()}
                                         </Table.Cell>
                                         <Table.Cell>
                                             <span className={'team-position'}>
-                                                {this.state.matchesData.statistics[item.tournamentId].teams[teamsVar]}
-                                                /
-                                                {this.state.matchesData.statistics[item.tournamentId]['positionsCount']}
+                                                {this.state.matchesData.statistics[item.tournamentId].teams[teamsVar]}/{this.state.matchesData.statistics[item.tournamentId].tournamentResults.length}
                                             </span>
                                         </Table.Cell>
-                                        <Table.Cell style={{width: '390px'}}>
-                                            <MatchForecastsOverall forecasts={item.scores}/>
-                                        </Table.Cell>
                                     </Table.Row>
-
-                                    <Table.Row>
-                                        <Table.Cell colSpan='6'>
-                                            <ScoreTable
-                                                activeRows={{
-                                                    [item.homeTeamId]: "home",
-                                                    [item.guestTeamId]: "guest"
-                                                }}
-                                                items={[
-                                                    this.state.matchesData.statistics[item.tournamentId].teams[item.homeTeamId],
-                                                    this.state.matchesData.statistics[item.tournamentId].teams[item.guestTeamId],
-                                                ].sort((a, b) => a.position - b.position)}
-                                            />
-                                        </Table.Cell>
-                                    </Table.Row>
-
                                 </Table.Body>
                             </Table>
 
-                            <BookmakerStatsTable data={item.bookmakersStats}/>
+                            <Tab panes={[
+                                { menuItem: 'Total', pane: {
+                                    key: item._id + '-tab1',
+                                    content: (
+                                        <div>
+                                            <BookmakerStatsTable data={item.bookmakersStats}/>
+                                            <MatchForecastsOverall forecasts={item.scores}/>
+                                            <ScoreTable
+                                                activeRows={{[item.homeTeamId]: "home", [item.guestTeamId]: "guest"}}
+                                                items={this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter(
+                                                    (team) => team.teamId === item.homeTeamId || team.teamId === item.guestTeamId
+                                                )}
+                                            />
+                                        </div>
+                                    )
+                                }},
+                                { menuItem: 'Score Table', pane: {
+                                    key: item._id + '-tab2',
+                                    content: (
+                                        <ScoreTable
+                                            activeRows={{[item.homeTeamId]: "whole", [item.guestTeamId]: "whole"}}
+                                            items={this.state.matchesData.statistics[item.tournamentId].tournamentResults}
+                                        />
+                                    )
+                                }},
+                            ]} renderActiveOnly={false} />
+
                         </div>
                         );
                     }

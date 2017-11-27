@@ -30,7 +30,7 @@ export default class extends React.Component {
                 </Table.Header>
                 <Table.Body>
                     {this.props.items.map((item) =>
-                        <Table.Row key={item.teamId}>
+                        <Table.Row key={item.teamId} active={activeRows[item.teamId] && activeRows[item.teamId] === 'whole'}>
                             <Table.Cell>{item.position}. {item.teamName}</Table.Cell>
                             <Table.Cell>{item.statistics.mp}</Table.Cell>
                             <Table.Cell>{item.statistics.w}</Table.Cell>
