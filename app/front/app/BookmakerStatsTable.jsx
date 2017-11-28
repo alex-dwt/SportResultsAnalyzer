@@ -8,7 +8,7 @@ export default class extends React.Component {
 
         if (typeof data === 'string') {
             return (
-                <Table fixed>
+                <Table fixed celled className={'bookmaker-stats-table'}>
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>
@@ -20,7 +20,7 @@ export default class extends React.Component {
             );
         } else {
             return (
-                <Table fixed>
+                <Table fixed celled className={'bookmaker-stats-table'}>
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell colSpan='8'>

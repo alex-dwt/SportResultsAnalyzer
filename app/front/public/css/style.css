@@ -28,3 +28,29 @@ p {
     height: 70px;
     margin-bottom: -5px;
 }
+
+
+.next-match-div {
+    background-color: #e9ecef;
+    padding: 5px 17px;
+    border-radius: 20px;
+    margin-top: 40px;
+}
+
+.bookmaker-stats-table {
+    text-align: center !important;
+    margin: 0 auto !important;
+    max-width: 1000px;
+}
+
+.match-forecasts-overall-div {
+    margin: 10px 0;
+}
+
+.next-match-grid {
+    margin: 5px !important;
+}
+
+.next-match-grid div {
+    text-align: center !important;
+}

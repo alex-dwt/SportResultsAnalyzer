@@ -30,7 +30,7 @@ export default class extends React.Component {
         }
         
         return (
-            <div>
+            <div className={'match-forecasts-overall-div'}>
                 {result}
             </div>
         );

@@ -10,6 +10,7 @@ import ScoreTable from './ScoreTable.jsx';
 import MatchForecastsOverall from './MatchForecastsOverall.jsx';
 import BookmakerStatsTable from './BookmakerStatsTable.jsx';
 import { Tab } from 'semantic-ui-react'
+import { Grid, Image } from 'semantic-ui-react'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -32,6 +33,12 @@ export default class extends React.Component {
             matchesData: {
                 items: []
             }
+        };
+        this.filters = {
+            strongerTeam: getFilterItems([
+                { key: 'home', value: 'home', text: 'Home' },
+                { key: 'guest', value: 'guest', text: 'Guest' },
+            ]),
         };
     }
 
@@ -70,50 +77,67 @@ export default class extends React.Component {
     render() {
         return (
             <div>
-                <DatePicker
-                    locale="ru"
-                    selected={this.state.date}
-                    onChange={(e) => this.handleChangeDate(e)}
-                />
+                <div className={'next-match-div'}>
+                    <Grid columns={3} divided>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <DatePicker locale="ru" selected={this.state.date} onChange={(e) => this.handleChangeDate(e)}/>
+                                <Button onClick={(e) => this.handleClick(e)}>Load</Button>
+                                <p>Total matches: {this.state.matchesData.items.length}</p>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <p>Which team is stronger</p>
+                                <Dropdown selection options={this.filters.strongerTeam} defaultValue="-"/>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Dropdown placeholder='Tournament' search selection options={this.state.tournaments} defaultValue="-" />
+                            </Grid.Column>
+                        </Grid.Row>
 
-                <Button onClick={(e) => this.handleClick(e)}>
-                    Load
-                </Button>
+                        <Grid.Row>
+                            <Grid.Column>
+                            </Grid.Column>
+                            <Grid.Column>
+                            </Grid.Column>
+                            <Grid.Column>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                </div>
 
-                <Dropdown placeholder='Tournament' search selection options={this.state.tournaments} defaultValue="-" />
-
-                <p>Total matches: {this.state.matchesData.items.length}</p>
-
-                {this.state.matchesData.items.map((item) => {
+                {this.state.matchesData.items.map((item, index) => {
                     let teamsVar = item.homeTeamId + '-' + item.guestTeamId;
                     return (
-                        <div key={item._id} style={{marginBottom: '40px'}}>
-                            <Table fixed>
-                                <Table.Body>
-                                    <Table.Row>
-                                        <Table.Cell style={{width: '50px'}}>
-                                            <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {item.tournamentName}<br/>
-                                            {item.date.slice(0, 10)} {item.time}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {item.homeTeamName}<br/>
-                                            {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.homeTeamId)[0].statistics.serial.join(' ').toUpperCase()}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {item.guestTeamName}<br/>
-                                            {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.guestTeamId)[0].statistics.serial.join(' ').toUpperCase()}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            <span className={'team-position'}>
-                                                {this.state.matchesData.statistics[item.tournamentId].teams[teamsVar]}/{this.state.matchesData.statistics[item.tournamentId].tournamentResults.length}
-                                            </span>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                </Table.Body>
-                            </Table>
+                        <div key={item._id} className={'next-match-div'}>
+                            <p style={{marginTop: '10px', fontWeight: 'bold'}}>
+                                Match #{index +1} of {this.state.matchesData.items.length}
+                            </p>
+
+
+                            <Grid columns={5} stretched divided textAlign={'center'} verticalAlign={'middle'} className={'next-match-grid'}>
+                                <Grid.Row>
+                                    <Grid.Column width={1}>
+                                        <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
+                                    </Grid.Column>
+                                    <Grid.Column>
+                                        {item.tournamentName}<br/>
+                                        {item.date.slice(0, 10)} {item.time}
+                                    </Grid.Column>
+                                    <Grid.Column>
+                                        {item.homeTeamName}<br/>
+                                        {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.homeTeamId)[0].statistics.serial.join(' ').toUpperCase()}
+                                    </Grid.Column>
+                                    <Grid.Column>
+                                        {item.guestTeamName}<br/>
+                                        {this.state.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.guestTeamId)[0].statistics.serial.join(' ').toUpperCase()}
+                                    </Grid.Column>
+                                    <Grid.Column width={1}>
+                                        <span className={'team-position'}>
+                                            {this.state.matchesData.statistics[item.tournamentId].teams[teamsVar]}/{this.state.matchesData.statistics[item.tournamentId].tournamentResults.length}
+                                        </span>
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
 
                             <Tab panes={[
                                 { menuItem: 'Total', pane: {
@@ -150,6 +174,10 @@ export default class extends React.Component {
             </div>
         );
     }
+}
+
+function getFilterItems(items) {
+    return [{ key: '-', value: '-', text: '-' }].concat(items);
 }
 
 function getParameterByName(name, url) {
