@@ -7,6 +7,7 @@
 'use strict';
 
 const parser = require("./parser");
+const compression = require('compression');
 const parserBookmakersMatches = require("./parser-bookmakers-matches");
 const fetcher = require("./fetcher");
 const express = require("express");
@@ -24,6 +25,7 @@ let mongoDB;
 
 const app = express();
 // app.use(bodyParser.json());
+app.use(compression());
 app.use(bodyParser.urlencoded());
 app.use(express.static('web'));
 app.use('/front', express.static('front/public'));
