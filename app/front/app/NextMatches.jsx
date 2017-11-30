@@ -53,6 +53,22 @@ export default class extends React.Component {
                 },
                 value: '',
             },
+            {
+                label: 'Positions difference (min)',
+                values: generateDigitsFilterValues(30),
+                filterCallback: (itemToFilter, value) => {
+                    return Math.abs(this.matchesData.statistics[itemToFilter.tournamentId].teams[`${itemToFilter.homeTeamId}-${itemToFilter.guestTeamId}`]) >= value;
+                },
+                value: '',
+            },
+            {
+                label: 'Positions difference (max)',
+                values: generateDigitsFilterValues(30),
+                filterCallback: (itemToFilter, value) => {
+                    return Math.abs(this.matchesData.statistics[itemToFilter.tournamentId].teams[`${itemToFilter.homeTeamId}-${itemToFilter.guestTeamId}`]) <= value;
+                },
+                value: '',
+            },
         ];
     }
 
@@ -70,16 +86,10 @@ export default class extends React.Component {
 
     handleFilterClick() {
         let filteredItems = this.matchesData.items;
-        let isChanged = false;
         for(const filter of this.filters) {
-            if (filter.value) {
-                filteredItems = filteredItems.filter(item => filter.filterCallback(item, filter.value));
-                isChanged = true;
-            }
+            filteredItems = filteredItems.filter(item => filter.value ? filter.filterCallback(item, filter.value) : true);
         }
-        if (isChanged) {
-            this.setState({filteredItems});
-        }
+        this.setState({filteredItems});
     }
 
     handleFilterOnChange(value, index) {
@@ -96,11 +106,11 @@ export default class extends React.Component {
         return (
             <div>
                 <div className={'next-match-div'}>
-                    <Grid columns={3} divided>
-                        <Grid.Row>
+                    <Grid divided>
                             <Grid.Column>
                                 <DatePicker locale="ru" selected={this.state.date} onChange={(e) => this.handleChangeDate(e)}/>
                                 <Button onClick={(e) => this.handleClick(e)}>Load</Button>
+                                <Button onClick={(e) => this.handleFilterClick(e)}>Filter</Button>
                                 <p>Total matches: {this.state.itemsCount}</p>
                                 <p>Filtered matches: {this.state.filteredItems.length}</p>
                             </Grid.Column>
@@ -118,19 +128,13 @@ export default class extends React.Component {
                                     </Grid.Column>
                                 );
                             })}
-
-                            <Grid.Column>
-                                <Button onClick={(e) => this.handleFilterClick(e)}>Filter</Button>
-                            </Grid.Column>
-                        </Grid.Row>
-
                     </Grid>
                 </div>
 
                 {this.state.filteredItems.map((item, index) => {
                     let teamsVar = item.homeTeamId + '-' + item.guestTeamId;
                     return (
-                        <div key={item._id} className={'next-match-div'}>
+                        <div key={item._id} className={'next-match-div-one-match'}>
                             <p style={{marginTop: '10px', fontWeight: 'bold'}}>
                                 Match #{index +1} of {this.state.filteredItems.length}
                             </p>
@@ -209,4 +213,13 @@ function getParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function generateDigitsFilterValues(count) {
+    let items = [];
+    for (let i = 1; i <= count; i++) {
+        items.push({ value: i, text: i })
+    }
+
+    return getFilterItems(items);
 }

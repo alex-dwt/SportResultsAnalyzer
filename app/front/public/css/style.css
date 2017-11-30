@@ -30,11 +30,22 @@ p {
 }
 
 
-.next-match-div {
+.next-match-div-one-match {
     background-color: #e9ecef;
     padding: 5px 17px;
     border-radius: 20px;
     margin-top: 40px;
+}
+
+.next-match-div{
+    background-color: #e9ecef;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.next-match-div .column {
+    width: 20% !important;
 }
 
 .bookmaker-stats-table {
