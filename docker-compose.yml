@@ -8,12 +8,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: "bash -c '
-      [ ! -d 'node_modules' ] && npm install ;
-      service tor start &
-      polipo socksParentProxy=localhost:9050 &
-      npm start
-      '"
+    command: "./boot.bash"
 #    command: bash -c 'sleep 10000'
     environment:
       - NODE_ENV=production
