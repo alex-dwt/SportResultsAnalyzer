@@ -69,6 +69,28 @@ export default class extends React.Component {
                 },
                 value: '',
             },
+            {
+                label: 'Wins difference (min)',
+                values: generateDigitsFilterValues(30),
+                filterCallback: (itemToFilter, value) => {
+                    return Math.abs(
+                        this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.homeTeamId)[0].statistics.w -
+                        this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.guestTeamId)[0].statistics.w
+                    ) >= value;
+                },
+                value: '',
+            },
+            {
+                label: 'Losses difference (min)',
+                values: generateDigitsFilterValues(30),
+                filterCallback: (itemToFilter, value) => {
+                    return Math.abs(
+                        this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.homeTeamId)[0].statistics.l -
+                        this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.guestTeamId)[0].statistics.l
+                    ) >= value;
+                },
+                value: '',
+            },
         ];
     }
 
