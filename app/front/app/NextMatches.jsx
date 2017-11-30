@@ -91,6 +91,42 @@ export default class extends React.Component {
                 },
                 value: '',
             },
+            {
+                label: 'First forecast goals difference (min)',
+                values: (() => {
+                    let values = [];
+                    for (let i = 2; i <= 3; i++) {
+                        let j = 0;
+                        while (j < 2) {
+                            j = Math.round((j + 0.05) * 100) / 100;
+                            values.push({
+                                value: `${i}:${j}`,
+                                text: `${j} (${i})`
+                            });
+                        }
+                    }
+
+                    return getFilterItems(values);
+                })(),
+                filterCallback: (itemToFilter, value) => {
+                    value = value.split(':');
+                    let scores = itemToFilter.scores.find(o => o.forecastNum === 1).value;
+                    for (let i = 2; i <= value[0]; i++) {
+                        let val = scores.find(o => o.info.matchesCount === i);
+                        if (!val) {
+                            return false;
+                        }
+                        let score1 = val.info.homeScore > 0 ? val.info.homeScore : 0;
+                        let score2 = val.info.guestScore > 0 ? val.info.guestScore : 0;
+                        if (Math.abs(Math.round((score1 - score2) * 100) / 100) < value[1]) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                value: '',
+            },
         ];
     }
 

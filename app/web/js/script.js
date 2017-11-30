@@ -552,7 +552,7 @@ $(() => {
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>${data.scoreLineShort.value[0]}</td>
+                        <td>${data.scoreLineShort.value[0].text}</td>
                     </tr>
             `);
         });
@@ -670,7 +670,7 @@ $(() => {
                     res += `<canvas class="forecast4-canvas" data-params="${btoa(JSON.stringify(value))}"></canvas>`;
                 }
             } else {
-                res += score.value.join('; ');
+                res += score.value.map(o => o.text).join('; ');
             }
             res += '<br/>';
         }

@@ -24,7 +24,7 @@ export default class extends React.Component {
                     );
                 }
             } else {
-                el += forecast.value.join('; ');
+                el += forecast.value.map(o => o.text).join('; ');
                 result.push(<p key={k++}>{el}</p>);
             }
         }
