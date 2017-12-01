@@ -2,6 +2,8 @@ module.exports = {
     sports: {
         basketball:  {
             urls: [
+                {id: '9', urls:['/', '/', '/']},
+                {id: '15', urls:['/', '/', '/']},
                 {id: '8', urls:['/', '/', '/']},
             ],
             archive: [
