@@ -290,12 +290,20 @@ $(() => {
                             (${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}
                             <br/>
                             ${value.extraInfo.serial.home.join(' ').toUpperCase()}
+                            <br/>
+                            Every: ${value.extraInfo.last5MatchesTotals.home.every.join(', ')}
+                            <br/>
+                            At home: ${value.extraInfo.last5MatchesTotals.home.home.join(', ')}
                             </td>
-                            <td style=";" class="goals-td">${value.homeScore} - ${value.guestScore}</td>
+                            <td style=";" class="goals-td">${value.homeScore} - ${value.guestScore} <br> (${value.totalScore})</td>
                             <td style=";">
                             ${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>)
                             <br/>
                             ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
+                            <br/>
+                            Every: ${value.extraInfo.last5MatchesTotals.guest.every.join(', ')}
+                            <br/>
+                            At guest: ${value.extraInfo.last5MatchesTotals.guest.guest.join(', ')}
                             </td>
                             <td class="score-td">${printScores(value.extraInfo.scores)}</td>
                         </tr>
@@ -330,12 +338,21 @@ $(() => {
                             (${value.extraInfo.positions.homeCurrent} <span class="then-position">/ ${value.extraInfo.positions.homeThen}</span>) ${value.homeTeamName}
                             <br/>
                             ${value.extraInfo.serial.home.join(' ').toUpperCase()}
+                            <br/>
+                            Every: ${value.extraInfo.last5MatchesTotals.home.every.join(', ')}
+                            <br/>
+                            At home: ${value.extraInfo.last5MatchesTotals.home.home.join(', ')}
                             </td>
-                            <td>${value.homeScore} - ${value.guestScore}</td>
+                            <td>${value.homeScore} - ${value.guestScore} <br> (${value.totalScore})</td>
                             <td class="${parseInt(teamId) === value.guestTeamId ? 'bold' : ''}">
                             ${value.guestTeamName} (${value.extraInfo.positions.guestCurrent} <span class="then-position">/ ${value.extraInfo.positions.guestThen}</span>)
                             <br/>
                             ${value.extraInfo.serial.guest.join(' ').toUpperCase()}
+                            <br/>
+                            Every: ${value.extraInfo.last5MatchesTotals.guest.every.join(', ')}
+                            <br/>
+                            At guest: ${value.extraInfo.last5MatchesTotals.guest.guest.join(', ')}
+                            </td>
                             </td>
                            <td>${printScores(value.extraInfo.scores)}</td>
                         </tr>
