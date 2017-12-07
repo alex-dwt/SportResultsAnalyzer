@@ -136,6 +136,7 @@ function parseUrl(url) {
                             guestScore,
                             date,
                             isArchived,
+                            totalScore: homeScore + guestScore,
                         };
                         if (sport === SPORT_TYPE_BASKETBALL) {
                             item = {...item, overtime: !! scoreLine.find('.score-addition').length};
