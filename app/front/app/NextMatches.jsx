@@ -127,6 +127,38 @@ export default class extends React.Component {
                 },
                 value: '',
             },
+            {
+                label: '5 forecast all "+"',
+                values: getFilterItems([
+                    { value: 'yes', text: 'Yes' },
+                ]),
+                filterCallback: (itemToFilter, value) => {
+                    for(const item of itemToFilter.scores.find(o => o.forecastNum === 5).value) {
+                        if (item.info.isPassed !== '+') {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                value: '',
+            },
+            {
+                label: '5 forecast no "-"',
+                values: getFilterItems([
+                    { value: 'yes', text: 'Yes' },
+                ]),
+                filterCallback: (itemToFilter, value) => {
+                    for(const item of itemToFilter.scores.find(o => o.forecastNum === 5).value) {
+                        if (item.info.isPassed === '-') {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                value: '',
+            },
         ];
     }
 
