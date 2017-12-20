@@ -83,3 +83,18 @@ p {
 .row-danger {
     background-color: #f5c6cb;
 }
+
+.team-matches-table-div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.team-matches-table-div .checkbox {
+    margin-bottom: 3px;
+}
+
+.team-matches-table-team-name {
+    margin-bottom: 5px;
+    text-align: center;
+}

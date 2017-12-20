@@ -3,8 +3,26 @@ import {render} from 'react-dom';
 import { Table } from 'semantic-ui-react'
 import TeamMatchesTableTeamCell from './TeamMatchesTableTeamCell.jsx';
 import TeamMatchesTableScoreCell from './TeamMatchesTableScoreCell.jsx';
+import { Checkbox } from 'semantic-ui-react'
 
 export default class extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isShowWins: true,
+            isShowDraws: true,
+            isShowLoses: true,
+            isShowAtHome: true,
+            isShowAtGuest: true,
+        };
+    }
+
+    handleCheckboxClick(checkboxName) {
+        this.setState(
+            (prevState) => ({[checkboxName]: !prevState[checkboxName]})
+        );
+    }
+
     render() {
         let teamId = this.props.teamId;
 
@@ -46,9 +64,24 @@ export default class extends React.Component {
 
         return (
             <div>
-                <p style={{'textAlign':'center'}}>{this.props.teamName}</p>
-                <p>At home: {winsAtHomeCount} (W) / {drawsAtHomeCount} (D) / {losesAtHomeCount} (L)</p>
-                <p>At guest: {winsAtGuestCount} (W) / {drawsAtGuestCount} (D) / {losesAtGuestCount} (L)</p>
+                <p className={"team-matches-table-team-name"}>{this.props.teamName}</p>
+
+                <div className={"team-matches-table-div"}>
+                    <div>
+                        <p>At home: {winsAtHomeCount} (W) / {drawsAtHomeCount} (D) / {losesAtHomeCount} (L)</p>
+                        <p>At guest: {winsAtGuestCount} (W) / {drawsAtGuestCount} (D) / {losesAtGuestCount} (L)</p>
+                    </div>
+                    <div>
+                        <div><Checkbox label={<label>Wins</label>} checked={this.state.isShowWins} onClick={() => this.handleCheckboxClick('isShowWins')}/></div>
+                        <div><Checkbox label={<label>Draws</label>} checked={this.state.isShowDraws} onClick={() => this.handleCheckboxClick('isShowDraws')} /></div>
+                        <div><Checkbox label={<label>Loses</label>} checked={this.state.isShowLoses} onClick={() => this.handleCheckboxClick('isShowLoses')} /></div>
+                    </div>
+                    <div>
+                        <div><Checkbox label={<label>At home</label>} checked={this.state.isShowAtHome} onClick={() => this.handleCheckboxClick('isShowAtHome')}/></div>
+                        <div><Checkbox label={<label>At guest</label>} checked={this.state.isShowAtGuest} onClick={() => this.handleCheckboxClick('isShowAtGuest')} /></div>
+                    </div>
+                </div>
+
                 <Table fixed>
                     <Table.Header>
                         <Table.Row>
@@ -65,6 +98,16 @@ export default class extends React.Component {
                                 res = item.homeScore - item.guestScore;
                             } else {
                                 res = item.guestScore - item.homeScore;
+                            }
+
+                            if (
+                                (!res && !this.state.isShowDraws) ||
+                                (res > 0 && !this.state.isShowWins) ||
+                                (res < 0 && !this.state.isShowLoses) ||
+                                (teamId === item.homeTeamId && !this.state.isShowAtHome) ||
+                                (teamId === item.guestTeamId && !this.state.isShowAtGuest)
+                            ) {
+                                return null;
                             }
 
                             return (
