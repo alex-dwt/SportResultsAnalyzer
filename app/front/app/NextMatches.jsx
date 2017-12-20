@@ -2,15 +2,15 @@ import React from 'react';
 import {render} from 'react-dom';
 import axios from 'axios';
 import { Button } from 'semantic-ui-react'
-import { Table } from 'semantic-ui-react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Dropdown } from 'semantic-ui-react'
 import ScoreTable from './ScoreTable.jsx';
 import MatchForecastsOverall from './MatchForecastsOverall.jsx';
 import BookmakerStatsTable from './BookmakerStatsTable.jsx';
+import TeamMatchesTable from './teamMatches/TeamMatchesTable.jsx';
 import { Tab } from 'semantic-ui-react'
-import { Grid, Image } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -24,13 +24,16 @@ axios.interceptors.request.use((config) => {
     return {...config, params};
 });
 
+const TEAM_MATCHES_TAB_ID = 2;
+
 export default class extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             date: moment(),
             filteredItems: [],
-            itemsCount: 0
+            itemsCount: 0,
+            teamsMatches: [],
         };
 
         this.matchesData = {
@@ -192,6 +195,26 @@ export default class extends React.Component {
         });
     }
 
+    handleChangeTab(e, data, item) {
+        if (data.activeIndex === TEAM_MATCHES_TAB_ID) {
+            for (const type of ['home', 'guest']) {
+                let teamId = item[`${type}TeamId`];
+                if (!this.state.teamsMatches.find((o) => o.teamId === teamId)) {
+                    axios
+                        .get(`/team-matches-table/${item.sport}/${item.tournamentId}/${teamId}`)
+                        .then((res) => {
+                            this.setState((prevState) => ({
+                                teamsMatches: prevState.teamsMatches.concat([{
+                                    teamId,
+                                    matches: res.data
+                                }])
+                            }));
+                        });
+                }
+            }
+        }
+    }
+
     render() {
         return (
             <div>
@@ -279,7 +302,28 @@ export default class extends React.Component {
                                         />
                                     )
                                 }},
-                            ]} renderActiveOnly={false} />
+                                { menuItem: 'Teams Matches', pane: {
+                                    key: item._id + '-tab3',
+                                    content: (
+                                        <div style={{'display': 'flex'}}>
+                                            <div style={{'marginRight': '30px'}}>
+                                                <TeamMatchesTable
+                                                    items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.homeTeamId ? o.matches : result, [])}
+                                                    teamId={item.homeTeamId}
+                                                    teamName={item.homeTeamName}
+                                                />
+                                            </div>
+                                            <div style={{'marginLeft': '30px'}}>
+                                                <TeamMatchesTable
+                                                    items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.guestTeamId ? o.matches : result, [])}
+                                                    teamId={item.guestTeamId}
+                                                    teamName={item.guestTeamName}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                }},
+                            ]} renderActiveOnly={false} onTabChange={(e, data) => this.handleChangeTab(e, data, item)}/>
 
                         </div>
                         );
