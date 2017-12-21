@@ -311,6 +311,7 @@ export default class extends React.Component {
                                                     items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.homeTeamId ? o.matches : result, [])}
                                                     teamId={item.homeTeamId}
                                                     teamName={item.homeTeamName}
+                                                    opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.guestTeamId).position}
                                                 />
                                             </div>
                                             <div style={{'marginLeft': '30px'}}>
@@ -318,6 +319,7 @@ export default class extends React.Component {
                                                     items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.guestTeamId ? o.matches : result, [])}
                                                     teamId={item.guestTeamId}
                                                     teamName={item.guestTeamName}
+                                                    opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.homeTeamId).position}
                                                 />
                                             </div>
                                         </div>

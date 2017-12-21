@@ -14,6 +14,8 @@ export default class extends React.Component {
             isShowLoses: true,
             isShowAtHome: true,
             isShowAtGuest: true,
+            isShowOpponentPositionLess: true,
+            isShowOpponentPositionGreater: true,
         };
     }
 
@@ -80,6 +82,12 @@ export default class extends React.Component {
                         <div><Checkbox label={<label>At home</label>} checked={this.state.isShowAtHome} onClick={() => this.handleCheckboxClick('isShowAtHome')}/></div>
                         <div><Checkbox label={<label>At guest</label>} checked={this.state.isShowAtGuest} onClick={() => this.handleCheckboxClick('isShowAtGuest')} /></div>
                     </div>
+                    {this.props.opponentPosition && (
+                        <div>
+                            <div><Checkbox label={<label>Opponent position > {this.props.opponentPosition}</label>} checked={this.state.isShowOpponentPositionGreater} onClick={() => this.handleCheckboxClick('isShowOpponentPositionGreater')}/></div>
+                            <div><Checkbox label={<label>Opponent position &lt; {this.props.opponentPosition}</label>} checked={this.state.isShowOpponentPositionLess} onClick={() => this.handleCheckboxClick('isShowOpponentPositionLess')}/></div>
+                        </div>
+                    )}
                 </div>
 
                 <Table fixed>
@@ -93,11 +101,14 @@ export default class extends React.Component {
                     </Table.Header>
                     <Table.Body>
                         {this.props.items.map((item) => {
+                            let opponentPosition;
                             let res = 0;
                             if (teamId === item.homeTeamId) {
                                 res = item.homeScore - item.guestScore;
+                                opponentPosition = item.extraInfo.positions.guestCurrent;
                             } else {
                                 res = item.guestScore - item.homeScore;
+                                opponentPosition = item.extraInfo.positions.homeCurrent;
                             }
 
                             if (
@@ -105,7 +116,14 @@ export default class extends React.Component {
                                 (res > 0 && !this.state.isShowWins) ||
                                 (res < 0 && !this.state.isShowLoses) ||
                                 (teamId === item.homeTeamId && !this.state.isShowAtHome) ||
-                                (teamId === item.guestTeamId && !this.state.isShowAtGuest)
+                                (teamId === item.guestTeamId && !this.state.isShowAtGuest) ||
+                                (
+                                    this.props.opponentPosition &&
+                                    (
+                                        (!this.state.isShowOpponentPositionLess && opponentPosition < this.props.opponentPosition)
+                                        || (!this.state.isShowOpponentPositionGreater && opponentPosition > this.props.opponentPosition)
+                                    )
+                                )
                             ) {
                                 return null;
                             }
