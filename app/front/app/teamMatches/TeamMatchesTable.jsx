@@ -141,6 +141,7 @@ export default class extends React.Component {
                                     <TeamMatchesTableScoreCell
                                         homeScore={item.homeScore}
                                         guestScore={item.guestScore}
+                                        total={item.totalScore}
                                     />
                                     <TeamMatchesTableTeamCell
                                         marksAsBold={teamId === item.guestTeamId}

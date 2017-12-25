@@ -4,7 +4,7 @@ import { Table } from 'semantic-ui-react'
 
 export default class extends React.Component {
     render() {
-        let activeRows = this.props.activeRows;
+        let activeRows = this.props.activeRows || [];
 
         return (
             <Table fixed>
