@@ -3,10 +3,7 @@ import { Dropdown } from 'semantic-ui-react'
 
 export default class extends React.Component {
     handleFilterOnChange(value, items) {
-        this.props.onChange(
-            this.props.index,
-            items === null ? null : items.map((o) => o._id)
-        );
+        this.props.onChange(this.props.index, items);
     }
 
     render() {

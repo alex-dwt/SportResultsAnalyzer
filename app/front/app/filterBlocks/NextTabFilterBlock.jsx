@@ -23,18 +23,22 @@ export default class extends React.Component {
         let result = this.props.items.slice();
 
         if (Object.keys(this.filteredValues).length) {
-            let ids = intersect(Object.values(this.filteredValues));
+            let idsArr = [];
+            for (const val of Object.values(this.filteredValues)) {
+                idsArr.push(val.map((o) => o._id));
+            }
+            let ids = intersect(idsArr);
             result = result.filter((o) => includes(ids, o._id));
         }
 
         this.props.handleFilterClick(result);
     }
 
-    handleFilterSelect(index, filteredItemsIds) {
-        if (filteredItemsIds === null) {
+    handleFilterSelect(index, filteredItems) {
+        if (filteredItems === null) {
             delete this.filteredValues[index];
         } else {
-            this.filteredValues[index] = filteredItemsIds;
+            this.filteredValues[index] = filteredItems;
         }
     }
 

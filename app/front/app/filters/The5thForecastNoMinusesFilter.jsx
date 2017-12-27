@@ -22,10 +22,6 @@ export default class extends Filter {
                     result.push(item);
                 }
             }
-
-            if (this.props.additionalFilterCallback) {
-                result = (this.props.additionalFilterCallback)(result);
-            }
         }
 
         super.handleFilterOnChange(null, result);
