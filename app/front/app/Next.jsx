@@ -1,5 +1,4 @@
 import React from 'react';
-import {render} from 'react-dom';
 import { Button } from 'semantic-ui-react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
@@ -11,6 +10,7 @@ import TeamMatchesTable from './teamMatches/TeamMatchesTable.jsx';
 import { Tab } from 'semantic-ui-react'
 import { Grid } from 'semantic-ui-react'
 import Request  from './Request.jsx'
+import NextTabFilterBlock  from './filterBlocks/NextTabFilterBlock.jsx'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -28,131 +28,8 @@ export default class extends React.Component {
 
         this.matchesData = {
             items: [],
+            statistics: [],
         };
-        this.filters = [
-            {
-                label: 'Which team is stronger',
-                values: getFilterItems([
-                    { value: 'home', text: 'Home' },
-                    { value: 'guest', text: 'Guest' },
-                ]),
-                filterCallback: (itemToFilter, value) => {
-                    let key = `${itemToFilter.homeTeamId}-${itemToFilter.guestTeamId}`;
-
-                    return (
-                        (value === 'home' && this.matchesData.statistics[itemToFilter.tournamentId].teams[key] > 0) ||
-                        (value === 'guest' && this.matchesData.statistics[itemToFilter.tournamentId].teams[key] < 0)
-                    );
-                },
-                value: '',
-            },
-            {
-                label: 'Positions difference (min)',
-                values: generateDigitsFilterValues(30),
-                filterCallback: (itemToFilter, value) => {
-                    return Math.abs(this.matchesData.statistics[itemToFilter.tournamentId].teams[`${itemToFilter.homeTeamId}-${itemToFilter.guestTeamId}`]) >= value;
-                },
-                value: '',
-            },
-            {
-                label: 'Positions difference (max)',
-                values: generateDigitsFilterValues(30),
-                filterCallback: (itemToFilter, value) => {
-                    return Math.abs(this.matchesData.statistics[itemToFilter.tournamentId].teams[`${itemToFilter.homeTeamId}-${itemToFilter.guestTeamId}`]) <= value;
-                },
-                value: '',
-            },
-            {
-                label: 'Wins difference (min)',
-                values: generateDigitsFilterValues(30),
-                filterCallback: (itemToFilter, value) => {
-                    return Math.abs(
-                            this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.homeTeamId)[0].statistics.w -
-                            this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.guestTeamId)[0].statistics.w
-                        ) >= value;
-                },
-                value: '',
-            },
-            {
-                label: 'Losses difference (min)',
-                values: generateDigitsFilterValues(30),
-                filterCallback: (itemToFilter, value) => {
-                    return Math.abs(
-                            this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.homeTeamId)[0].statistics.l -
-                            this.matchesData.statistics[itemToFilter.tournamentId].tournamentResults.filter((team) => team.teamId === itemToFilter.guestTeamId)[0].statistics.l
-                        ) >= value;
-                },
-                value: '',
-            },
-            {
-                label: 'First forecast goals difference (min)',
-                values: (() => {
-                    let values = [];
-                    for (let i = 2; i <= 3; i++) {
-                        let j = 0;
-                        while (j < 2) {
-                            j = Math.round((j + 0.05) * 100) / 100;
-                            values.push({
-                                value: `${i}:${j}`,
-                                text: `${j} (${i})`
-                            });
-                        }
-                    }
-
-                    return getFilterItems(values);
-                })(),
-                filterCallback: (itemToFilter, value) => {
-                    value = value.split(':');
-                    let scores = itemToFilter.scores.find(o => o.forecastNum === 1).value;
-                    for (let i = 2; i <= value[0]; i++) {
-                        let val = scores.find(o => o.info.matchesCount === i);
-                        if (!val) {
-                            return false;
-                        }
-                        let score1 = val.info.homeScore > 0 ? val.info.homeScore : 0;
-                        let score2 = val.info.guestScore > 0 ? val.info.guestScore : 0;
-                        if (Math.abs(Math.round((score1 - score2) * 100) / 100) < value[1]) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                },
-                value: '',
-            },
-            {
-                label: '5 forecast all "+"',
-                values: getFilterItems([
-                    { value: 'yes', text: 'Yes' },
-                ]),
-                filterCallback: (itemToFilter, value) => {
-                    for(const item of itemToFilter.scores.find(o => o.forecastNum === 5).value) {
-                        if (item.info.isPassed !== '+') {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                },
-                value: '',
-            },
-            {
-                label: '5 forecast no "-"',
-                values: getFilterItems([
-                    { value: 'yes', text: 'Yes' },
-                ]),
-                filterCallback: (itemToFilter, value) => {
-                    for(const item of itemToFilter.scores.find(o => o.forecastNum === 5).value) {
-                        if (item.info.isPassed === '-') {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                },
-                value: '',
-            },
-        ];
     }
 
     handleClick() {
@@ -168,16 +45,8 @@ export default class extends React.Component {
         });
     }
 
-    handleFilterClick() {
-        let filteredItems = this.matchesData.items;
-        for(const filter of this.filters) {
-            filteredItems = filteredItems.filter(item => filter.value ? filter.filterCallback(item, filter.value) : true);
-        }
+    handleFilterClick(filteredItems) {
         this.setState({filteredItems});
-    }
-
-    handleFilterOnChange(value, index) {
-        this.filters[index].value = value;
     }
 
     handleChangeDate(date) {
@@ -212,24 +81,16 @@ export default class extends React.Component {
                         <Grid.Column>
                             <DatePicker locale="ru" selected={this.state.date} onChange={(e) => this.handleChangeDate(e)}/>
                             <Button onClick={(e) => this.handleClick(e)}>Load</Button>
-                            <Button onClick={(e) => this.handleFilterClick(e)}>Filter</Button>
                             <p>Total matches: {this.state.itemsCount}</p>
                             <p>Filtered matches: {this.state.filteredItems.length}</p>
                         </Grid.Column>
 
-                        {this.filters.map((filter, index) => {
-                            return (
-                                <Grid.Column key={index}>
-                                    <p>{filter.label}</p>
-                                    <Dropdown
-                                        selection
-                                        options={filter.values}
-                                        defaultValue="-"
-                                        onChange={(e, { value }) => this.handleFilterOnChange(value, index)}
-                                    />
-                                </Grid.Column>
-                            );
-                        })}
+                        <NextTabFilterBlock
+                            items={this.matchesData.items}
+                            payload={this.matchesData.statistics}
+                            handleFilterClick={this.handleFilterClick.bind(this)}
+                        />
+
                     </Grid>
                 </div>
 
@@ -324,17 +185,4 @@ export default class extends React.Component {
             </div>
         );
     }
-}
-
-function getFilterItems(items) {
-    return [{ value: '', text: '' }].concat(items).map((o) => ({...o, key: o.value || '-'}));
-}
-
-function generateDigitsFilterValues(count) {
-    let items = [];
-    for (let i = 1; i <= count; i++) {
-        items.push({ value: i, text: i })
-    }
-
-    return getFilterItems(items);
 }
