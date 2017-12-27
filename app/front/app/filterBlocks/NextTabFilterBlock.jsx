@@ -100,7 +100,7 @@ export default class extends React.Component {
                             index="5"
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
-                            payloadCallback={(item) => null}
+                            payloadCallback={(item) => item.scores}
                         />
                     </Grid.Column>
 
@@ -109,7 +109,7 @@ export default class extends React.Component {
                             index="6"
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
-                            payloadCallback={(item) => null}
+                            payloadCallback={(item) => item.scores}
                         />
                     </Grid.Column>
 
@@ -118,7 +118,7 @@ export default class extends React.Component {
                             index="7"
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
-                            payloadCallback={(item) => null}
+                            payloadCallback={(item) => item.scores}
                         />
                     </Grid.Column>
 

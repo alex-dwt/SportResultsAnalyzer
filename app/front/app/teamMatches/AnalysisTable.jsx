@@ -4,18 +4,57 @@ import { Table } from 'semantic-ui-react'
 import TeamMatchesTableTeamCell from './TeamMatchesTableTeamCell.jsx';
 import TeamMatchesTableScoreCell from './TeamMatchesTableScoreCell.jsx';
 import MatchForecastsOverall from '../MatchForecastsOverall.jsx';
+import AnalysisTableFilterBlock from '../filterBlocks/AnalysisTableFilterBlock.jsx';
 
 export default class extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            items: [],
+            positiveItemsCount: 0,
+            negativeItemsCount: 0,
         };
+
+        this.positiveMatchesIds = [];
     }
+
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            items: nextProps.items,
+            positiveItemsCount: nextProps.items.length,
+            negativeItemsCount: nextProps.items.length,
+        });
+        this.positiveMatchesIds = [];
+    }
+
+    handleFilterClick(filteredItems) {
+        let positiveItemsCount = filteredItems.length;
+        let negativeItemsCount = this.props.items.length - positiveItemsCount;
+
+        this.positiveMatchesIds = filteredItems.map((o) => o._id);
+
+        this.setState({
+            filteredItems,
+            positiveItemsCount,
+            negativeItemsCount,
+        });
+    }
+
 
     render() {
         return (
             <div>
+
+                <p>Total matches: {this.props.items.length}</p>
+                <p>Positive matches: {this.state.positiveItemsCount}</p>
+                <p style={{marginBottom: '10px'}}>Negative matches: {this.state.negativeItemsCount}</p>
+
+                <AnalysisTableFilterBlock
+                    items={this.props.items}
+                    payload={null}
+                    handleFilterClick={this.handleFilterClick.bind(this)}
+                />
+
                 <Table fixed>
                     <Table.Header>
                         <Table.Row>
@@ -27,9 +66,9 @@ export default class extends React.Component {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {this.props.items.map((item) => {
+                        {this.state.items.map((item) => {
                             return (
-                                <Table.Row key={item._id}>
+                                <Table.Row key={item._id} className={this.positiveMatchesIds.find((id) => id === item._id) ? 'row-success' : ''}>
                                     <Table.Cell>{item.date.slice(0, 10)}</Table.Cell>
                                     <TeamMatchesTableTeamCell
                                         marksAsBold={this.state.teamId === item.homeTeamId}
@@ -71,6 +110,7 @@ export default class extends React.Component {
                         })}
                     </Table.Body>
                 </Table>
+
             </div>
         );
     }

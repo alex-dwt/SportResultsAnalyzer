@@ -98,3 +98,7 @@ p {
     margin-bottom: 5px;
     text-align: center;
 }
+
+.analysis-table-filter-block .column {
+    width: 20% !important;
+}

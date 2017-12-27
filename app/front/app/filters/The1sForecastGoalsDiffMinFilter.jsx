@@ -10,7 +10,7 @@ export default class extends Filter {
             value = value.split(':');
 
             for (const item of items) {
-                let scores = item.scores.find(o => o.forecastNum === 1).value;
+                let scores = (this.props.payloadCallback)(item).find(o => o.forecastNum === 1).value;
 
                 let passed = true;
 

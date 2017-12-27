@@ -9,8 +9,9 @@ export default class extends Filter {
         } else {
             for (const item of items) {
                 let passed = true;
+                let scores = (this.props.payloadCallback)(item);
 
-                for(const score of item.scores.find(o => o.forecastNum === 5).value) {
+                for(const score of scores.find(o => o.forecastNum === 5).value) {
                     if (score.info.isPassed === '-') {
                         passed = false;
                         break;
@@ -20,6 +21,10 @@ export default class extends Filter {
                 if (passed) {
                     result.push(item);
                 }
+            }
+
+            if (this.props.additionalFilterCallback) {
+                result = (this.props.additionalFilterCallback)(result);
             }
         }
 
