@@ -10,44 +10,42 @@ export default class extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            items: [],
-            positiveItemsCount: 0,
-            negativeItemsCount: 0,
+            positiveFilteredItemsIds: [],
+            negativeFilteredItemsIds: [],
+            neutralFilteredItemsIds: [],
         };
-
-        this.positiveMatchesIds = [];
     }
 
     componentWillReceiveProps(nextProps){
         this.setState({
-            items: nextProps.items,
-            positiveItemsCount: nextProps.items.length,
-            negativeItemsCount: nextProps.items.length,
+            positiveFilteredItemsIds: [],
+            negativeFilteredItemsIds: [],
+            neutralFilteredItemsIds: [],
         });
-        this.positiveMatchesIds = [];
     }
 
-    handleFilterClick(filteredItems) {
-        let positiveItemsCount = filteredItems.length;
-        let negativeItemsCount = this.props.items.length - positiveItemsCount;
-
-        this.positiveMatchesIds = filteredItems.map((o) => o._id);
-
+    handleFilterClick(positiveFilteredItemsIds, negativeFilteredItemsIds, neutralFilteredItemsIds) {
         this.setState({
-            filteredItems,
-            positiveItemsCount,
-            negativeItemsCount,
+            positiveFilteredItemsIds,
+            negativeFilteredItemsIds,
+            neutralFilteredItemsIds,
         });
     }
-
 
     render() {
+        let filteredItemsCount = this.state.positiveFilteredItemsIds.length
+            + this.state.negativeFilteredItemsIds.length
+            + this.state.neutralFilteredItemsIds.length;
+
         return (
             <div>
 
                 <p>Total matches: {this.props.items.length}</p>
-                <p>Positive matches: {this.state.positiveItemsCount}</p>
-                <p style={{marginBottom: '10px'}}>Negative matches: {this.state.negativeItemsCount}</p>
+                <p>Filtered matches: {filteredItemsCount} ({this.calculatePercents(this.props.items.length, filteredItemsCount)})</p>
+                <p>Positive matches: {this.state.positiveFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.positiveFilteredItemsIds.length)})</p>
+                <p>Negative matches: {this.state.negativeFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.negativeFilteredItemsIds.length)})</p>
+                <p>Neutral matches: {this.state.neutralFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.neutralFilteredItemsIds.length)})</p>
+                <p style={{marginBottom: '10px'}}>&nbsp;</p>
 
                 <AnalysisTableFilterBlock
                     items={this.props.items}
@@ -66,9 +64,19 @@ export default class extends React.Component {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {this.state.items.map((item) => {
+                        {this.props.items.map((item) => {
                             return (
-                                <Table.Row key={item._id} className={this.positiveMatchesIds.find((id) => id === item._id) ? 'row-success' : ''}>
+                                <Table.Row key={item._id} className={
+                                    this.state.positiveFilteredItemsIds.find((id) => id === item._id)
+                                        ? 'row-success'
+                                        : (this.state.negativeFilteredItemsIds.find((id) => id === item._id)
+                                            ? 'row-danger'
+                                            : (this.state.neutralFilteredItemsIds.find((id) => id === item._id)
+                                                ? 'row-neutral'
+                                                : ''
+                                            )
+                                        )
+                                }>
                                     <Table.Cell>{item.date.slice(0, 10)}</Table.Cell>
                                     <TeamMatchesTableTeamCell
                                         marksAsBold={this.state.teamId === item.homeTeamId}
@@ -113,5 +121,11 @@ export default class extends React.Component {
 
             </div>
         );
+    }
+
+    calculatePercents(amount, count) {
+        return amount
+            ? (parseInt(count * 100 / amount) + '%')
+            : '0%';
     }
 }

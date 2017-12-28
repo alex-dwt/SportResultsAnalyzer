@@ -84,6 +84,10 @@ p {
     background-color: #f5c6cb;
 }
 
+.row-neutral {
+    background-color: #ffe389;
+}
+
 .team-matches-table-div {
     display: flex;
     justify-content: space-around;
