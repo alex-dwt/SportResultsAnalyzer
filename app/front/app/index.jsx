@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import Archive from './Archive.jsx';
+import Home from './Home.jsx';
 import Current from './Current.jsx';
 import Next from './Next.jsx';
 import { Dropdown, Menu } from 'semantic-ui-react'
@@ -44,12 +45,14 @@ class App extends React.Component {
                         />
 
                         <Menu>
-                            <Menu.Item as={NavLink} to='/' exact>Next</Menu.Item>
+                            <Menu.Item as={NavLink} to='/' exact>Home</Menu.Item>
+                            <Menu.Item as={NavLink} to='/next' exact>Next</Menu.Item>
                             <Menu.Item as={NavLink} to='/current'>Current</Menu.Item>
                             <Menu.Item as={NavLink} to='/archive'>Archive</Menu.Item>
                         </Menu>
 
-                        <Route exact path="/" component={Next}/>
+                        <Route exact path="/" component={Home}/>
+                        <Route exact path="/next" component={Next}/>
                         <Route path="/current" component={Current}/>
                         <Route path="/archive" component={Archive}/>
                     </div>

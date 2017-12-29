@@ -55,6 +55,17 @@ export default {
             .then((res) => resolve(res.data))
         );
     },
+
+    createTournamentAnalysisItem(data) {
+        axios.post('/tournament_analysis', data);
+    },
+
+    getTournamentAnalysisItems() {
+        return new Promise((resolve, reject) => axios
+            .get('/tournament_analysis')
+            .then((res) => resolve(res.data))
+        );
+    },
 }
 
 axios.interceptors.request.use((config) => {

@@ -10,6 +10,7 @@ import LossesDiffMinFilter  from '../filters/LossesDiffMinFilter.jsx'
 import The5thForecastNoMinusesFilter  from '../filters/The5thForecastNoMinusesFilter.jsx'
 import The5thForecastAllPlusesFilter  from '../filters/The5thForecastAllPlusesFilter.jsx'
 import The1sForecastGoalsDiffMinFilter  from '../filters/The1sForecastGoalsDiffMinFilter.jsx'
+import FilterButton  from './FilterButton.jsx'
 const includes = require('array-includes');
 const intersect = require('intersect');
 
@@ -128,9 +129,7 @@ export default class extends React.Component {
 
                 </Grid>
 
-                <Button  style={{marginTop: '10px'}} onClick={(e) => this.handleFilterClick(e)}>
-                    Filter
-                </Button>
+                <FilterButton disabled={!this.props.items.length} onClick={() => this.handleFilterClick()}/>
 
             </div>
         );

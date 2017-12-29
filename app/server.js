@@ -24,9 +24,9 @@ const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
 let mongoDB;
 
 const app = express();
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.use(compression());
-app.use(bodyParser.urlencoded());
+// app.use(bodyParser.urlencoded());
 app.use(express.static('web'));
 app.use('/front', express.static('front/public'));
 
@@ -166,6 +166,20 @@ app.put('/favorite_game', (req, res, next) =>
  */
 app.delete('/favorite_game', (req, res, next) =>
     fetcher.markGameAsFavorite(req.body.id, false).then(() => res.json({}))
+);
+
+/**
+ * Save calculated stats from Analysis Table
+ */
+app.post('/tournament_analysis', (req, res, next) =>{
+    fetcher.createTournamentAnalysisItem(req.body).then(() => res.json({}))}
+);
+
+/**
+ * Get calculated stats from Analysis Table
+ */
+app.get('/tournament_analysis', (req, res, next) =>{
+    fetcher.getTournamentAnalysisItems().then((data) => res.json(data))}
 );
 
 function connectDB() {

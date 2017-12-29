@@ -41,10 +41,10 @@ export default class extends React.Component {
             <div>
 
                 <p>Total matches: {this.props.items.length}</p>
-                <p>Filtered matches: {filteredItemsCount} ({this.calculatePercents(this.props.items.length, filteredItemsCount)})</p>
-                <p>Positive matches: {this.state.positiveFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.positiveFilteredItemsIds.length)})</p>
-                <p>Negative matches: {this.state.negativeFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.negativeFilteredItemsIds.length)})</p>
-                <p>Neutral matches: {this.state.neutralFilteredItemsIds.length} ({this.calculatePercents(filteredItemsCount, this.state.neutralFilteredItemsIds.length)})</p>
+                <p>Filtered matches: {filteredItemsCount} ({this.constructor.calculatePercents(this.props.items.length, filteredItemsCount)})</p>
+                <p>Positive matches: {this.state.positiveFilteredItemsIds.length} ({this.constructor.calculatePercents(filteredItemsCount, this.state.positiveFilteredItemsIds.length)})</p>
+                <p>Negative matches: {this.state.negativeFilteredItemsIds.length} ({this.constructor.calculatePercents(filteredItemsCount, this.state.negativeFilteredItemsIds.length)})</p>
+                <p>Neutral matches: {this.state.neutralFilteredItemsIds.length} ({this.constructor.calculatePercents(filteredItemsCount, this.state.neutralFilteredItemsIds.length)})</p>
                 <p style={{marginBottom: '10px'}}>&nbsp;</p>
 
                 <AnalysisTableFilterBlock
@@ -123,7 +123,7 @@ export default class extends React.Component {
         );
     }
 
-    calculatePercents(amount, count) {
+    static calculatePercents(amount, count) {
         return amount
             ? (parseInt(count * 100 / amount) + '%')
             : '0%';

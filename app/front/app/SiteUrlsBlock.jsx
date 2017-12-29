@@ -2,6 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import Request  from './Request.jsx'
 import { Button } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 
 export default class extends React.Component {
     constructor(props) {
