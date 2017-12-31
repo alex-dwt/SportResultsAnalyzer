@@ -4,6 +4,7 @@ import Archive from './Archive.jsx';
 import Home from './Home.jsx';
 import Current from './Current.jsx';
 import Next from './Next.jsx';
+import Settings from './Settings.jsx';
 import { Dropdown, Menu } from 'semantic-ui-react'
 import {
     Router,
@@ -12,14 +13,15 @@ import {
 } from 'react-router-dom'
 import createBrowserHistory from 'history/createBrowserHistory'
 
-const SPORT_TYPE_FOOTBALL = 'soccer';
+export class App extends React.Component {
 
-class App extends React.Component {
+    static SPORT_TYPE_FOOTBALL = 'soccer';
+
     constructor(props) {
         super(props);
         this.history = createBrowserHistory();
         sessionStorage.setItem('password', getParameterByName('password'));
-        sessionStorage.setItem('sport', SPORT_TYPE_FOOTBALL);
+        sessionStorage.setItem('sport', App.SPORT_TYPE_FOOTBALL);
     }
 
     componentDidMount() {
@@ -34,10 +36,10 @@ class App extends React.Component {
                         <Dropdown
                             selection
                             options={[
-                                { value: SPORT_TYPE_FOOTBALL, text: 'Football', key: SPORT_TYPE_FOOTBALL },
+                                { value: App.SPORT_TYPE_FOOTBALL, text: 'Football', key: App.SPORT_TYPE_FOOTBALL },
                                 { value: 'basketball', text: 'Basketball', key: 'basketball' },
                             ]}
-                            defaultValue={SPORT_TYPE_FOOTBALL}
+                            defaultValue={App.SPORT_TYPE_FOOTBALL}
                             onChange={(e, { value }) => {
                                 sessionStorage.setItem('sport', value);
                                 this.history.push('/');
@@ -49,12 +51,14 @@ class App extends React.Component {
                             <Menu.Item as={NavLink} to='/next' exact>Next</Menu.Item>
                             <Menu.Item as={NavLink} to='/current'>Current</Menu.Item>
                             <Menu.Item as={NavLink} to='/archive'>Archive</Menu.Item>
+                            <Menu.Item as={NavLink} to='/settings' position="right">Settings</Menu.Item>
                         </Menu>
 
                         <Route exact path="/" component={Home}/>
                         <Route exact path="/next" component={Next}/>
                         <Route path="/current" component={Current}/>
                         <Route path="/archive" component={Archive}/>
+                        <Route path="/settings" component={Settings}/>
                     </div>
                 </Router>
             </div>

@@ -13,8 +13,8 @@ export default class extends React.Component {
                             <Table.HeaderCell>Positive matches</Table.HeaderCell>
                             <Table.HeaderCell>Negative matches</Table.HeaderCell>
                             <Table.HeaderCell>Neutral matches</Table.HeaderCell>
+                            <Table.HeaderCell>Filter</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
-                            <Table.HeaderCell>Filters</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -27,8 +27,10 @@ export default class extends React.Component {
                                     <Table.Cell positive>{item.positiveFilteredItemsCount} ({item.positiveFilteredItemsPercent})</Table.Cell>
                                     <Table.Cell negative>{item.negativeFilteredItemsCount} ({item.negativeFilteredItemsPercent})</Table.Cell>
                                     <Table.Cell warning>{item.neutralFilteredItemsCount} ({item.neutralFilteredItemsPercent})</Table.Cell>
+                                    <Table.Cell>
+                                        <p dangerouslySetInnerHTML={{__html: item.filter.name.split(';').join('<br/>')}}></p>
+                                    </Table.Cell>
                                     <Table.Cell>{item.date}</Table.Cell>
-                                    <Table.Cell>-</Table.Cell>
                                 </Table.Row>
                             );
                         })}

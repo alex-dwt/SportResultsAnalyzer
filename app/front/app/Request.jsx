@@ -18,11 +18,11 @@ export default {
         );
     },
 
-    getTournamentsList(sportType, isArchive) {
+    getTournamentsList(sportType, isArchived) {
         return new Promise((resolve, reject) => axios
             .get(
                 `/tournaments/${sportType}`,
-                {params: {isArchived: isArchive ? 1 : ''}}
+                {params: {isArchived: isArchived ? 1 : ''}}
             )
             .then((res) => resolve(res.data))
         );
@@ -57,13 +57,26 @@ export default {
     },
 
     createTournamentAnalysisItem(data) {
-        axios.post('/tournament_analysis', data);
+        return new Promise((resolve, reject) => axios
+            .post('/tournament_analysis', data)
+            .then(() => resolve())
+        );
     },
 
     getTournamentAnalysisItems() {
         return new Promise((resolve, reject) => axios
             .get('/tournament_analysis')
             .then((res) => resolve(res.data))
+        );
+    },
+
+    isTournamentAnalysisItemExists(sport, tournamentId) {
+        return new Promise((resolve, reject) => axios
+            .get(
+                '/tournament_analysis_check',
+                {params: {sport, tournamentId, }}
+            )
+            .then((res) => resolve(res.data.isExists))
         );
     },
 }

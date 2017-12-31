@@ -182,6 +182,18 @@ app.get('/tournament_analysis', (req, res, next) =>{
     fetcher.getTournamentAnalysisItems().then((data) => res.json(data))}
 );
 
+/**
+ * Get calculated stats from Analysis Table
+ */
+app.get('/tournament_analysis_check', (req, res, next) =>{
+    fetcher
+        .isTournamentAnalysisExists(
+            req.query.sport,
+            req.query.tournamentId,
+        )
+        .then((isExists) => res.json({isExists}))}
+);
+
 function connectDB() {
     mongoClient
         .connect(mongoClientUrl)

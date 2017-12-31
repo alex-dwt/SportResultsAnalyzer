@@ -10,6 +10,7 @@ export default class extends React.Component {
                  <Dropdown
                      style={{'width': '100%'}}
                      selection
+                     search
                      options={this.props.items.map((o) => ({...o, 'key': o.value}))}
                      defaultValue={'-'}
                      onChange={(e, { value }) => (this.props.handleClick)(value)}

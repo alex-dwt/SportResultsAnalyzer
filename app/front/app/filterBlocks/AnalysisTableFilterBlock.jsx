@@ -59,22 +59,22 @@ export default class extends NextTabFilterBlock {
                     + neutralFilteredItemsCount
                     + negativeFilteredItemsCount;
 
-                Request.createTournamentAnalysisItem({
-                    tournamentId: firstItem.tournamentId,
-                    tournamentName: firstItem.tournamentName,
-                    sport: firstItem.sport,
-                    isArchived: firstItem.isArchived,
-                    enabledFiltersIds: Object.keys(this.filteredValues),
-                    positiveFilteredItemsCount,
-                    neutralFilteredItemsCount,
-                    negativeFilteredItemsCount,
-                    positiveFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, positiveFilteredItemsCount),
-                    neutralFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, neutralFilteredItemsCount),
-                    negativeFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, negativeFilteredItemsCount),
-                    filteredItemsCount,
-                    filteredItemsPercent: AnalysisTable.calculatePercents( this.props.items.length, filteredItemsCount),
-                    itemsCount: this.props.items.length,
-                });
+                // Request.createTournamentAnalysisItem({
+                //     tournamentId: firstItem.tournamentId,
+                //     tournamentName: firstItem.tournamentName,
+                //     sport: firstItem.sport,
+                //     isArchived: firstItem.isArchived,
+                //     enabledFiltersIds: Object.keys(this.filteredValues),
+                //     positiveFilteredItemsCount,
+                //     neutralFilteredItemsCount,
+                //     negativeFilteredItemsCount,
+                //     positiveFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, positiveFilteredItemsCount),
+                //     neutralFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, neutralFilteredItemsCount),
+                //     negativeFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, negativeFilteredItemsCount),
+                //     filteredItemsCount,
+                //     filteredItemsPercent: AnalysisTable.calculatePercents( this.props.items.length, filteredItemsCount),
+                //     itemsCount: this.props.items.length,
+                // });
             }
         }
 
