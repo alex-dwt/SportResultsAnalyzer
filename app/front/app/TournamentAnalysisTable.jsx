@@ -30,7 +30,7 @@ export default class extends React.Component {
                                     <Table.Cell>
                                         <p dangerouslySetInnerHTML={{__html: item.filter.name.split(';').join('<br/>')}}></p>
                                     </Table.Cell>
-                                    <Table.Cell>{item.date}</Table.Cell>
+                                    <Table.Cell>{item.date.slice(0, 10)}</Table.Cell>
                                 </Table.Row>
                             );
                         })}

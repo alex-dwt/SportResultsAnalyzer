@@ -3,26 +3,45 @@ import { Button, Progress } from 'semantic-ui-react'
 import Request  from './Request.jsx'
 import { App } from './index.jsx'
 import AnalysisTable  from './teamMatches/AnalysisTable.jsx'
+import AnalysisTableFilterBlock  from './filterBlocks/AnalysisTableFilterBlock.jsx'
+import The5thForecastAllPlusesFilter  from './filters/The5thForecastAllPlusesFilter.jsx'
+import The5thForecastNoMinusesFilter  from './filters/The5thForecastNoMinusesFilter.jsx'
 
 const CURRENT_TOURNAMENTS = 'current';
 const ARCHIVED_TOURNAMENTS = 'archived';
 const FILTERS = [
     {
         name: '5f no minuses;',
-        payload: {},
+        payload: {
+            callback: (matches) => AnalysisTableFilterBlock.doFiltering(
+                matches,
+                The5thForecastNoMinusesFilter.doFiltering(
+                    matches,
+                    (item) => item.extraInfo.scores
+                ).map((o) => o._id)
+            ),
+        },
     },
     {
         name: '5f all pluses;',
-        payload: {},
+        payload: {
+            callback: (matches) => AnalysisTableFilterBlock.doFiltering(
+                matches,
+                The5thForecastAllPlusesFilter.doFiltering(
+                    matches,
+                    (item) => item.extraInfo.scores
+                ).map((o) => o._id)
+            ),
+        },
     },
-    {
-        name: '5f no minuses; min pos diff 3;',
-        payload: {},
-    },
-    {
-        name: '5f all pluses; min pos diff 3;',
-        payload: {},
-    },
+    // {
+    //     name: '5f no minuses; min pos diff 3;',
+    //     payload: {},
+    // },
+    // {
+    //     name: '5f all pluses; min pos diff 3;',
+    //     payload: {},
+    // },
 ];
 
 export default class extends React.Component {
@@ -65,10 +84,15 @@ export default class extends React.Component {
 
                                     for (const [filterIndex, filter] of FILTERS.entries()) {
                                         // do filtering
+                                        let [
+                                            positiveFilteredItemsIds,
+                                            negativeFilteredItemsIds,
+                                            neutralFilteredItemsIds
+                                        ] = filter.payload.callback(matches);
 
-                                        let positiveFilteredItemsCount = 0;
-                                        let neutralFilteredItemsCount = 0;
-                                        let negativeFilteredItemsCount = 0;
+                                        let positiveFilteredItemsCount = positiveFilteredItemsIds.length;
+                                        let neutralFilteredItemsCount = neutralFilteredItemsIds.length;
+                                        let negativeFilteredItemsCount = negativeFilteredItemsIds.length;
                                         let filteredItemsCount = positiveFilteredItemsCount
                                             + neutralFilteredItemsCount
                                             + negativeFilteredItemsCount;

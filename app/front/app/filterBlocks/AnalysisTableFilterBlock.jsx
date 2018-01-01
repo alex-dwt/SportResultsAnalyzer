@@ -28,54 +28,14 @@ export default class extends NextTabFilterBlock {
             for (const val of Object.values(this.filteredValues)) {
                 idsArr.push(val.map((o) => o._id));
             }
-            for (const id of intersect(idsArr)) {
-                let item = this.props.items.find((o) => o._id === id);
-                if (item) {
-                    let strongerTeam = item
-                        .extraInfo
-                        .scores.find(o => o.forecastNum === 5)
-                        .value.find(o => o.info.type === 'forecast1').info.strongerTeam;
-
-                    if ((strongerTeam === 'home' && item.homeScore > item.guestScore) ||
-                        (strongerTeam === 'guest' && item.homeScore < item.guestScore)
-                    ) {
-                        positiveFilteredItemsIds.push(item._id);
-                    } else if (item.homeScore === item.guestScore) {
-                        neutralFilteredItemsIds.push(item._id);
-                    } else {
-                        negativeFilteredItemsIds.push(item._id);
-                    }
-                }
-            }
-
-            // save results to DB
-            if (this.props.items.length) {
-                let firstItem = this.props.items[0];
-
-                let positiveFilteredItemsCount = positiveFilteredItemsIds.length;
-                let neutralFilteredItemsCount = neutralFilteredItemsIds.length;
-                let negativeFilteredItemsCount = negativeFilteredItemsIds.length;
-                let filteredItemsCount = positiveFilteredItemsCount
-                    + neutralFilteredItemsCount
-                    + negativeFilteredItemsCount;
-
-                // Request.createTournamentAnalysisItem({
-                //     tournamentId: firstItem.tournamentId,
-                //     tournamentName: firstItem.tournamentName,
-                //     sport: firstItem.sport,
-                //     isArchived: firstItem.isArchived,
-                //     enabledFiltersIds: Object.keys(this.filteredValues),
-                //     positiveFilteredItemsCount,
-                //     neutralFilteredItemsCount,
-                //     negativeFilteredItemsCount,
-                //     positiveFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, positiveFilteredItemsCount),
-                //     neutralFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, neutralFilteredItemsCount),
-                //     negativeFilteredItemsPercent: AnalysisTable.calculatePercents(filteredItemsCount, negativeFilteredItemsCount),
-                //     filteredItemsCount,
-                //     filteredItemsPercent: AnalysisTable.calculatePercents( this.props.items.length, filteredItemsCount),
-                //     itemsCount: this.props.items.length,
-                // });
-            }
+            [
+                positiveFilteredItemsIds,
+                negativeFilteredItemsIds,
+                neutralFilteredItemsIds
+            ] = this.constructor.doFiltering(
+                this.props.items,
+                intersect(idsArr)
+            );
         }
 
         this.props.handleFilterClick(
@@ -133,5 +93,37 @@ export default class extends NextTabFilterBlock {
 
             </div>
         );
+    }
+
+    static doFiltering(matches, filteredIds) {
+        let positiveFilteredItemsIds = [];
+        let negativeFilteredItemsIds = [];
+        let neutralFilteredItemsIds = [];
+
+        for (const id of filteredIds) {
+            let item = matches.find((o) => o._id === id);
+            if (item) {
+                let strongerTeam = item
+                    .extraInfo
+                    .scores.find(o => o.forecastNum === 5)
+                    .value.find(o => o.info.type === 'forecast1').info.strongerTeam;
+
+                if ((strongerTeam === 'home' && item.homeScore > item.guestScore) ||
+                    (strongerTeam === 'guest' && item.homeScore < item.guestScore)
+                ) {
+                    positiveFilteredItemsIds.push(item._id);
+                } else if (item.homeScore === item.guestScore) {
+                    neutralFilteredItemsIds.push(item._id);
+                } else {
+                    negativeFilteredItemsIds.push(item._id);
+                }
+            }
+        }
+
+        return [
+            positiveFilteredItemsIds,
+            negativeFilteredItemsIds,
+            neutralFilteredItemsIds,
+        ];
     }
 }
