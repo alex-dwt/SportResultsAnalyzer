@@ -106,3 +106,12 @@ p {
 .analysis-table-filter-block .column {
     width: 20% !important;
 }
+
+.tournament-analysis-table-filter-div {
+    align-items: center;
+    display: flex;
+}
+
+.tournament-analysis-table-filter-div p {
+    margin: 0 5px;
+}

@@ -1,9 +1,71 @@
 import React from 'react';
 import { Table } from 'semantic-ui-react'
+import { Dropdown } from 'semantic-ui-react'
 
 export default class extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            filterId: '',
+            orderId: '',
+            orderDirectionId: 'desc',
+        };
+    }
+
     render() {
+        let filterOptions = [{ value: '', text: '' }];
+        for (const item of this.props.items) {
+            let filter = item.filter;
+            if (!filterOptions.find((o) => filter.id === o.value)) {
+                filterOptions.push({ value: filter.id, text: filter.name });
+            }
+        }
+
+        let items = this.props.items.filter((o) => this.state.filterId === '' || o.filter.id === this.state.filterId);
+
+        if (this.state.orderId) {
+            items.sort((a, b) => parseInt(a[this.state.orderId]) - parseInt(b[this.state.orderId]));
+            if (this.state.orderDirectionId !== 'asc') {
+                items.reverse();
+            }
+        }
+
         return (
+            <div>
+
+                <div className="tournament-analysis-table-filter-div">
+                    <p>Filter</p>
+                    <Dropdown
+                            selection
+                            options={filterOptions.map((o) => ({...o, key: o.value === '' ? '-' : o.value}))}
+                            defaultValue="-"
+                            onChange={(e, { value }) => this.setState({filterId: value})}
+                        />
+
+                    <p>Order</p>
+                    <Dropdown
+                            selection
+                            options={
+                                [
+                                    { value: '', text: '' },
+                                    { value: 'filteredItemsPercent', text: 'Filtered' },
+                                    { value: 'positiveFilteredItemsPercent', text: 'Positive' },
+                                    { value: 'neutralFilteredItemsPercent', text: 'Neutral' },
+                                    { value: 'negativeFilteredItemsPercent', text: 'Negative' },
+                                ].map((o) => ({...o, key: o.value || '-'}))
+                            }
+                            defaultValue="-"
+                            onChange={(e, { value }) => this.setState({orderId: value})}
+                        />
+                    <Dropdown
+                            selection
+                            options={[{ value: 'asc', text: 'ASC' }, { value: 'desc', text: 'DESC' }].map((o) => ({...o, key: o.value}))}
+                            defaultValue="desc"
+                            onChange={(e, { value }) => this.setState({orderDirectionId: value})}
+                        />
+                </div>
+
+
                 <Table fixed>
                     <Table.Header>
                         <Table.Row>
@@ -18,7 +80,7 @@ export default class extends React.Component {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {this.props.items.map((item) => {
+                        {items.map((item) => {
                             return (
                                 <Table.Row key={item._id}>
                                     <Table.Cell>{item.tournamentName}</Table.Cell>
@@ -36,6 +98,8 @@ export default class extends React.Component {
                         })}
                     </Table.Body>
                 </Table>
+
+            </div>
         );
     }
 }
