@@ -11,6 +11,16 @@ export default {
         );
     },
 
+    getPrevMatches(sportType, date) {
+        return new Promise((resolve, reject) => axios
+            .get(
+                `/prev-matches/${sportType}`,
+                {params: {date: date.format('YYYY-MM-DD')}}
+            )
+            .then((res) => resolve(res.data))
+        );
+    },
+
     getTeamMatches(sportType, tournamentId, teamId) {
         return new Promise((resolve, reject) => axios
             .get(`/team-matches-table/${sportType}/${tournamentId}/${teamId}`)

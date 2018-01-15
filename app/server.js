@@ -155,6 +155,13 @@ app.get('/next-matches/:sport', (req, res, next) =>
 );
 
 /**
+ * Forecast for prev matches
+ */
+app.get('/prev-matches/:sport', (req, res, next) =>
+    fetcher.getNextMatches(req.params.sport, req.query.date, true).then((result) => res.json(result))
+);
+
+/**
  * Mark future game as favorite
  */
 app.put('/favorite_game', (req, res, next) =>

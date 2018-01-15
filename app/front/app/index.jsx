@@ -4,6 +4,7 @@ import Archive from './Archive.jsx';
 import Home from './Home.jsx';
 import Current from './Current.jsx';
 import Next from './Next.jsx';
+import Prev from './Prev.jsx';
 import Settings from './Settings.jsx';
 import { Dropdown, Menu } from 'semantic-ui-react'
 import {
@@ -49,6 +50,7 @@ export class App extends React.Component {
                         <Menu>
                             <Menu.Item as={NavLink} to='/' exact>Home</Menu.Item>
                             <Menu.Item as={NavLink} to='/next' exact>Next</Menu.Item>
+                            <Menu.Item as={NavLink} to='/prev' exact>Previous</Menu.Item>
                             <Menu.Item as={NavLink} to='/current'>Current</Menu.Item>
                             <Menu.Item as={NavLink} to='/archive'>Archive</Menu.Item>
                             <Menu.Item as={NavLink} to='/settings' position="right">Settings</Menu.Item>
@@ -56,6 +58,7 @@ export class App extends React.Component {
 
                         <Route exact path="/" component={Home}/>
                         <Route exact path="/next" component={Next}/>
+                        <Route exact path="/prev" component={Prev}/>
                         <Route path="/current" component={Current}/>
                         <Route path="/archive" component={Archive}/>
                         <Route path="/settings" component={Settings}/>

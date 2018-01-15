@@ -32,17 +32,23 @@ export default class extends React.Component {
         };
     }
 
+    loadMatches(sport, date) {
+        return Request.getNextMatches(sport, date);
+    }
+
     handleClick() {
-        Request.getNextMatches(
-            sessionStorage.getItem('sport'),
-            this.state.date
-        ).then((res) => {
-            this.matchesData = res;
-            this.setState({
-                filteredItems: this.matchesData.items,
-                itemsCount: this.matchesData.items.length,
+        this
+            .loadMatches(
+                sessionStorage.getItem('sport'),
+                this.state.date,
+            )
+            .then((res) => {
+                this.matchesData = res;
+                this.setState({
+                    filteredItems: this.matchesData.items,
+                    itemsCount: this.matchesData.items.length,
+                });
             });
-        });
     }
 
     handleFilterClick(filteredItems) {
@@ -105,7 +111,10 @@ export default class extends React.Component {
                                 <Grid columns={5} divided textAlign={'center'} verticalAlign={'middle'} className={'next-match-grid'}>
                                     <Grid.Row>
                                         <Grid.Column style={{'width': '10%'}}>
-                                            <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
+                                            {typeof  item.homeScore !== 'undefined'
+                                                ? `${item.homeScore} - ${item.guestScore} (${item.totalScore})`
+                                                : <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
+                                            }
                                         </Grid.Column>
                                         <Grid.Column style={{'width': '30%'}}>
                                             {item.tournamentName}<br/>
