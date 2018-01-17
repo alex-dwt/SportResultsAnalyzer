@@ -11,6 +11,7 @@ import { Tab } from 'semantic-ui-react'
 import { Grid } from 'semantic-ui-react'
 import Request  from './Request.jsx'
 import NextTabFilterBlock  from './filterBlocks/NextTabFilterBlock.jsx'
+import PrevTabForecastsAnalyserBlock  from './PrevTabForecastsAnalyserBlock.jsx'
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -111,9 +112,9 @@ export default class extends React.Component {
                                 <Grid columns={5} divided textAlign={'center'} verticalAlign={'middle'} className={'next-match-grid'}>
                                     <Grid.Row>
                                         <Grid.Column style={{'width': '10%'}}>
-                                            {typeof  item.homeScore !== 'undefined'
-                                                ? `${item.homeScore} - ${item.guestScore} (${item.totalScore})`
-                                                : <span className={'make-favorite-game-sign icon-star' + (item.isFavorite ? '' : '-empty')}></span>
+                                            {
+                                                typeof  item.homeScore !== 'undefined' &&
+                                                `${item.homeScore} - ${item.guestScore} (${item.totalScore})`
                                             }
                                         </Grid.Column>
                                         <Grid.Column style={{'width': '30%'}}>
@@ -190,6 +191,8 @@ export default class extends React.Component {
                         );
                     }
                 )}
+
+                <PrevTabForecastsAnalyserBlock items={this.state.filteredItems}/>
 
             </div>
         );
