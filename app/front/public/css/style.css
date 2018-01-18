@@ -115,3 +115,38 @@ p {
 .tournament-analysis-table-filter-div p {
     margin: 0 5px;
 }
+
+
+
+
+.rates-analyser {
+    padding: 10px;
+}
+
+.rates-analyser > div {
+    width: 25%;
+}
+
+.rates-analyser h6 {
+    font-size: 18px;
+    margin: 0;
+    text-align: center;
+}
+
+.rates-analyser .bet-type {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.rates-analyser .summary-line {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.rates-analyser .button-div {
+    text-align: center;
+}
