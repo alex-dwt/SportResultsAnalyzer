@@ -373,7 +373,7 @@ function getMinRatesValues() {
     let vals = [];
     let val = 1;
 
-    while(val < 2) {
+    while(val <= 3) {
         vals.push(Math.round(val * 100) / 100);
         val += 0.05;
     }

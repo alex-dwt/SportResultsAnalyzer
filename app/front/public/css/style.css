@@ -150,3 +150,7 @@ p {
 .rates-analyser .button-div {
     text-align: center;
 }
+
+.tournament-analysis-table-block table tfoot tr:first-child td {
+    border-top: 5px solid black !important;
+}

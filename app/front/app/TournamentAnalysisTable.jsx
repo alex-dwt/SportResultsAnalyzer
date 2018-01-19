@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table } from 'semantic-ui-react'
 import { Dropdown } from 'semantic-ui-react'
+import AnalysisTable  from './teamMatches/AnalysisTable.jsx'
 
 export default class extends React.Component {
     constructor(props) {
@@ -21,6 +22,50 @@ export default class extends React.Component {
             }
         }
 
+        /**
+         * Calculate summary for every filter
+         */
+        let summaryItems = [];
+
+        for (const filter of filterOptions) {
+            if (filter.value === '') {
+                continue;
+            }
+
+            let result;
+
+            for (const item of this.props.items) {
+                if (filter.value !== item.filter.id) {
+                    continue;
+                }
+                if (!result) {
+                    result = {
+                        id: filter.value,
+                        filterName: filter.text
+                    };
+                }
+                for (const fieldName of [
+                    'itemsCount',
+                    'filteredItemsCount',
+                    'neutralFilteredItemsCount',
+                    'positiveFilteredItemsCount',
+                    'negativeFilteredItemsCount',
+                ]) {
+                    if (typeof result[fieldName] === 'undefined') {
+                        result[fieldName] = 0;
+                    }
+                    result[fieldName] += item[fieldName];
+                }
+            }
+
+            if (result) {
+                summaryItems.push(result);
+            }
+        }
+
+        /**
+         * Show items
+         */
         let items = this.props.items.filter((o) => this.state.filterId === '' || o.filter.id === this.state.filterId);
 
         if (this.state.orderId) {
@@ -31,7 +76,7 @@ export default class extends React.Component {
         }
 
         return (
-            <div>
+            <div className="tournament-analysis-table-block">
 
                 <div className="tournament-analysis-table-filter-div">
                     <p>Filter</p>
@@ -79,6 +124,7 @@ export default class extends React.Component {
                             <Table.HeaderCell>Date</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
+
                     <Table.Body>
                         {items.map((item) => {
                             return (
@@ -97,6 +143,44 @@ export default class extends React.Component {
                             );
                         })}
                     </Table.Body>
+
+                    <Table.Footer>
+                        {summaryItems.map((item) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell>{item.itemsCount}</Table.Cell>
+                                    <Table.Cell>
+                                        {item.filteredItemsCount} ({AnalysisTable.calculatePercents(
+                                            item.itemsCount,
+                                            item.filteredItemsCount
+                                        )})
+                                    </Table.Cell>
+                                    <Table.Cell positive>
+                                        {item.positiveFilteredItemsCount} ({AnalysisTable.calculatePercents(
+                                            item.filteredItemsCount,
+                                            item.positiveFilteredItemsCount
+                                        )})
+                                    </Table.Cell>
+                                    <Table.Cell negative>
+                                        {item.negativeFilteredItemsCount} ({AnalysisTable.calculatePercents(
+                                            item.filteredItemsCount,
+                                            item.negativeFilteredItemsCount
+                                        )})
+                                    </Table.Cell>
+                                    <Table.Cell warning>
+                                        {item.neutralFilteredItemsCount} ({AnalysisTable.calculatePercents(
+                                            item.filteredItemsCount,
+                                            item.neutralFilteredItemsCount
+                                        )})
+                                    </Table.Cell>
+                                    <Table.Cell>{item.filterName}</Table.Cell>
+                                    <Table.Cell></Table.Cell>
+                                </Table.Row>
+                            );
+                        })}
+                    </Table.Footer>
+
                 </Table>
 
             </div>
