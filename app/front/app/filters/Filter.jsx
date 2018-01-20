@@ -13,7 +13,7 @@ export default class extends React.Component {
                 <Dropdown
                     selection
                     options={this.getValues()}
-                    defaultValue="-"
+                    defaultValue={typeof this.props.defaultValue === 'undefined' ? '-' : this.props.defaultValue}
                     onChange={(e, { value }) => this.handleFilterOnChange(value, this.props.items)}
                 />
             </div>
@@ -27,12 +27,12 @@ export default class extends React.Component {
     getValues(items = []) {
         return [{ value: '', text: '' }]
             .concat(items)
-            .map((o) => ({...o, key: o.value || '-'}));
+            .map((o) => ({...o, key: o.value === '' ? '-' : o.value}));
     }
 
-    generateDigitsFilterValues(count) {
+    generateDigitsFilterValues(maxValue, initialValue = 1, step = 1) {
         let items = [];
-        for (let i = 1; i <= count; i++) {
+        for (let i = initialValue; i <= maxValue; i += step) {
             items.push({ value: i, text: i })
         }
 

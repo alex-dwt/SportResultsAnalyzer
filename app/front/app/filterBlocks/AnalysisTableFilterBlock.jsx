@@ -7,13 +7,15 @@ import NextTabFilterBlock  from '../filterBlocks/NextTabFilterBlock.jsx'
 import StrongerTeamFilter  from '../filters/StrongerTeamFilter.jsx'
 import PositionsDiffMinFilter  from '../filters/PositionsDiffMinFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
-import AnalysisTable from '../teamMatches/AnalysisTable.jsx';
-import Request from '../Request.jsx';
+import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
+import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
 
 const NO_MINUSES_FILTER_ID = 0;
 const ALL_PLUSES_FILTER_ID = 1;
 const STRONGER_TEAM_FILTER_ID = 2;
 const POSITIONS_MIN_DIFF_FILTER_ID = 3;
+const MIN_SERIAL_FILTER_ID = 4;
+const MAX_SERIAL_FILTER_ID = 5;
 
 export default class extends NextTabFilterBlock {
     handleFilterClick() {
@@ -81,6 +83,24 @@ export default class extends NextTabFilterBlock {
                     <Grid.Column>
                         <The5thForecastAllPlusesFilter
                             index={ALL_PLUSES_FILTER_ID}
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.extraInfo.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <MinSerialFilter
+                            index={MIN_SERIAL_FILTER_ID}
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.extraInfo.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <MaxSerialFilter
+                            index={MAX_SERIAL_FILTER_ID}
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
                             payloadCallback={(item) => item.extraInfo.scores}

@@ -10,6 +10,8 @@ import LossesDiffMinFilter  from '../filters/LossesDiffMinFilter.jsx'
 import The5thForecastNoMinusesFilter  from '../filters/The5thForecastNoMinusesFilter.jsx'
 import The5thForecastAllPlusesFilter  from '../filters/The5thForecastAllPlusesFilter.jsx'
 import The1sForecastGoalsDiffMinFilter  from '../filters/The1sForecastGoalsDiffMinFilter.jsx'
+import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
+import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
 const includes = require('array-includes');
 const intersect = require('intersect');
@@ -121,6 +123,24 @@ export default class extends React.Component {
                     <Grid.Column>
                         <The1sForecastGoalsDiffMinFilter
                             index="7"
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <MinSerialFilter
+                            index="8"
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <MaxSerialFilter
+                            index="9"
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
                             payloadCallback={(item) => item.scores}
