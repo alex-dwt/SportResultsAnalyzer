@@ -6,6 +6,7 @@ const intersect = require('intersect');
 import NextTabFilterBlock  from '../filterBlocks/NextTabFilterBlock.jsx'
 import StrongerTeamFilter  from '../filters/StrongerTeamFilter.jsx'
 import PositionsDiffMinFilter  from '../filters/PositionsDiffMinFilter.jsx'
+import The6thForecastTotalCalculatedFilter  from '../filters/The6thForecastTotalCalculatedFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
 import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
 import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
@@ -16,6 +17,7 @@ const STRONGER_TEAM_FILTER_ID = 2;
 const POSITIONS_MIN_DIFF_FILTER_ID = 3;
 const MIN_SERIAL_FILTER_ID = 4;
 const MAX_SERIAL_FILTER_ID = 5;
+const TOTAL_CALCULATED_FILTER_ID = 6;
 
 export default class extends NextTabFilterBlock {
     handleFilterClick() {
@@ -38,6 +40,8 @@ export default class extends NextTabFilterBlock {
                 this.props.items,
                 intersect(idsArr)
             );
+        } else if (this.filteredValues.hasOwnProperty(TOTAL_CALCULATED_FILTER_ID)) {
+            positiveFilteredItemsIds = this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id);
         }
 
         this.props.handleFilterClick(
@@ -101,6 +105,15 @@ export default class extends NextTabFilterBlock {
                     <Grid.Column>
                         <MaxSerialFilter
                             index={MAX_SERIAL_FILTER_ID}
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.extraInfo.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <The6thForecastTotalCalculatedFilter
+                            index={TOTAL_CALCULATED_FILTER_ID}
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
                             payloadCallback={(item) => item.extraInfo.scores}
