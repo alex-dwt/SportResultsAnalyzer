@@ -40,6 +40,8 @@ export default class extends React.Component {
                             <Table.Cell>2X</Table.Cell>
                             <Table.Cell>F1</Table.Cell>
                             <Table.Cell>F2</Table.Cell>
+                            {typeof data.rates.lt !== 'undefined' ? <Table.Cell>&lt; {data.rates.lt.count}</Table.Cell> : ''}
+                            {typeof data.rates.gt !== 'undefined' ? <Table.Cell>&gt; {data.rates.gt.count}</Table.Cell> : ''}
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>{data.rates[1]}</Table.Cell>
@@ -50,6 +52,8 @@ export default class extends React.Component {
                             <Table.Cell>{data.rates.x2}</Table.Cell>
                             <Table.Cell>({data.rates.f1.count}) {data.rates.f1.value}</Table.Cell>
                             <Table.Cell>({data.rates.f2.count}) {data.rates.f2.value}</Table.Cell>
+                            {typeof data.rates.lt !== 'undefined' ? <Table.Cell>{data.rates.lt.value}</Table.Cell> : ''}
+                            {typeof data.rates.gt !== 'undefined' ? <Table.Cell>{data.rates.gt.value}</Table.Cell> : ''}
                         </Table.Row>
                     </Table.Body>
                 </Table>

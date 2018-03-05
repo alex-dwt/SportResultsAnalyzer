@@ -105,13 +105,13 @@ function parseUrl(index = 0) {
                     }
 
                     let rates = {};
-                    for (const prop of ['1', 'x', '2', '1x', '12', 'x2', 'f1', 'f2']) {
+                    for (const prop of ['1', 'x', '2', '1x', '12', 'x2', 'f1', 'f2', 'lt', 'gt']) {
                         let $next = $item.next();
                         if (!$next) {
                             return true;
                         }
                         let text = $next.text().trim();
-                        if (prop === 'f1' || prop === 'f2') {
+                        if (prop === 'f1' || prop === 'f2' || prop === 'lt' || prop === 'gt') {
                             let i = text.indexOf(')');
                             let count = '-', value = '-';
                             if (i !== -1) {
