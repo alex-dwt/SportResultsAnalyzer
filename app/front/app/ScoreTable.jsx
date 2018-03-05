@@ -33,9 +33,9 @@ export default class extends React.Component {
                         <Table.Row key={item.teamId} active={activeRows[item.teamId] && activeRows[item.teamId] === 'whole'}>
                             <Table.Cell>{item.position}. {item.teamName}</Table.Cell>
                             <Table.Cell>{item.statistics.mp}</Table.Cell>
-                            <Table.Cell>{item.statistics.w}</Table.Cell>
-                            <Table.Cell>{item.statistics.d}</Table.Cell>
-                            <Table.Cell>{item.statistics.l}</Table.Cell>
+                            <Table.Cell>{item.statistics.w} ({item.statistics.wh}/{item.statistics.wg})</Table.Cell>
+                            <Table.Cell>{item.statistics.d} ({item.statistics.dh}/{item.statistics.dg})</Table.Cell>
+                            <Table.Cell>{item.statistics.l} ({item.statistics.lh}/{item.statistics.lg})</Table.Cell>
                             <Table.Cell>{item.statistics.gf}</Table.Cell>
                             <Table.Cell>{item.statistics.ga}</Table.Cell>
                             <Table.Cell>{item.statistics.agf}</Table.Cell>

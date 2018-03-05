@@ -252,9 +252,9 @@ $(() => {
                         <tr>
                             <td>${value.position}. ${value.teamName}</td>
                             <td>${value.statistics.mp}</td>
-                            <td>${value.statistics.w}</td>
-                            <td>${value.statistics.d}</td>
-                            <td>${value.statistics.l}</td>
+                            <td>${value.statistics.w} (${value.statistics.wh}/${value.statistics.wg})</td>
+                            <td>${value.statistics.d} (${value.statistics.dh}/${value.statistics.dg})</td>
+                            <td>${value.statistics.l} (${value.statistics.lh}/${value.statistics.lg})</td>
                             <td>${value.statistics.gf}</td>
                             <td>${value.statistics.ga}</td>
                             <td>${value.statistics.agf}</td>
