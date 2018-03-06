@@ -4,11 +4,12 @@
 
 version: '3.3'
 services:
-  node:
+
+  front:
     build:
       context: .
       dockerfile: Dockerfile
-    command: "./boot.bash"
+    command: "npm run front"
 #    command: bash -c 'sleep 10000'
     environment:
       - NODE_ENV=production
@@ -21,6 +22,28 @@ services:
       - ./app:/usr/src/app
     ports:
       - 80:80
+
+  mparser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run matches-parser"
+    environment:
+      - NODE_ENV=production
+      - SITE_URL
+    volumes:
+      - ./app:/usr/src/app
+
+  bparser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run bookmakers-matches-parser"
+    environment:
+      - NODE_ENV=production
+      - OFFICE2_SITE
+    volumes:
+      - ./app:/usr/src/app
 
   mongodb:
       image: mongo:latest

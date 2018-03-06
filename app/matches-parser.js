@@ -1,6 +1,15 @@
+/*
+ * This file is part of the SportResultsAnalyzer package.
+ * (c) Alexander Lukashevich <aleksandr.dwt@gmail.com>
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 const { spawn } = require('child_process');
 const cheerio = require('cheerio');
 const request = require('request');
+const db = require("./db");
+const URLS = require("./sites");
+
 
 const SPORT_TYPE_BASKETBALL = 'basketball';
 const HOURS_DIFF = 2;
@@ -8,8 +17,7 @@ const delay = 3 * 60 * 1000; // minutes
 let matchesCollection,
     scheduleCollection,
     archiveCompletedCollection,
-    isStarted,
-    urlsToParse;
+    urlsToParse = [];
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 2;
@@ -214,18 +222,27 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
-module.exports = {
-    start(urls, mongoDB) {
-        if (isStarted) {
-            return;
-        }
+for (const [sport, value] of Object.entries(URLS.sports)) {
+    urlsToParse = urlsToParse.concat(
+        value.archive.map((o) => ({
+            id: o.id,
+            url: URLS.createUrl(sport, o.id, true),
+            isArchive: true,
+            sport,
+        })),
+        value.urls.map((o) => ({
+            id: o.id,
+            url: URLS.createUrl(sport, o.id, true),
+            sport,
+        }))
+    );
+}
 
-        isStarted = true;
-        matchesCollection = mongoDB.collection('matches');
-        scheduleCollection = mongoDB.collection('schedule');
-        archiveCompletedCollection = mongoDB.collection('archive_completed');
-        urlsToParse = urls;
 
-        startBunchParsing(true);
-    }
-};
+db.connectDB(db => {
+    matchesCollection = db.collection('matches');
+    scheduleCollection = db.collection('schedule');
+    archiveCompletedCollection = db.collection('archive_completed');
+
+    startBunchParsing(true);
+});

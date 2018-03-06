@@ -1,3 +1,11 @@
+/*
+ * This file is part of the SportResultsAnalyzer package.
+ * (c) Alexander Lukashevich <aleksandr.dwt@gmail.com>
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+const SITE_URL = process.env.SITE_URL;
+
 module.exports = {
     sports: {
         basketball:  {
@@ -125,4 +133,20 @@ module.exports = {
             ],
         },
     },
+
+    createUrl(sport, tournamentId, isMatchesUrl) {
+        let result = `${SITE_URL}/?sport=${sport}&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
+        if (tournamentId.indexOf('r') !== -1) {
+            result += 'round';
+        } else if (tournamentId.indexOf('s') !== -1) {
+            result += 'season';
+        } else {
+            result += 'competition';
+        }
+        if (isMatchesUrl) {
+            result += '&view=matches';
+        }
+
+        return result;
+    }
 };

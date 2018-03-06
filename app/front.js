@@ -6,22 +6,16 @@
 
 'use strict';
 
-const parser = require("./parser");
+const db = require("./db");
 const compression = require('compression');
-const parserBookmakersMatches = require("./parser-bookmakers-matches");
 const fetcher = require("./fetcher");
 const express = require("express");
 const bodyParser = require("body-parser");
-const SITE_URL = process.env.SITE_URL;
 const OFFICE0_SITE = process.env.OFFICE1_SITE;
 const OFFICE1_SITE = process.env.OFFICE2_SITE;
 const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
 const URLS = require("./sites");
-
-const mongoClient = require('mongodb').MongoClient;
-const mongoClientUrl = 'mongodb://mongodb:27017/scoresdb';
-let mongoDB;
 
 const app = express();
 app.use(bodyParser.json());
@@ -141,8 +135,8 @@ app.get('/site_urls/:sport/:tournamentId', (req, res, next) => {
         : ['/', '/', '/'];
 
     res.json({
-        matchesUrl: createUrl(sport, id, true),
-        scoreTableUrl: createUrl(sport, id),
+        matchesUrl: URLS.createUrl(sport, id, true),
+        scoreTableUrl: URLS.createUrl(sport, id),
         officesUrls: officesUrls.map((val, index) => eval(`OFFICE${index}_SITE`) + val)
     });
 });
@@ -201,67 +195,9 @@ app.get('/tournament_analysis_check', (req, res, next) =>{
         .then((isExists) => res.json({isExists}))}
 );
 
-function connectDB() {
-    mongoClient
-        .connect(mongoClientUrl)
-        .then((db) => {
-            fetcher.setMongoDb(db);
-            mongoDB = db;
 
-            let urlsToParseMatches = [];
-            let urlsToParseBookmakers = [];
-            for (const [sport, value] of Object.entries(URLS.sports)) {
-                urlsToParseBookmakers = urlsToParseBookmakers.concat(
-                    value.urls
-                        .filter((o) => o.urls[1] !== '/')
-                        .map((o) => ({
-                            id: o.id,
-                            url: `${OFFICE1_SITE}${o.urls[1]}`,
-                            sport,
-                        }))
-                );
-                urlsToParseMatches = urlsToParseMatches.concat(
-                    value.archive.map((o) => ({
-                        id: o.id,
-                        url: createUrl(sport, o.id, true),
-                        isArchive: true,
-                        sport,
-                    })),
-                    value.urls.map((o) => ({
-                        id: o.id,
-                        url: createUrl(sport, o.id, true),
-                        sport,
-                    }))
-                );
-            }
+db.connectDB(db => {
+    fetcher.setMongoDb(db);
 
-            // start parsing bookmakers matches forever
-            parserBookmakersMatches.start(urlsToParseBookmakers, mongoDB);
-
-            // start parsing sites forever
-            parser.start(urlsToParseMatches, mongoDB);
-            
-            app.listen(80);
-        }).catch((err) =>  {
-            console.log('Trying connecting MongoDB...');
-            setTimeout(connectDB, 1000);
-        });
-}
-
-function createUrl(sport, tournamentId, isMatchesUrl) {
-    let result = `${SITE_URL}/?sport=${sport}&id=${parseInt(tournamentId.replace('a', ''))}&page=`;
-    if (tournamentId.indexOf('r') !== -1) {
-        result += 'round';
-    } else if (tournamentId.indexOf('s') !== -1) {
-        result += 'season';
-    } else {
-        result += 'competition';
-    }
-    if (isMatchesUrl) {
-        result += '&view=matches';
-    }
-
-    return result;
-}
-
-connectDB();
+    app.listen(80);
+});

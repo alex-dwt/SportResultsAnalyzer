@@ -1,11 +1,20 @@
+/*
+ * This file is part of the SportResultsAnalyzer package.
+ * (c) Alexander Lukashevich <aleksandr.dwt@gmail.com>
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 const cheerio = require('cheerio');
 const request = require('request');
+const db = require("./db");
+const URLS = require("./sites");
+const { spawn, exec } = require('child_process');
+
+const OFFICE1_SITE = process.env.OFFICE2_SITE;
 
 const HOURS_DIFF = 3;
 const delay = 8 * 60 * 60 * 1000; // hours
-let bookmakersMatchesCollection,
-    isStarted,
-    urlsToParse;
+let bookmakersMatchesCollection, urlsToParse = [];
 
 function parseUrl(index = 0) {
     let tournamentId = urlsToParse[index].id;
@@ -172,16 +181,37 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
-module.exports = {
-    start(urls, mongoDB) {
-        if (isStarted || !urls) {
-            return;
-        }
+for (const [sport, value] of Object.entries(URLS.sports)) {
+    urlsToParse = urlsToParse.concat(
+        value.urls
+            .filter((o) => o.urls[1] !== '/')
+            .map((o) => ({
+                id: o.id,
+                url: `${OFFICE1_SITE}${o.urls[1]}`,
+                sport,
+            }))
+    );
+}
 
-        isStarted = true;
-        bookmakersMatchesCollection = mongoDB.collection('bookmakers_matches');
-        urlsToParse = urls;
+
+exec('ip route show 0.0.0.0/0 | awk \'{ print $3 }\'', (err, stdout, stderr) => {
+    if (err) {
+        console.error('Can not run polipo.');
+        return;
+    }
+
+    const polipo = spawn(
+        'polipo',
+        [`socksParentProxy=${stdout.trim()}:9050`],
+        { detached: true, stdio: [ 'ignore', 'ignore', 'ignore' ] }
+    );
+    polipo.unref();
+
+    db.connectDB(db => {
+        bookmakersMatchesCollection = db.collection('bookmakers_matches');
 
         parseUrl();
-    }
-};
+    });
+});
+
+
