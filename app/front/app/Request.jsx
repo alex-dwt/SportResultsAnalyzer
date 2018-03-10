@@ -80,11 +80,11 @@ export default {
         );
     },
 
-    isTournamentAnalysisItemExists(sport, tournamentId) {
+    isTournamentAnalysisItemExists(sport, tournamentId, filterId) {
         return new Promise((resolve, reject) => axios
             .get(
                 '/tournament_analysis_check',
-                {params: {sport, tournamentId, }}
+                {params: {sport, tournamentId, filterId}}
             )
             .then((res) => resolve(res.data.isExists))
         );

@@ -119,6 +119,7 @@ module.exports = {
                 {id: '39336r'},
                 {id: '39625r'},
                 {id: '39745r'},
+                {id: '41670r'},
                 {id: '66', urls:['/v3/ru/line/bets/period=0;chmp=a:11953;', '/su/betting/Football/Belarus/Vysshaya+League/', '/sport/futbol/belarus-vysshaja-liga']},
                 {id: '89', urls:['/v3/ru/line/bets/period=0;chmp=a:16500;', '/su/betting/Football/Brazil/Serie+B/', '/sport/futbol/brazilija-serija-v']},
                 {id: '26', urls:['/v3/ru/line/bets/period=0;chmp=a:1471;', '/su/betting/Football/Brazil/Serie+A/', '/sport/futbol/brazilija-serija-a']},

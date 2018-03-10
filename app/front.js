@@ -191,10 +191,24 @@ app.get('/tournament_analysis_check', (req, res, next) =>{
         .isTournamentAnalysisExists(
             req.query.sport,
             req.query.tournamentId,
+            req.query.filterId,
         )
         .then((isExists) => res.json({isExists}))}
 );
 
+/**
+ *
+ */
+app.get('/totals_probability', (req, res, next) =>{
+    fetcher
+        .calculateTotalGoalsProbability(
+            req.query.dateTill,
+            req.query.sport,
+            req.query.tournamentId,
+            req.query.teamId,
+        )
+        .then(result => res.json(result))}
+);
 
 db.connectDB(db => {
     fetcher.setMongoDb(db);

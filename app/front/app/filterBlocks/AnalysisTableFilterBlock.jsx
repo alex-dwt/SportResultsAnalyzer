@@ -7,6 +7,7 @@ import NextTabFilterBlock  from '../filterBlocks/NextTabFilterBlock.jsx'
 import StrongerTeamFilter  from '../filters/StrongerTeamFilter.jsx'
 import PositionsDiffMinFilter  from '../filters/PositionsDiffMinFilter.jsx'
 import The6thForecastTotalCalculatedFilter  from '../filters/The6thForecastTotalCalculatedFilter.jsx'
+import {The9thForecastFilter}  from '../filters/The9thForecastFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
 import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
 import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
@@ -18,6 +19,7 @@ const POSITIONS_MIN_DIFF_FILTER_ID = 3;
 const MIN_SERIAL_FILTER_ID = 4;
 const MAX_SERIAL_FILTER_ID = 5;
 const TOTAL_CALCULATED_FILTER_ID = 6;
+const TOTAL_PROBABILITY_FILTER_ID = 7;
 
 export default class extends NextTabFilterBlock {
     handleFilterClick() {
@@ -40,8 +42,25 @@ export default class extends NextTabFilterBlock {
                 this.props.items,
                 intersect(idsArr)
             );
-        } else if (this.filteredValues.hasOwnProperty(TOTAL_CALCULATED_FILTER_ID)) {
-            positiveFilteredItemsIds = this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id);
+        // } else if (this.filteredValues.hasOwnProperty(TOTAL_CALCULATED_FILTER_ID)) {
+        //     positiveFilteredItemsIds = this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id);
+        } else if (this.filteredValues.hasOwnProperty(TOTAL_PROBABILITY_FILTER_ID)) {
+            let ids = this.filteredValues[TOTAL_PROBABILITY_FILTER_ID].map((o) => o._id);
+            if (this.filteredValues.hasOwnProperty(TOTAL_CALCULATED_FILTER_ID)) {
+                ids = intersect([
+                    ids,
+                    this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id)
+                ]);
+            }
+
+            [
+                positiveFilteredItemsIds,
+                negativeFilteredItemsIds,
+                neutralFilteredItemsIds
+            ] = The9thForecastFilter.doAnalysis(
+                this.props.items,
+                ids
+            );
         }
 
         this.props.handleFilterClick(
@@ -114,6 +133,15 @@ export default class extends NextTabFilterBlock {
                     <Grid.Column>
                         <The6thForecastTotalCalculatedFilter
                             index={TOTAL_CALCULATED_FILTER_ID}
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.extraInfo.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <The9thForecastFilter
+                            index={TOTAL_PROBABILITY_FILTER_ID}
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
                             payloadCallback={(item) => item.extraInfo.scores}
