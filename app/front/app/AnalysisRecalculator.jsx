@@ -7,6 +7,7 @@ import AnalysisTableFilterBlock  from './filterBlocks/AnalysisTableFilterBlock.j
 import The5thForecastAllPlusesFilter  from './filters/The5thForecastAllPlusesFilter.jsx'
 import The5thForecastNoMinusesFilter  from './filters/The5thForecastNoMinusesFilter.jsx'
 import {The9thForecastFilter}  from './filters/The9thForecastFilter.jsx'
+import The10thForecastFilter  from './filters/The10thForecastFilter.jsx'
 
 const intersect = require('intersect');
 
@@ -43,68 +44,143 @@ const FILTERS = [
 
     for(const type of [
         The9thForecastFilter.ANALYSIS_TYPE_GT_2,
-        The9thForecastFilter.ANALYSIS_TYPE_GT_2_AND_HALF
+        // The9thForecastFilter.ANALYSIS_TYPE_GT_2_AND_HALF
     ]) {
-        for (let goalsCount = 2; goalsCount <= 3; goalsCount++) {
-            for (let percents = 20; percents <= 30; percents += 10) {
+        for (let goalsCount = 2; goalsCount <= 2; goalsCount++) {
+            for (let percents = 20; percents <= 20; percents += 10) {
                 for(const sign of ['>', '>>']) {
                     const name = `${goalsCount}: ${sign}${percents}%`;
-                    const callback = (matches) => The9thForecastFilter
-                        .doFiltering(
-                            `${goalsCount}:${percents}:${sign}`,
-                            matches,
-                            (item) => item.extraInfo.scores
-                        ).map((o) => o._id);
-
-                    callbacks.push({
-                        id: `${type}:${goalsCount}:${sign}:${percents}`,
-                        name,
-                        callback,
-                    });
 
                     result.push({
-                        name: `9f (5%) (${type}) ${name}`,
+                        name: `10f (2 >> 60) + 9f (${type}) ${name}`,
                         payload: {
                             callback: (matches) => The9thForecastFilter.doAnalysis(
                                 matches,
-                                callback(matches),
+                                (matches) => intersect(
+                                    The9thForecastFilter
+                                        .doFiltering(
+                                            `${goalsCount}:${percents}:${sign}`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                    The10thForecastFilter
+                                        .doFiltering(
+                                            `2:60:>>`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                ),
                                 type
                             )
                         },
                     });
+
+                    result.push({
+                        name: `10f (2 >> 70) + 9f (${type}) ${name}`,
+                        payload: {
+                            callback: (matches) => The9thForecastFilter.doAnalysis(
+                                matches,
+                                (matches) => intersect(
+                                    The9thForecastFilter
+                                        .doFiltering(
+                                            `${goalsCount}:${percents}:${sign}`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                    The10thForecastFilter
+                                        .doFiltering(
+                                            `2:70:>>`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                ),
+                                type
+                            )
+                        },
+                    });
+
+                    result.push({
+                        name: `10f (3 >> 60) + 9f (${type}) ${name}`,
+                        payload: {
+                            callback: (matches) => The9thForecastFilter.doAnalysis(
+                                matches,
+                                (matches) => intersect(
+                                    The9thForecastFilter
+                                        .doFiltering(
+                                            `${goalsCount}:${percents}:${sign}`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                    The10thForecastFilter
+                                        .doFiltering(
+                                            `3:60:>>`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                ),
+                                type
+                            )
+                        },
+                    });
+
+                    result.push({
+                        name: `10f (3 >> 70) + 9f (${type}) ${name}`,
+                        payload: {
+                            callback: (matches) => The9thForecastFilter.doAnalysis(
+                                matches,
+                                (matches) => intersect(
+                                    The9thForecastFilter
+                                        .doFiltering(
+                                            `${goalsCount}:${percents}:${sign}`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                    The10thForecastFilter
+                                        .doFiltering(
+                                            `3:70:>>`,
+                                            matches,
+                                            (item) => item.extraInfo.scores
+                                        ).map((o) => o._id),
+                                ),
+                                type
+                            )
+                        },
+                    });
+
+
                 }
             }
         }
     }
 
     // create combined filters
-    for(const type of [
-        The9thForecastFilter.ANALYSIS_TYPE_GT_2,
-        The9thForecastFilter.ANALYSIS_TYPE_GT_2_AND_HALF
-    ]) {
-        for(const sign of ['>', '>>']) {
-            let goalsCount = 2;
-            let percents = 20;
-            const callback1 = callbacks.find(o => o.id === `${type}:${goalsCount}:${sign}:${percents}`);
-            goalsCount += 1;
-            // percents += 10;
-            const callback2 = callbacks.find(o => o.id === `${type}:${goalsCount}:${sign}:${percents}`);
-            if (!callback1 || !callback2) {
-                continue;
-            }
-
-            result.push({
-                name: `9f (5%) (${type}) ${callback1.name}; ${callback2.name}`,
-                payload: {
-                    callback: (matches) => The9thForecastFilter.doAnalysis(
-                        matches,
-                        intersect(callback1.callback(matches), callback2.callback(matches)),
-                        type
-                    )
-                },
-            });
-        }
-    }
+    // for(const type of [
+    //     The9thForecastFilter.ANALYSIS_TYPE_GT_2,
+    //     The9thForecastFilter.ANALYSIS_TYPE_GT_2_AND_HALF
+    // ]) {
+    //     for(const sign of ['>', '>>']) {
+    //         let goalsCount = 2;
+    //         let percents = 20;
+    //         const callback1 = callbacks.find(o => o.id === `${type}:${goalsCount}:${sign}:${percents}`);
+    //         goalsCount += 1;
+    //         // percents += 10;
+    //         const callback2 = callbacks.find(o => o.id === `${type}:${goalsCount}:${sign}:${percents}`);
+    //         if (!callback1 || !callback2) {
+    //             continue;
+    //         }
+    //
+    //         result.push({
+    //             name: `9f (${type}) ${callback1.name}; ${callback2.name}`,
+    //             payload: {
+    //                 callback: (matches) => The9thForecastFilter.doAnalysis(
+    //                     matches,
+    //                     intersect(callback1.callback(matches), callback2.callback(matches)),
+    //                     type
+    //                 )
+    //             },
+    //         });
+    //     }
+    // }
 
     return result;
 })());

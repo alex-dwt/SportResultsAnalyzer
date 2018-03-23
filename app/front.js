@@ -16,6 +16,7 @@ const OFFICE1_SITE = process.env.OFFICE2_SITE;
 const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
 const URLS = require("./sites");
+const settings = require("./settings");
 
 const app = express();
 app.use(bodyParser.json());
@@ -210,8 +211,17 @@ app.get('/totals_probability', (req, res, next) =>{
         .then(result => res.json(result))}
 );
 
+/**
+ * Settings //todo
+ */
+app.get('/settings', (req, res, next) => {
+    settings.setForecast4MatchesCount(req.query.value);
+    res.json({});
+});
+
 db.connectDB(db => {
     fetcher.setMongoDb(db);
+    settings.setMongoDb(db);
 
     app.listen(80);
 });

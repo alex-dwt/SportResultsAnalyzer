@@ -22,7 +22,7 @@ let currentPhantomCount = 0;
 let currentUrlIndex = 0;
 const maxConcurrentlyPhantomCount = 2;
 
-function parseUrl(url) {
+function parseUrl(url, index) {
     const isArchived = !! url.isArchive;
     const sport = url.sport;
     let title = '';
@@ -31,7 +31,7 @@ function parseUrl(url) {
         ['--ignore-ssl-errors=yes', '--load-images=no', '/usr/src/app/phantom.js', url.url]
     );
 
-    console.log((new Date()).toISOString() + ' PhantomJS started (' + url.id + ')');
+    console.log((new Date()).toISOString() + ' PhantomJS started (index: ' + index + `, ${url.url}` + ')');
 
     proc.stdout.setEncoding('utf8');
 
@@ -171,7 +171,7 @@ function parseUrl(url) {
             }).catch(() => { });
         }
 
-        console.log((new Date()).toISOString() + ' PhantomJS exited (' + url.id + ')');
+        console.log((new Date()).toISOString() + ' PhantomJS exited (' + `${url.url}` + ')');
         currentPhantomCount--;
     });
 }
@@ -193,7 +193,7 @@ async function startBunchParsing(isFirstTime) {
         ) {
             ;
         } else {
-            setTimeout(() => { parseUrl(urlsToParse[i]) }, 10);
+            setTimeout(() => { parseUrl(urlsToParse[i], i) }, 10);
             currentPhantomCount++;
         }
 
@@ -237,6 +237,8 @@ for (const [sport, value] of Object.entries(URLS.sports)) {
         }))
     );
 }
+
+console.log(`urlsToParse count: ${urlsToParse.length}`);
 
 
 db.connectDB(db => {

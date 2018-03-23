@@ -8,6 +8,7 @@ import StrongerTeamFilter  from '../filters/StrongerTeamFilter.jsx'
 import PositionsDiffMinFilter  from '../filters/PositionsDiffMinFilter.jsx'
 import The6thForecastTotalCalculatedFilter  from '../filters/The6thForecastTotalCalculatedFilter.jsx'
 import {The9thForecastFilter}  from '../filters/The9thForecastFilter.jsx'
+import The10thForecastFilter  from '../filters/The10thForecastFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
 import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
 import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
@@ -20,6 +21,7 @@ const MIN_SERIAL_FILTER_ID = 4;
 const MAX_SERIAL_FILTER_ID = 5;
 const TOTAL_CALCULATED_FILTER_ID = 6;
 const TOTAL_PROBABILITY_FILTER_ID = 7;
+const TOTAL_AGGREGATED_PROBABILITY_FILTER_ID = 8;
 
 export default class extends NextTabFilterBlock {
     handleFilterClick() {
@@ -46,10 +48,10 @@ export default class extends NextTabFilterBlock {
         //     positiveFilteredItemsIds = this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id);
         } else if (this.filteredValues.hasOwnProperty(TOTAL_PROBABILITY_FILTER_ID)) {
             let ids = this.filteredValues[TOTAL_PROBABILITY_FILTER_ID].map((o) => o._id);
-            if (this.filteredValues.hasOwnProperty(TOTAL_CALCULATED_FILTER_ID)) {
+            if (this.filteredValues.hasOwnProperty(TOTAL_AGGREGATED_PROBABILITY_FILTER_ID)) {
                 ids = intersect([
                     ids,
-                    this.filteredValues[TOTAL_CALCULATED_FILTER_ID].map((o) => o._id)
+                    this.filteredValues[TOTAL_AGGREGATED_PROBABILITY_FILTER_ID].map((o) => o._id)
                 ]);
             }
 
@@ -142,6 +144,15 @@ export default class extends NextTabFilterBlock {
                     <Grid.Column>
                         <The9thForecastFilter
                             index={TOTAL_PROBABILITY_FILTER_ID}
+                            items={this.props.items}
+                            onChange={this.handleFilterSelect.bind(this)}
+                            payloadCallback={(item) => item.extraInfo.scores}
+                        />
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <The10thForecastFilter
+                            index={TOTAL_AGGREGATED_PROBABILITY_FILTER_ID}
                             items={this.props.items}
                             onChange={this.handleFilterSelect.bind(this)}
                             payloadCallback={(item) => item.extraInfo.scores}

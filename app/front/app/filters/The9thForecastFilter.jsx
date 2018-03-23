@@ -70,7 +70,7 @@ export class The9thForecastFilter extends Filter {
         let negativeFilteredItemsIds = [];
         let neutralFilteredItemsIds = [];
 
-        for (const id of filteredIds) {
+        for (const id of filteredIds(matches)) {
             let item = matches.find((o) => o._id === id);
             if (item) {
                 if (type === The9thForecastFilter.ANALYSIS_TYPE_GT_2) {
