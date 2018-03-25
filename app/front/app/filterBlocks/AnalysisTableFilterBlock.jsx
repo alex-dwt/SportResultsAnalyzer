@@ -12,6 +12,7 @@ import The10thForecastFilter  from '../filters/The10thForecastFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
 import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
 import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
+import ExportButton  from './ExportButton.jsx'
 
 const NO_MINUSES_FILTER_ID = 0;
 const ALL_PLUSES_FILTER_ID = 1;
@@ -64,6 +65,11 @@ export default class extends NextTabFilterBlock {
                 ids
             );
         }
+
+        // for export
+        this.setState({
+            filteredItemsIds: this.props.items.map(o => o._id),
+        });
 
         this.props.handleFilterClick(
             positiveFilteredItemsIds,
@@ -162,6 +168,8 @@ export default class extends NextTabFilterBlock {
                 </Grid>
 
                 <FilterButton disabled={!this.props.items.length} onClick={() => this.handleFilterClick()}/>
+
+                <ExportButton disabled={!this.state.filteredItemsIds.length} filteredItemsIds={this.state.filteredItemsIds}/>
 
             </div>
         );

@@ -9,6 +9,7 @@
 const db = require("./db");
 const compression = require('compression');
 const fetcher = require("./fetcher");
+const exporting = require("./exporting");
 const express = require("express");
 const bodyParser = require("body-parser");
 const OFFICE0_SITE = process.env.OFFICE1_SITE;
@@ -17,6 +18,7 @@ const OFFICE2_SITE = process.env.OFFICE3_SITE;
 const PASSWORD = process.env.PASSWORD;
 const URLS = require("./sites");
 const settings = require("./settings");
+const stream = require('stream');
 
 const app = express();
 app.use(bodyParser.json());
@@ -218,6 +220,26 @@ app.get('/settings', (req, res, next) => {
     settings.setForecast4MatchesCount(req.query.value);
     res.json({});
 });
+
+/**
+ * Exporting
+ */
+app.post('/export', (req, res, next) =>{
+    if (Array.isArray(req.body.ids)) {
+        fetcher
+            .getMatchesForExport(req.body.ids)
+            .then(matches => exporting.doExport(matches))
+            .then(result => {
+                const readStream = new stream.PassThrough();
+                readStream.end(result);
+                res.attachment('results.xlsx');
+                readStream.pipe(res);
+            });
+    } else {
+        res.status(422).send();
+    }
+});
+
 
 db.connectDB(db => {
     fetcher.setMongoDb(db);

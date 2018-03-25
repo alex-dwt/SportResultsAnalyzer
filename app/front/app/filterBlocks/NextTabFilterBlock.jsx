@@ -13,6 +13,7 @@ import The1sForecastGoalsDiffMinFilter  from '../filters/The1sForecastGoalsDiffM
 import MaxSerialFilter  from '../filters/MaxSerialFilter.jsx'
 import MinSerialFilter  from '../filters/MinSerialFilter.jsx'
 import FilterButton  from './FilterButton.jsx'
+import ExportButton  from './ExportButton.jsx'
 const includes = require('array-includes');
 const intersect = require('intersect');
 
@@ -20,6 +21,9 @@ export default class extends React.Component {
     constructor(props) {
         super(props);
         this.filteredValues = {};
+        this.state = {
+            filteredItemsIds: []
+        };
     }
 
     handleFilterClick() {
@@ -33,6 +37,11 @@ export default class extends React.Component {
             let ids = intersect(idsArr);
             result = result.filter((o) => includes(ids, o._id));
         }
+
+        // for export
+        this.setState({
+            filteredItemsIds: result.map(o => o._id),
+        });
 
         this.props.handleFilterClick(result);
     }
@@ -150,6 +159,8 @@ export default class extends React.Component {
                 </Grid>
 
                 <FilterButton disabled={!this.props.items.length} onClick={() => this.handleFilterClick()}/>
+
+                <ExportButton disabled={!this.state.filteredItemsIds.length} filteredItemsIds={this.state.filteredItemsIds}/>
 
             </div>
         );

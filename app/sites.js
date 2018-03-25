@@ -41,8 +41,8 @@ module.exports = {
         },
         soccer: {
             urls: [
-                {id: '45776r', urls:['/', '/', '/']},
-                {id: '45787r', urls:['/', '/', '/']},
+                {id: '45776r', urls:['/', '/su/betting/Football/Paraguay/Primera+A/', '/']},
+                {id: '45787r', urls:['/', '/su/betting/Football/Venezuela/Primera+Division/', '/']},
                 {id: '63', urls:['/v3/ru/line/bets/period=0;chmp=a:1324;', '/su/betting/Football/Portugal/Primeira+Liga/', '/sport/futbol/portugalija-primejjra-liga']},
                 {id: '100', urls:['/', '/su/betting/Football/Portugal/Segunda+Liga/', '/']},
                 {id: '216', urls:['/v3/ru/line/bets/period=0;chmp=a:11168;', '/su/betting/Football/Saudi+Arabia/Pro+League/', '/sport/futbol/saudovskaja-aravija-pro-liga']},

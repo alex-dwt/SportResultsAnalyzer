@@ -89,6 +89,28 @@ export default {
             .then((res) => resolve(res.data.isExists))
         );
     },
+
+    doExport(matchesIds) {
+        axios({
+            url: '/export',
+            method: 'post',
+            responseType: 'blob',
+            data: {ids: matchesIds}
+        })
+            .then(res => {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'results.xlsx');
+                document.body.appendChild(link);
+                link.click();
+
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(link);
+                }, 1);
+            });
+    },
 }
 
 axios.interceptors.request.use((config) => {
