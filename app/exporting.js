@@ -107,7 +107,10 @@ function writeBody(ws, matches) {
                 .string(match.extraInfo.scores.find(o => o.forecastNum === 1).value.find(o => o.info.matchesCount === item).text)
                 .style(STYLE_WITH_TBB);
 
-            ws.cell(row + 1, column).string('').style(STYLE_WITH_MBB);
+            ws
+                .cell(row + 1, column)
+                .string(match.exportAdditionalData.forecast1[item].toString())
+                .style(STYLE_WITH_MBB);
             column++;
         }
 
@@ -116,7 +119,10 @@ function writeBody(ws, matches) {
             .cell(row, column)
             .string(match.extraInfo.scores.find(o => o.forecastNum === 2).value[0].text)
             .style(STYLE_WITH_TBB);
-        ws.cell(row + 1, column).string('').style(STYLE_WITH_MBB);
+        ws
+            .cell(row + 1, column)
+            .string(match.exportAdditionalData.forecast2.toString())
+            .style(STYLE_WITH_MBB);
         column++;
 
         //empty
