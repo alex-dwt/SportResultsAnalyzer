@@ -102,9 +102,15 @@ function writeBody(ws, matches) {
 
         // forecast 1
         for (const item of [2, 3, 4, 5]) {
+            let text = match.extraInfo.scores.find(o => o.forecastNum === 1).value.find(o => o.info.matchesCount === item).text;
+            const pos = text.indexOf(' (');
+            if (pos !== -1) {
+                text = text.substring(0, pos);
+            }
+
             ws
                 .cell(row, column)
-                .string(match.extraInfo.scores.find(o => o.forecastNum === 1).value.find(o => o.info.matchesCount === item).text)
+                .string(text)
                 .style(STYLE_WITH_TBB);
 
             ws
