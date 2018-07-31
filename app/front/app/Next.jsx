@@ -103,6 +103,29 @@ export default class extends React.Component {
 
                 {this.state.filteredItems.map((item, index) => {
                         let teamsVar = item.homeTeamId + '-' + item.guestTeamId;
+
+                        let statisticsHome = this
+                            .matchesData
+                            .statistics[item.tournamentId]
+                            .tournamentResults
+                            .filter((team) => team.teamId === item.homeTeamId);
+                        if (statisticsHome.length) {
+                            statisticsHome = statisticsHome[0].statistics;
+                        } else {
+                            statisticsHome = null;
+                        }
+
+                        let statisticsGuest = this
+                            .matchesData
+                            .statistics[item.tournamentId]
+                            .tournamentResults
+                            .filter((team) => team.teamId === item.guestTeamId);
+                        if (statisticsGuest.length) {
+                            statisticsGuest = statisticsGuest[0].statistics;
+                        } else {
+                            statisticsGuest = null;
+                        }
+
                         return (
                             <div key={item._id} className={'next-match-div-one-match'}>
                                 <p style={{marginTop: '10px', fontWeight: 'bold'}}>
@@ -123,11 +146,11 @@ export default class extends React.Component {
                                         </Grid.Column>
                                         <Grid.Column style={{'width': '25%'}}>
                                             {item.homeTeamName}<br/>
-                                            {this.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.homeTeamId)[0].statistics.serial.join(' ').toUpperCase()}
+                                            {statisticsHome ? statisticsHome.serial.join(' ').toUpperCase() : ''}
                                         </Grid.Column>
                                         <Grid.Column style={{'width': '25%'}}>
                                             {item.guestTeamName}<br/>
-                                            {this.matchesData.statistics[item.tournamentId].tournamentResults.filter((team) => team.teamId === item.guestTeamId)[0].statistics.serial.join(' ').toUpperCase()}
+                                            {statisticsGuest ? statisticsGuest.serial.join(' ').toUpperCase() : ''}
                                         </Grid.Column>
                                         <Grid.Column style={{'width': '10%'}}>
                                         <span className={'team-position'}>
@@ -167,20 +190,20 @@ export default class extends React.Component {
                                         content: (
                                             <div style={{'display': 'flex'}}>
                                                 <div style={{'marginRight': '30px'}}>
-                                                    <TeamMatchesTable
-                                                        items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.homeTeamId ? o.matches : result, [])}
-                                                        teamId={item.homeTeamId}
-                                                        teamName={item.homeTeamName}
-                                                        opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.guestTeamId).position}
-                                                    />
+                                                    {/*<TeamMatchesTable*/}
+                                                        {/*items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.homeTeamId ? o.matches : result, [])}*/}
+                                                        {/*teamId={item.homeTeamId}*/}
+                                                        {/*teamName={item.homeTeamName}*/}
+                                                        {/*opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.guestTeamId).position}*/}
+                                                    {/*/>*/}
                                                 </div>
                                                 <div style={{'marginLeft': '30px'}}>
-                                                    <TeamMatchesTable
-                                                        items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.guestTeamId ? o.matches : result, [])}
-                                                        teamId={item.guestTeamId}
-                                                        teamName={item.guestTeamName}
-                                                        opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.homeTeamId).position}
-                                                    />
+                                                    {/*<TeamMatchesTable*/}
+                                                        {/*items={this.state.teamsMatches.reduce((result, o) => o.teamId === item.guestTeamId ? o.matches : result, [])}*/}
+                                                        {/*teamId={item.guestTeamId}*/}
+                                                        {/*teamName={item.guestTeamName}*/}
+                                                        {/*opponentPosition={this.matchesData.statistics[item.tournamentId].tournamentResults.find((team) => team.teamId === item.homeTeamId).position}*/}
+                                                    {/*/>*/}
                                                 </div>
                                             </div>
                                         )
