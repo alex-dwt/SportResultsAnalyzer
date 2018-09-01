@@ -10,17 +10,17 @@ const request = require('request');
 const db = require("./db");
 const URLS = require("./sites");
 
-
+const MAX_DAYS_TO_PARSE_FOR_FUTURE_MATCHES = 10;
 const SPORT_TYPE_BASKETBALL = 'basketball';
 const HOURS_DIFF = 2;
-const delay = 3 * 60 * 1000; // minutes
+const delay = 1000 * 60 * 1000; // minutes
 let matchesCollection,
     scheduleCollection,
     archiveCompletedCollection,
     urlsToParse = [];
 let currentPhantomCount = 0;
 let currentUrlIndex = 0;
-const maxConcurrentlyPhantomCount = 2;
+const maxConcurrentlyPhantomCount = 1;
 
 function parseUrl(url, index) {
     const isArchived = !! url.isArchive;
@@ -101,7 +101,7 @@ function parseUrl(url, index) {
                             time = `${date.getHours()}:${time[1].trim()}`;
                             date.setHours(0, 0, 0, 0);
 
-                            if (date <= (new Date()).setDate((new Date()).getDate() + 4)) {
+                            if (date <= (new Date()).setDate((new Date()).getDate() + MAX_DAYS_TO_PARSE_FOR_FUTURE_MATCHES)) {
                                 scheduleCollection.insertOne({
                                     _id: `${sport};${date.getTime()};${url.id};${homeTeamId};${guestTeamId};`,
                                     sport,
